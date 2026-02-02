@@ -34,8 +34,15 @@ public class CollabConsoleApp {
             System.out.println("└─────────────────────────────────────┘");
             System.out.print("Choix : ");
 
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            int choice;
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("❌ Veuillez entrer un nombre valide.");
+                scanner.nextLine();
+                continue;
+            }
 
             try {
                 switch (choice) {
