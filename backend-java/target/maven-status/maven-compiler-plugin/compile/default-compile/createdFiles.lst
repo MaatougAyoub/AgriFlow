@@ -1,0 +1,7 @@
+tn/esprit/agriflow/collab/CollabConsoleApp.class
+tn/esprit/agriflow/collab/CollabRequest.class
+tn/esprit/agriflow/collab/CollabRequestDAO.class
+tn/esprit/agriflow/config/DBConnection.class
+tn/esprit/agriflow/Main.class
+tn/esprit/agriflow/collab/CollabApplication.class
+tn/esprit/agriflow/collab/CollabApplicationDAO.class
