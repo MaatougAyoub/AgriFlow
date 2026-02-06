@@ -101,8 +101,8 @@ public class CollabRequestService implements ICollabRequestService {
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, entity.getTitle());
             ps.setString(2, entity.getDescription());
-            ps.setDate(3, Date.valueOf(entity.getStartDate()));
-            ps.setDate(4, Date.valueOf(entity.getEndDate()));
+            ps.setDate(3, entity.getStartDate() == null ? null : Date.valueOf(entity.getStartDate()));
+            ps.setDate(4, entity.getEndDate() == null ? null : Date.valueOf(entity.getEndDate()));
             ps.setInt(5, entity.getNeededPeople());
             ps.setString(6, entity.getStatus());
             ps.setLong(7, entity.getId());

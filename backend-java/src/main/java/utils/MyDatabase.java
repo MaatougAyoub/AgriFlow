@@ -21,7 +21,7 @@ public class MyDatabase {
         }
     }
 
-    public static MyDatabase getInstance() {
+    public static synchronized MyDatabase getInstance() {
         if (instance == null) {
             instance = new MyDatabase();
         }
