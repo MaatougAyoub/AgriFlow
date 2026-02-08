@@ -38,6 +38,7 @@ public class ServiceExpert implements IServiceExpert <Expert> {
 
         st.executeUpdate(reqExpert);
         st.close();
+        System.out.println("Expert ajoute avec succés!!! ✅");
     }
 
     public void modifierExpert(Expert expert) throws SQLException {
@@ -68,11 +69,11 @@ public class ServiceExpert implements IServiceExpert <Expert> {
         psExpert.setObject(7, expert.getDateCreation());
         psExpert.setString(8, expert.getSignature());
         psExpert.setString(9, expert.getCertification()); // ✅ Certification
-        psExpert.setInt(10, expert.getId()); // ✅ WHERE id=?
+        psExpert.setInt(10, expert.getId()); //  WHERE id=?
         psExpert.executeUpdate();
         psExpert.close();
 
-        System.out.println("Expert modifié avec succès!");
+        System.out.println("Expert modifié avec succès!!✅");
     }
     @Override
     public void supprimerExpert (Expert expert) throws SQLException
@@ -96,7 +97,7 @@ public class ServiceExpert implements IServiceExpert <Expert> {
         psUser.executeUpdate();
         psUser.close();
 
-        System.out.println("Expert supprimé avec succès!");
+        System.out.println("Expert supprimé avec succès!!✅");
     }
 
     @Override

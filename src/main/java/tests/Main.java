@@ -1,8 +1,10 @@
 package tests;
 
+import entities.Admin;
 import entities.Agriculteur;
 import entities.Expert;
 import entities.Role;
+import services.ServiceAdmin;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
 import utils.MyDatabase;
@@ -17,23 +19,25 @@ public class Main {
         MyDatabase db = MyDatabase.getInstance();
         ServiceExpert serviceExpert = new ServiceExpert();
         Expert expert = new Expert("foulen", "benfoulen", 11223344, "foulen@gmail.com", "motdepasse", Role.EXPERT.toString(), LocalDate.parse("2026-02-06"),"signature2.png", "certification.pnj");
-        Expert expert2 = new Expert("ayoub", "ben Sami Maatoug", 11223345, "ayoub.maatoug@ipeib.ucar@gmail.tn", "motdepasse11111", Role.EXPERT.toString(), LocalDate.parse("2026-02-06"),"signature2.png", "certification.pnj");
+        //Expert expert2 = new Expert("ayoub", "ben Sami Maatoug", 11223345, "ayoub.maatoug@ipeib.ucar@gmail.tn", "motdepasse11111", Role.EXPERT.toString(), LocalDate.parse("2026-02-06"),"signature2.png", "certification.pnj");
 
         ServiceAgriculteur serviceAgriculteur = new ServiceAgriculteur();
 
 
-/*        try {
+/*       try {
             serviceExpert.ajouterExpert(expert2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }*/
+        //Expert expert2 = new Expert(27,"ayoub->adam", "ben Sami Maatoug", 11223345, "ayoub.maatoug@ipeib.ucar@gmail.tn", "motdepasse11111", Role.EXPERT.toString(), LocalDate.parse("2026-02-06"),"signatureAdam.png", "certification.pnj");
 
-/*        try {
+       /* try {
             serviceExpert.modifierExpert(expert2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }*/
-/*        try {
+
+        /*try {
             serviceExpert.supprimerExpert(expert2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -44,7 +48,7 @@ public class Main {
             System.out.println(e.getMessage());
         }*/
 
-        //______________________________________________________________________________
+        //________________________________________________________________________________________________________________________
 
         Agriculteur agri1 = new Agriculteur("adam", "Maatoug", 99998888, "adam@gmail.com", "pwAdam", Role.AGRICULTEUR.toString(), LocalDate.parse("2026-02-07"),"signatureAdam.png", "cartePro.pnj", "Adresse", "liste des parcelles");
        //agri1.setId(24);
@@ -69,12 +73,40 @@ public class Main {
             System.out.println(e.getMessage());
         }*/
 
+/*        try {
+            serviceAgriculteur.supprimerAgriculteur(agri1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+        //________________________________________________________________________________________________________________________
+        ServiceAdmin serviceAdmin = new ServiceAdmin();
+        Admin admin1 = new Admin("Ayoub", "Maatoug", 11429920, "maatougayoub7@gmail.com", "pwayoub", Role.ADMIN.toString(), LocalDate.parse("2026-02-07"), "Signatre Ayoub.png", 200.58);
+/*        try {
+            serviceAdmin.ajouterAdmin(admin1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+
+        Admin admin2 = new Admin(33,"Ayoub222", "Maatoug", 11429920, "maatougayoub7@gmail.com", "pwayoub*004", Role.ADMIN.toString(), LocalDate.parse("2026-02-08"), "Signatre Ayoub.png", 200.58);
+
+
+        /*try {
+            serviceAdmin.modifierAdmin(admin2);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+
+/*        try {
+            System.out.println(serviceAdmin.recupererAdmin());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+
         try {
-            serviceAgriculteur.supprimerAgriculteur(agri11);
+            serviceAdmin.supprimerAdmin(admin2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
 
     }
 }
