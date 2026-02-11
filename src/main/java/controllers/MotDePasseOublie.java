@@ -1,5 +1,6 @@
 package controllers;
 
+import entities.Role;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,14 +12,20 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import services.ServiceAgriculteur;
+import services.ServiceExpert;
+import utils.MyDatabase;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class MotDePasseOublie implements Initializable {
 
     @FXML private TextField emailField;
-
     @FXML private VBox stepEmailBox;
     @FXML private VBox stepResetBox;
 
@@ -29,16 +36,23 @@ public class MotDePasseOublie implements Initializable {
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
 
-    // Simulation (tu peux le remplacer par un vrai code envoyé par email)
     private String generatedCode = null;
+    private String emailCible = null;
+    private Role roleCible = null;
+
+    private ServiceAgriculteur serviceAgriculteur;
+    private ServiceExpert serviceExpert;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        serviceAgriculteur = new ServiceAgriculteur();
+        serviceExpert = new ServiceExpert();
+
         hideMessages();
         showStepEmail();
     }
 
-    // ====== Etape 1 ======
+    // ===== Étape 1 =====
     @FXML
     private void envoyerCode(ActionEvent event) {
         hideMessages();
@@ -53,25 +67,41 @@ public class MotDePasseOublie implements Initializable {
             return;
         }
 
-        // TODO: Vérifier que l'email existe dans la DB (utilisateurs)
-        // TODO: Générer un code + l'envoyer par email
+        try {
+            // 1) déterminer le rôle (AGRICULTEUR ou EXPERT) depuis table utilisateurs
+            Role role = findRoleByEmail(email);
+            if (role == null) {
+                showError("Aucun compte trouvé avec cet email.");
+                return;
+            }
+            if (role != Role.AGRICULTEUR && role != Role.EXPERT) {
+                showError("La réinitialisation est disponible uniquement pour Agriculteur/Expert.");
+                return;
+            }
 
-        generatedCode = generateSimpleCode();
+            // 2) garder l'état
+            this.emailCible = email;
+            this.roleCible = role;
 
-        // Pour debug (optionnel) : afficher le code dans console
-        System.out.println("Code reset (debug) = " + generatedCode);
+            // 3) générer code (simulation)
+            generatedCode = generateSimpleCode();
+            System.out.println("Code reset (debug) = " + generatedCode);
 
-        showSuccess("Un code a été envoyé à votre email (simulation).");
-        showStepReset();
+            showSuccess("Code envoyé (simulation). Vérifiez votre email.");
+            showStepReset();
+
+        } catch (SQLException e) {
+            showError("Erreur DB: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void renvoyerCode(ActionEvent event) {
-        // Réutiliser la logique
         envoyerCode(event);
     }
 
-    // ====== Etape 2 ======
+    // ===== Étape 2 =====
     @FXML
     private void reinitialiserMotDePasse(ActionEvent event) {
         hideMessages();
@@ -80,7 +110,7 @@ public class MotDePasseOublie implements Initializable {
         String newPass = newPasswordField.getText() == null ? "" : newPasswordField.getText();
         String confirm = confirmPasswordField.getText() == null ? "" : confirmPasswordField.getText();
 
-        if (generatedCode == null) {
+        if (emailCible == null || roleCible == null || generatedCode == null) {
             showError("Veuillez d'abord demander un code.");
             showStepEmail();
             return;
@@ -106,21 +136,28 @@ public class MotDePasseOublie implements Initializable {
             return;
         }
 
-        // TODO: Mettre à jour le mot de passe dans la DB
-        // Exemple attendu: UPDATE utilisateurs SET motDePasse=? WHERE email=?
-        // (idéalement motDePasse hashé)
+        try {
+            // Mettre à jour selon rôle
+            if (roleCible == Role.AGRICULTEUR) {
+                serviceAgriculteur.modifierMotDePasseParEmail(emailCible, newPass);
+            } else if (roleCible == Role.EXPERT) {
+                serviceExpert.modifierMotDePasseParEmail(emailCible, newPass);
+            }
 
-        showSuccess("Mot de passe réinitialisé avec succès (à brancher sur la DB).");
+            showSuccess("Mot de passe réinitialisé avec succès ✅");
+            // Optionnel: revenir vers SignIn
+            // retourConnexion(event);
 
-        // Option: revenir vers la connexion après succès
-        // retourConnexion(event);
+        } catch (SQLException e) {
+            showError("Erreur lors de la mise à jour du mot de passe: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    // ====== Navigation ======
+    // ===== Navigation =====
     @FXML
     private void retourConnexion(ActionEvent event) {
         hideMessages();
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml")); // adapte si /fxml/...
             Parent root = loader.load();
@@ -136,11 +173,24 @@ public class MotDePasseOublie implements Initializable {
         }
     }
 
-    // ====== Helpers UI ======
+    // ===== Helpers DB =====
+    private Role findRoleByEmail(String email) throws SQLException {
+        Connection cnx = utils.MyDatabase.getInstance().getConnection(); // ne pas fermer
+
+        String sql = "SELECT role FROM utilisateurs WHERE email = ?";
+        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                return Role.valueOf(rs.getString("role"));
+            }
+        }
+    }
+
+    // ===== Helpers UI =====
     private void showStepEmail() {
         stepEmailBox.setVisible(true);
         stepEmailBox.setManaged(true);
-
         stepResetBox.setVisible(false);
         stepResetBox.setManaged(false);
     }
@@ -148,9 +198,6 @@ public class MotDePasseOublie implements Initializable {
     private void showStepReset() {
         stepResetBox.setVisible(true);
         stepResetBox.setManaged(true);
-
-        // On peut laisser l'étape email visible ou non.
-        // Ici on la cache pour faire une vraie interface dynamique.
         stepEmailBox.setVisible(false);
         stepEmailBox.setManaged(false);
     }
@@ -173,7 +220,6 @@ public class MotDePasseOublie implements Initializable {
     }
 
     private String generateSimpleCode() {
-        // Code 6 chiffres
         int code = (int) (Math.random() * 900000) + 100000;
         return String.valueOf(code);
     }

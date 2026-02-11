@@ -11,8 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import services.ServiceAuth;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -69,9 +71,34 @@ public class SignIn implements Initializable {
             prefs.remove("remember_email");
         }
 
-        // TODO: Brancher ici la vraie authentification (DB)
-        // Pour le moment, message simple:
-        showSuccess("Connexion (simulation) : OK. À brancher sur la base de données.");
+        // Auth DB + ouverture du profil
+        try {
+            ServiceAuth auth = new ServiceAuth();
+            Map<String, Object> userData = auth.loginAndFetchProfile(email, mdp);
+
+            if (userData == null) {
+                showError("Email ou mot de passe incorrect.");
+                return;
+            }
+
+            // Charger la page profil
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml")); // adapte si /fxml/
+            Parent root = loader.load();
+
+            // Passer les données au controller ProfilUtilisateur
+            ProfilUtilisateur profilController = loader.getController();
+            profilController.setUserData(userData);
+
+            // Afficher dans le même Stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AgriFlow - Profil");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            showError("Erreur lors de la connexion: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -87,8 +114,7 @@ public class SignIn implements Initializable {
         hideMessages();
 
         try {
-            // ⚠️ Si ton fxml est dans resources/fxml alors remplace par "/fxml/SignUp.fxml"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignUp.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignUp.fxml")); // adapte si /fxml/
             Parent root = loader.load();
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -105,10 +131,9 @@ public class SignIn implements Initializable {
     @FXML
     private void motDePasseOublie(ActionEvent event) {
         hideMessages();
-        //showError("Fonction 'Mot de passe oublié' non implémentée pour le moment.");
+
         try {
-            // ⚠️ Si ton fxml est dans resources/fxml alors remplace par "/fxml/SignUp.fxml"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MotDePasseOublie.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/MotDePasseOublie.fxml")); // adapte si /fxml/
             Parent root = loader.load();
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -117,7 +142,7 @@ public class SignIn implements Initializable {
             stage.show();
 
         } catch (Exception e) {
-            showError("Impossible d'ouvrir la page  " + e.getMessage());
+            showError("Impossible d'ouvrir la page: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -126,6 +126,41 @@ public class ServiceExpert implements IServiceExpert <Expert> {
         st.close();
         return expertsList;
     }
+    public boolean emailExiste(String email) throws SQLException {
+        Connection cnx = MyDatabase.getInstance().getConnection(); // ✅ récupérer une connexion active
+
+        String sql = "SELECT 1 FROM utilisateurs WHERE email = ? AND role = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, Role.EXPERT.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    public void modifierMotDePasseParEmail(String email, String nouveauMotDePasse) throws SQLException {
+        Connection cnx = MyDatabase.getInstance().getConnection(); // ✅ récupérer une connexion active
+
+        // 1) utilisateurs
+        String sqlUser = "UPDATE utilisateurs SET motDePasse = ? WHERE email = ? AND role = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
+            ps.setString(1, nouveauMotDePasse);
+            ps.setString(2, email);
+            ps.setString(3, Role.EXPERT.toString());
+            ps.executeUpdate();
+        }
+
+        // 2) experts
+        String sqlExpert = "UPDATE experts SET motDePasse = ? WHERE email = ? AND role = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sqlExpert)) {
+            ps.setString(1, nouveauMotDePasse);
+            ps.setString(2, email);
+            ps.setString(3, Role.EXPERT.toString());
+            ps.executeUpdate();
+        }
+    }
+
 
 }
 
