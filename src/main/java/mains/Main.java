@@ -1,15 +1,12 @@
-package tests;
+package mains;
 
-import entities.Admin;
-import entities.Agriculteur;
-import entities.Expert;
-import entities.Role;
+import entities.*;
 import services.ServiceAdmin;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
+import services.ServiceReclamation;
 import utils.MyDatabase;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -54,11 +51,14 @@ public class Main {
        //agri1.setId(24);
 
         Agriculteur agri2 = new Agriculteur(23,"anas", "Maatoug", 99998888, "anas@gmail.com", "pwAnas", Role.AGRICULTEUR.toString(), LocalDate.parse("2026-02-07"),"signatureAdam.png", "cartePro.pnj", "Adresse:RueAliDouagi", "liste des parcelles");
-        /*try {
+
+/*
+        try {
             serviceAgriculteur.ajouterAgriculteur(agri1);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        }*/
+        }
+*/
 
 
 /*        try {
@@ -102,11 +102,39 @@ public class Main {
             System.out.println(e.getMessage());
         }*/
 
-        try {
+/*        try {
             serviceAdmin.supprimerAdmin(admin2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        }
+        }*/
 
+        ServiceReclamation serviceReclamation = new ServiceReclamation();
+        Reclamation r1 = new Reclamation(34, Categorie.TECHNIQUE, "reclamation 11", "Voici une réclamation pur le test1" );
+        Reclamation r2 = new Reclamation(34, Categorie.AUTRE, "reclamation 22222", "Voici une réclamation pur le test222222" );
+
+/*        try {
+            serviceReclamation.ajouterReclamation(r1);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+        Reclamation r3 = new Reclamation(4,34, Categorie.AUTRE, "reclamation 333333", "Voici une réclamation pur le test3333333" );
+
+/*        try {
+            serviceReclamation.modifierReclamation(r3);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+
+  /*     try {
+            System.out.println(serviceReclamation.recupererReclamation());;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
+
+        /*try {
+            serviceReclamation.supprimerReclamation(r3);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }*/
     }
 }
