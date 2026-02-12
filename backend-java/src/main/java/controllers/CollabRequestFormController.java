@@ -3,8 +3,10 @@ package controllers;
 import entities.CollabRequest;
 import services.CollabRequestService;
 import validators.CollabRequestValidator;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Duration;
 
 import java.time.LocalDate;
 
@@ -89,14 +91,9 @@ public class CollabRequestFormController {
             showSuccess("✅ Demande créée avec succès !\n\nID de la demande : " + id + "\nTitre : " + title);
             
             // 6. Réinitialiser le formulaire après 2 secondes
-            new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-                    javafx.application.Platform.runLater(this::handleReset);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }).start();
+            PauseTransition pause = new PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> handleReset());
+            pause.play();
             
         } catch (NumberFormatException e) {
             showError("❌ L'ID du demandeur doit être un nombre valide (ex: 2)");
@@ -104,7 +101,6 @@ public class CollabRequestFormController {
             showError("❌ " + e.getMessage());
         } catch (Exception e) {
             showError("❌ Erreur lors de la création : " + e.getMessage());
-            e.printStackTrace();
         }
     }
     
