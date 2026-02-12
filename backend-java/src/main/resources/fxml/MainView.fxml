@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.MainViewController">
+    
+    <!-- Header -->
+    <top>
+        <VBox style="-fx-background-color: linear-gradient(to right, #2E7D32, #388E3C); -fx-padding: 25;">
+            <Label text="🌾 AgriFlow - Gestion des Collaborations" textFill="WHITE">
+                <font>
+                    <Font name="System Bold" size="28.0"/>
+                </font>
+            </Label>
+            <Label text="Module 5 : Plateforme de recherche de partenaires agricoles" textFill="#E8F5E9">
+                <font>
+                    <Font size="15.0"/>
+                </font>
+            </Label>
+            <VBox.margin>
+                <Insets bottom="5.0"/>
+            </VBox.margin>
+        </VBox>
+    </top>
+    
+    <!-- Main Content -->
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE" style="-fx-background-color: #FAFAFA;">
+            <!-- Onglet 1 : Liste des demandes -->
+            <Tab text="📋 Demandes de collaboration">
+                <fx:include source="CollabRequestList.fxml"/>
+            </Tab>
+            
+            <!-- Onglet 2 : Créer une demande -->
+            <Tab text="➕ Nouvelle demande">
+                <fx:include source="CollabRequestForm.fxml"/>
+            </Tab>
+            
+            <!-- Onglet 3 : Candidatures -->
+            <Tab text="📝 Mes candidatures">
+                <fx:include source="CollabApplicationList.fxml"/>
+            </Tab>
+        </TabPane>
+    </center>
+    
+    <!-- Footer -->
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-background-color: #EEEEEE; -fx-padding: 12;">
+            <Label text="© 2026 AgriFlow - Projet PIDEV ESPRIT | Développé par YakineEddine" textFill="#616161">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+        </HBox>
+    </bottom>
+</BorderPane>

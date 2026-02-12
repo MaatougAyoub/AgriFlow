@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="controllers.CollabRequestListController" 
+      spacing="15" style="-fx-padding: 20; -fx-background-color: white;">
+    
+    <!-- Titre -->
+    <Label text="📋 Liste des demandes de collaboration" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+    
+    <!-- Barre de recherche et filtres -->
+    <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding: 10; -fx-background-color: #F5F5F5; -fx-background-radius: 8;">
+        <Label text="🔍" style="-fx-font-size: 18px;"/>
+        <TextField fx:id="searchField" promptText="Rechercher par titre ou description..." prefWidth="350" 
+                   style="-fx-font-size: 14px;"/>
+        
+        <Label text="Statut:" style="-fx-font-weight: bold;"/>
+        <ComboBox fx:id="statusFilter" promptText="Tous" prefWidth="150"/>
+        
+        <Button text="🔍 Rechercher" onAction="#handleSearch" 
+                style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 8 16; -fx-cursor: hand;"/>
+        <Button text="🔄 Rafraîchir" onAction="#handleRefresh" 
+                style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-font-size: 13px; -fx-padding: 8 16; -fx-cursor: hand;"/>
+    </HBox>
+    
+    <!-- TableView -->
+    <TableView fx:id="requestsTable" VBox.vgrow="ALWAYS" style="-fx-font-size: 13px;">
+        <columns>
+            <TableColumn text="ID" prefWidth="60" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="id"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Titre" prefWidth="220">
+                <cellValueFactory>
+                    <PropertyValueFactory property="title"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Description" prefWidth="280">
+                <cellValueFactory>
+                    <PropertyValueFactory property="description"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Date début" prefWidth="110" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="startDate"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Date fin" prefWidth="110" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="endDate"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Personnes" prefWidth="90" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="neededPeople"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Statut" prefWidth="110" style="-fx-alignment: CENTER;">
+                <cellValueFactory>
+                    <PropertyValueFactory property="status"/>
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+        <placeholder>
+            <Label text="Aucune demande de collaboration trouvée" style="-fx-text-fill: #757575;"/>
+        </placeholder>
+    </TableView>
+    
+    <!-- Compteur de résultats -->
+    <Label fx:id="resultsLabel" text="0 demande(s) affichée(s)" style="-fx-font-size: 12px; -fx-text-fill: #616161;"/>
+    
+    <!-- Boutons d'action -->
+    <HBox spacing="12" alignment="CENTER" style="-fx-padding: 10;">
+        <Button text="✏️ Modifier" onAction="#handleEdit" prefWidth="120"
+                style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="🗑️ Supprimer" onAction="#handleDelete" prefWidth="120"
+                style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="✅ Valider" onAction="#handleApprove" prefWidth="120"
+                style="-fx-background-color: #388E3C; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="❌ Rejeter" onAction="#handleReject" prefWidth="120"
+                style="-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10; -fx-cursor: hand;"/>
+    </HBox>
+</VBox>
