@@ -27,8 +27,8 @@
     </TableView>
     
     <HBox spacing="10" alignment="CENTER">
-        <Button text="✅ Approuver" style="-fx-background-color: #388E3C; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
-        <Button text="❌ Rejeter" style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
-        <Button text="🔄 Rafraîchir" style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="✅ Approuver" onAction="#handleApprove" style="-fx-background-color: #388E3C; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="❌ Rejeter" onAction="#handleReject" style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
+        <Button text="🔄 Rafraîchir" onAction="#handleRefresh" style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-padding: 10; -fx-cursor: hand;"/>
     </HBox>
 </VBox>
