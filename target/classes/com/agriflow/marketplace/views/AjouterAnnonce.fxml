@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.agriflow.marketplace.controllers.AjouterAnnonceController"
+            stylesheets="@styles.css"
+            style="-fx-background-color: #F4F6F3; -fx-background: #F4F6F3;">
+
+    <VBox spacing="20" style="-fx-background-color: #F4F6F3;">
+        <padding>
+            <Insets top="25" right="30" bottom="25" left="30"/>
+        </padding>
+
+        <!-- Header -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <Button text="Retour au Marketplace" styleClass="btn-secondary"
+                    onAction="#retourMarketplace">
+                <graphic>
+                    <SVGPath content="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+                             fill="#757575" scaleX="0.7" scaleY="0.7"/>
+                </graphic>
+            </Button>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="pageTitle" text="Publier une Annonce" styleClass="page-title">
+                <graphic>
+                    <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                             fill="#333333" scaleX="0.9" scaleY="0.9"/>
+                </graphic>
+            </Label>
+        </HBox>
+
+        <!-- Formulaire -->
+        <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 25; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);">
+
+            <!-- Titre -->
+            <VBox spacing="5">
+                <Label text="Titre de l'annonce *" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="titreField" promptText="Ex: Tracteur John Deere 6120M"
+                           style="-fx-padding: 10 15; -fx-background-radius: 8;"/>
+            </VBox>
+
+            <!-- Description -->
+            <VBox spacing="5">
+                <Label text="Description *" style="-fx-font-weight: bold;"/>
+                <TextArea fx:id="descriptionArea" promptText="Décrivez votre annonce en détail..."
+                          prefRowCount="4" wrapText="true"/>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Button fx:id="btnAmeliorerDesc" text="Améliorer avec l'IA" styleClass="btn-ai"
+                            onAction="#ameliorerDescription">
+                        <graphic>
+                            <SVGPath content="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z"
+                                     fill="white" scaleX="0.6" scaleY="0.6"/>
+                        </graphic>
+                    </Button>
+                    <Label fx:id="aiDescStatus" styleClass="ai-label" text="" visible="false" managed="false"/>
+                </HBox>
+            </VBox>
+
+            <!-- Type + Catégorie -->
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Type *" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="typeCombo" maxWidth="Infinity" promptText="Sélectionnez le type"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Catégorie" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="categorieField" promptText="Ex: Tracteur, Engrais..."
+                               style="-fx-padding: 10 15; -fx-background-radius: 8;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Prix + Localisation -->
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Prix (DT) *" style="-fx-font-weight: bold;"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <TextField fx:id="prixField" promptText="Ex: 250.00"
+                                   style="-fx-padding: 10 15; -fx-background-radius: 8;" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnSuggererPrix" text="Suggérer un prix" styleClass="btn-ai"
+                                onAction="#suggererPrix">
+                            <graphic>
+                                <SVGPath content="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"
+                                         fill="white" scaleX="0.6" scaleY="0.6"/>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                    <Label fx:id="aiPrixStatus" styleClass="ai-label" text="" visible="false" managed="false"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Localisation" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="localisationField" promptText="Ex: Sousse, Tunis..."
+                               style="-fx-padding: 10 15; -fx-background-radius: 8;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Image URL -->
+            <VBox spacing="5">
+                <Label text="URL de l'image *" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="imageUrlField" promptText="https://example.com/image.jpg"
+                           style="-fx-padding: 10 15; -fx-background-radius: 8;"/>
+                <Label text="Collez un lien vers une image (JPG, PNG)" style="-fx-font-size: 11px; -fx-text-fill: #9E9E9E;"/>
+            </VBox>
+
+            <!-- Message erreur -->
+            <Label fx:id="errorLabel" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
+
+            <!-- Boutons -->
+            <HBox spacing="15" alignment="CENTER">
+                <Button fx:id="btnPublier" text="Publier l'annonce" styleClass="action-button"
+                        onAction="#publierAnnonce" prefWidth="200">
+                    <graphic>
+                        <SVGPath content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+                                 fill="white" scaleX="0.7" scaleY="0.7"/>
+                    </graphic>
+                </Button>
+                <Button text="Annuler" styleClass="btn-secondary"
+                        onAction="#retourMarketplace" prefWidth="120"/>
+            </HBox>
+        </VBox>
+    </VBox>
+</ScrollPane>

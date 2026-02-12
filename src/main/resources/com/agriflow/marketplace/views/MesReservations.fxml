@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.agriflow.marketplace.controllers.MesReservationsController"
+      spacing="15" style="-fx-background-color: #F4F6F3;"
+      stylesheets="@styles.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <SVGPath content="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+                 fill="#2D5A27" scaleX="1.1" scaleY="1.1"/>
+        <Label text="Mes Réservations" styleClass="page-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Retour au Marketplace" styleClass="btn-secondary"
+                onAction="#retourMarketplace">
+            <graphic>
+                <SVGPath content="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"
+                         fill="#757575" scaleX="0.7" scaleY="0.7"/>
+            </graphic>
+        </Button>
+    </HBox>
+
+    <!-- Informations -->
+    <Label fx:id="infoLabel" text="Chargement..."
+           style="-fx-font-size: 14px; -fx-text-fill: #757575;"/>
+
+    <!-- Cards des réservations -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: transparent; -fx-background: transparent;">
+        <FlowPane fx:id="cardsContainer" hgap="18" vgap="18"/>
+    </ScrollPane>
+
+</VBox>
