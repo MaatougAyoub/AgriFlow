@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
@@ -14,12 +15,36 @@
     
     <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn text="ID" prefWidth="60"/>
-            <TableColumn text="Demande" prefWidth="220"/>
-            <TableColumn text="Candidat" prefWidth="150"/>
-            <TableColumn text="Message" prefWidth="350"/>
-            <TableColumn text="Statut" prefWidth="120"/>
-            <TableColumn text="Date" prefWidth="150"/>
+            <TableColumn text="ID" prefWidth="60">
+                <cellValueFactory>
+                    <PropertyValueFactory property="id"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Demande" prefWidth="220">
+                <cellValueFactory>
+                    <PropertyValueFactory property="requestTitle"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Candidat" prefWidth="150">
+                <cellValueFactory>
+                    <PropertyValueFactory property="applicantName"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Message" prefWidth="350">
+                <cellValueFactory>
+                    <PropertyValueFactory property="message"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Statut" prefWidth="120">
+                <cellValueFactory>
+                    <PropertyValueFactory property="status"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Date" prefWidth="150">
+                <cellValueFactory>
+                    <PropertyValueFactory property="applicationDate"/>
+                </cellValueFactory>
+            </TableColumn>
         </columns>
         <placeholder>
             <Label text="Aucune candidature" style="-fx-text-fill: #757575;"/>
