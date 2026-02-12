@@ -651,64 +651,46 @@
     -fx-text-fill: #2D5A27;
 }
 
-/* --- Admin Table --- */
-.admin-table {
+/* --- Admin Cards --- */
+.admin-card {
     -fx-background-color: white;
-    -fx-background-radius: 10;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);
 }
 
-.admin-table .column-header {
-    -fx-background-color: #2D5A27;
-    -fx-padding: 8 12;
+.admin-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45, 90, 39, 0.22), 18, 0, 0, 5);
 }
 
-.admin-table .column-header .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 12px;
-}
-
-.admin-table .table-row-cell:odd {
-    -fx-background-color: #F9FBF8;
-}
-
-.admin-table .table-row-cell:even {
-    -fx-background-color: white;
-}
-
-.admin-table .table-row-cell:selected {
-    -fx-background-color: rgba(45, 90, 39, 0.12);
-}
-
-/* --- Action Buttons (Admin) --- */
-.btn-admin-delete {
-    -fx-background-color: #E53935;
-    -fx-text-fill: white;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 10;
-    -fx-background-radius: 6;
+/* --- Icon-only Buttons (round, transparent) --- */
+.admin-icon-btn {
+    -fx-background-color: rgba(229, 57, 53, 0.08);
+    -fx-background-radius: 50;
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-max-width: 34;
+    -fx-max-height: 34;
+    -fx-padding: 0;
     -fx-cursor: hand;
 }
 
-.btn-admin-delete:hover {
-    -fx-background-color: #C62828;
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+.admin-icon-btn:hover {
+    -fx-background-color: rgba(229, 57, 53, 0.18);
+    -fx-scale-x: 1.15;
+    -fx-scale-y: 1.15;
 }
 
-.btn-admin-cancel {
-    -fx-background-color: #F57C00;
-    -fx-text-fill: white;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 10;
-    -fx-background-radius: 6;
-    -fx-cursor: hand;
+/* --- Admin Search Bar --- */
+.admin-search {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 20;
+    -fx-padding: 8 16;
+    -fx-font-size: 13px;
 }
 
-.btn-admin-cancel:hover {
-    -fx-background-color: #E65100;
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
+.admin-search:focused {
+    -fx-border-color: #2D5A27;
+    -fx-effect: dropshadow(gaussian, rgba(45, 90, 39, 0.15), 6, 0, 0, 0);
 }
