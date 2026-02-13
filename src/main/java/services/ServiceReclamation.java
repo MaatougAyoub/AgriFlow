@@ -182,4 +182,55 @@ public class ServiceReclamation implements IServiceReclamation<Reclamation> {
         st.close();
         return list;
     }
+
+/*
+    public void repondreAReclamation(int reclamationId, String reponseFormatee) throws SQLException {
+        String sql = "UPDATE reclamations SET reponse = ? WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, reponseFormatee);
+        ps.setInt(2, reclamationId);
+        ps.executeUpdate();
+        ps.close();
+    }*/
+
+
+    // ===================== AJOUTS (pour Répondre + concaténer) =====================
+
+    public String getReponseById(int reclamationId) throws SQLException {
+        String sql = "SELECT reponse FROM reclamations WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, reclamationId);
+        ResultSet rs = ps.executeQuery();
+
+        String rep = null;
+        if (rs.next()) {
+            rep = rs.getString("reponse");
+        }
+
+        rs.close();
+        ps.close();
+        return rep;
+    }
+
+    /**
+     * ✅ Ajoute une réponse en la concaténant à la suite (sur une nouvelle ligne),
+     * au lieu d’écraser l’ancienne.
+     */
+    public void ajouterReponseConcatenee(int reclamationId, String nouvelleReponseFormatee) throws SQLException {
+        String ancienne = getReponseById(reclamationId);
+
+        String finalText;
+        if (ancienne == null || ancienne.trim().isEmpty()) {
+            finalText = nouvelleReponseFormatee;
+        } else {
+            finalText = ancienne + "\n" + nouvelleReponseFormatee;
+        }
+
+        String sql = "UPDATE reclamations SET reponse = ? WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, finalText);
+        ps.setInt(2, reclamationId);
+        ps.executeUpdate();
+        ps.close();
+    }
 }
