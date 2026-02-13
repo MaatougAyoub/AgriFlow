@@ -95,8 +95,8 @@
                 <TextField fx:id="adresseField" promptText="Votre adresse complète" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                 <!-- Parcelles -->
-                <Label text="Parcelles" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="parcellesField" promptText="Informations sur vos parcelles" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+<!--                <Label text="Parcelles" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="parcellesField" promptText="Informations sur vos parcelles" GridPane.rowIndex="1" GridPane.columnIndex="1"/>-->
 
                 <!-- Upload Carte Professionnelle -->
                 <Label text="Carte professionnelle *" GridPane.rowIndex="2" GridPane.columnIndex="0"/>

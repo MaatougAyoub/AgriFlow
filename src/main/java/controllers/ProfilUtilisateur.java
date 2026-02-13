@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,6 +20,11 @@ public class ProfilUtilisateur {
 
     @FXML private Label roleLabel;
     @FXML private Label errorLabel;
+    //bouton Réclamation
+    @FXML private javafx.scene.control.Button reclamationsButton;
+
+    // ✅ bouton visible seulement pour AGRICULTEUR
+    @FXML private Button listeParcellesButton;
 
     // commun
     @FXML private Label nomValue;
@@ -78,11 +84,21 @@ public class ProfilUtilisateur {
         setSectionVisible(expertBox, false);
         setSectionVisible(adminBox, false);
 
+        // ✅ cacher bouton parcelles par défaut
+        if (listeParcellesButton != null) {
+            listeParcellesButton.setVisible(false);
+            listeParcellesButton.setManaged(false);
+        }
+
         try {
             Role role = Role.valueOf(roleStr);
 
             if (role == Role.AGRICULTEUR) {
                 setSectionVisible(agriculteurBox, true);
+
+                // ✅ afficher bouton parcelles uniquement pour agriculteur
+                listeParcellesButton.setVisible(true);
+                listeParcellesButton.setManaged(true);
 
                 adresseValue.setText(safeString(userData.get("adresse")));
                 parcellesValue.setText(safeString(userData.get("parcelles")));
@@ -120,13 +136,6 @@ public class ProfilUtilisateur {
         box.setManaged(visible);
     }
 
-    /**
-     * Charge une image depuis un chemin stocké en DB.
-     * Gère aussi les anciens chemins cassés:
-     * - uploadssignatures...
-     * - uploadscertifications...
-     * - uploadscartes_pro...
-     */
     private void loadImageInto(ImageView view, String path) {
         try {
             if (view == null) return;
@@ -138,21 +147,17 @@ public class ProfilUtilisateur {
 
             String normalized = path.trim();
 
-            // ✅ réparer anciens formats sans slash
             normalized = normalized
                     .replace("uploadssignatures", "uploads/signatures/")
                     .replace("uploadscertifications", "uploads/certifications/")
                     .replace("uploadscartes_pro", "uploads/cartes_pro/");
 
-            // ✅ assurer "uploads/"
             if (normalized.startsWith("uploads") && !normalized.startsWith("uploads/")) {
                 normalized = normalized.replaceFirst("^uploads", "uploads/");
             }
 
             File file = new File(System.getProperty("user.dir"), normalized);
-            if (!file.exists()) {
-                file = new File(normalized);
-            }
+            if (!file.exists()) file = new File(normalized);
 
             if (!file.exists()) {
                 System.out.println("[Profil] Image introuvable: " + normalized);
@@ -170,9 +175,15 @@ public class ProfilUtilisateur {
     }
 
     @FXML
+    private void listeParcelles(ActionEvent event) {
+        // TODO: charger ListeParcelles.fxml et passer userData.get("id")
+        System.out.println("Ouvrir liste des parcelles pour agriculteur id=" + userData.get("id"));
+    }
+
+    @FXML
     private void logout(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml")); // adapte si /fxml/
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -182,6 +193,32 @@ public class ProfilUtilisateur {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void reclamations(ActionEvent event) {
+        try {
+            var url = getClass().getResource("/ListeReclamtions.fxml"); // adapte si /fxml/
+            if (url == null) {
+                throw new IllegalStateException("FXML introuvable: /ListeReclamations.fxml (vérifie src/main/resources)");
+            }
+
+            FXMLLoader loader = new FXMLLoader(url);
+            Parent root = loader.load();
+
+            ListeReclamations controller = loader.getController();
+            controller.setUserData(userData);
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AgriFlow - Réclamations");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorLabel.setText("Impossible d'ouvrir Réclamations: " + e.getMessage());
+            errorLabel.setVisible(true);
         }
     }
 
@@ -205,5 +242,4 @@ public class ProfilUtilisateur {
             errorLabel.setVisible(true);
         }
     }
-
 }

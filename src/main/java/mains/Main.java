@@ -7,6 +7,7 @@ import services.ServiceExpert;
 import services.ServiceReclamation;
 import utils.MyDatabase;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -80,8 +81,8 @@ public class Main {
         }*/
         //________________________________________________________________________________________________________________________
         ServiceAdmin serviceAdmin = new ServiceAdmin();
-        Admin admin1 = new Admin("Ayoub", "Maatoug", 11429920, "maatougayoub7@gmail.com", "pwayoub", Role.ADMIN.toString(), LocalDate.parse("2026-02-07"), "Signatre Ayoub.png", 200.58);
-/*        try {
+        Admin admin1 = new Admin("Maatoug", "Ayoub", 00001111, "ayoub.maatoug@esprit.tn", "pwayoub", Role.ADMIN.toString(), LocalDate.parse("2026-02-13"), "Signatre Ayoub.png", 200.5);
+     /*  try {
             serviceAdmin.ajouterAdmin(admin1);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -110,10 +111,10 @@ public class Main {
 
         ServiceReclamation serviceReclamation = new ServiceReclamation();
         Reclamation r1 = new Reclamation(34, Categorie.TECHNIQUE, "reclamation 11", "Voici une réclamation pur le test1" );
-        Reclamation r2 = new Reclamation(34, Categorie.AUTRE, "reclamation 22222", "Voici une réclamation pur le test222222" );
+        Reclamation r2 = new Reclamation(36, Categorie.AUTRE, "reclamation Sami", "Voici une réclamation pur le Sami" );
 
 /*        try {
-            serviceReclamation.ajouterReclamation(r1);
+            serviceReclamation.ajouterReclamation(r2);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }*/

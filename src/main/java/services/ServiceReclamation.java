@@ -135,4 +135,51 @@ public class ServiceReclamation implements IServiceReclamation<Reclamation> {
         st.close();
         return list;
     }
+
+    public List<entities.ReclamationRow> recupererReclamationAvecUtilisateur() throws SQLException {
+        List<entities.ReclamationRow> list = new ArrayList<>();
+
+        // JOIN reclamations + utilisateurs
+        String sql = """
+        SELECT r.id, r.utilisateur_id, u.nom, u.prenom, u.role, u.email,
+               r.categorie, r.titre, r.description, r.date_creation, r.statut, r.reponse
+        FROM reclamations r
+        JOIN utilisateurs u ON u.id = r.utilisateur_id
+        ORDER BY r.date_creation DESC
+        """;
+
+        // ⚠️ important: si ton MyDatabase utilise une seule connection, ne pas la fermer ici.
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            int utilisateurId = rs.getInt("utilisateur_id");
+
+            String nom = rs.getString("nom");
+            String prenom = rs.getString("prenom");
+            String role = rs.getString("role");
+            String email = rs.getString("email");
+
+            String categorie = rs.getString("categorie");
+            String titre = rs.getString("titre");
+            String description = rs.getString("description");
+
+            Timestamp ts = rs.getTimestamp("date_creation");
+            java.time.LocalDateTime dateCreation = (ts != null) ? ts.toLocalDateTime() : null;
+
+            String statut = rs.getString("statut");
+            String reponse = rs.getString("reponse");
+
+            list.add(new entities.ReclamationRow(
+                    id, utilisateurId, nom, prenom, role, email,
+                    categorie, titre, description, dateCreation,
+                    statut, reponse
+            ));
+        }
+
+        rs.close();
+        st.close();
+        return list;
+    }
 }
