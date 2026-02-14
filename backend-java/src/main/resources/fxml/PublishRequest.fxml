@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.PublishRequestController"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Button text="← Retour" styleClass="btn-secondary" onAction="#handleCancel"/>
+                <Text text="AGRIFLOW" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="Publier une demande" style="-fx-font-size: 18px; -fx-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox spacing="20" style="-fx-padding: 40;" alignment="TOP_CENTER">
+                
+                <!-- Card formulaire -->
+                <VBox styleClass="card" spacing="20" maxWidth="700" prefWidth="700">
+                    
+                    <VBox spacing="5">
+                        <Text text="Publier une demande" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                        <Text text="(Nouvelle demande de collaboration)" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
+                    </VBox>
+                    
+                    <Separator/>
+                    
+                    <!-- Formulaire -->
+                    <VBox spacing="20">
+                        
+                        <!-- Titre de la demande -->
+                        <VBox spacing="8">
+                            <Label text="Titre de la demande" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="titleField" promptText="Ex: Récolte de Tomates" 
+                                      style="-fx-font-size: 14px; -fx-padding: 10;"/>
+                        </VBox>
+                        
+                        <!-- Lieu -->
+                        <VBox spacing="8">
+                            <Label text="Lieu" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="locationField" promptText="Ex: Sidi Bousid, Sfax" 
+                                      style="-fx-font-size: 14px; -fx-padding: 10;"/>
+                        </VBox>
+                        
+                        <!-- Dates -->
+                        <HBox spacing="15">
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Date de début" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="startDatePicker" promptText="jj/MM/aaaa" 
+                                           maxWidth="Infinity" style="-fx-font-size: 14px;"/>
+                            </VBox>
+                            
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Date de fin" style="-fx-font-weight: bold;"/>
+                                <DatePicker fx:id="endDatePicker" promptText="jj/MM/aaaa" 
+                                           maxWidth="Infinity" style="-fx-font-size: 14px;"/>
+                            </VBox>
+                        </HBox>
+                        
+                        <!-- Nombre de personnes -->
+                        <VBox spacing="8">
+                            <Label text="Nombre de personnes requises" style="-fx-font-weight: bold;"/>
+                            <ComboBox fx:id="neededPeopleCombo" maxWidth="Infinity" 
+                                     promptText="Sélectionner..." style="-fx-font-size: 14px;"/>
+                        </VBox>
+                        
+                        <!-- Rémunération -->
+                        <VBox spacing="8">
+                            <Label text="Rémunération (DT/jour)" style="-fx-font-weight: bold;"/>
+                            <TextField fx:id="salaryField" promptText="Ex: 80" 
+                                      style="-fx-font-size: 14px; -fx-padding: 10;"/>
+                        </VBox>
+                        
+                        <!-- Description -->
+                        <VBox spacing="8">
+                            <Label text="Description" style="-fx-font-weight: bold;"/>
+                            <TextArea fx:id="descriptionArea" 
+                                     promptText="Décrivez en détail les tâches, compétences requises, horaires, etc."
+                                     wrapText="true" prefHeight="120"
+                                     style="-fx-font-size: 14px; -fx-padding: 10;"/>
+                        </VBox>
+                        
+                        <!-- Statut -->
+                        <VBox spacing="8">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="Statut:" style="-fx-font-weight: bold;"/>
+                                <Label text="EN ATTENTE" styleClass="badge badge-pending"/>
+                                <Text text="(validation attendue)" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            </HBox>
+                        </VBox>
+                        
+                    </VBox>
+                    
+                    <Separator/>
+                    
+                    <!-- Boutons -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="Publier" styleClass="btn-primary" 
+                                onAction="#handlePublish" 
+                                prefWidth="200" style="-fx-font-size: 16px;"/>
+                        <Button text="Annuler" styleClass="btn-secondary" 
+                                onAction="#handleCancel" 
+                                prefWidth="200" style="-fx-font-size: 16px;"/>
+                    </HBox>
+                    
+                </VBox>
+                
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

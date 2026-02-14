@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.CollabRequestDetailsController"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Button text="← Retour" styleClass="btn-secondary" onAction="#handleBack"/>
+                <Text text="AGRIFLOW" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="Détails de la demande" style="-fx-font-size: 18px; -fx-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox spacing="20" style="-fx-padding: 40;">
+                
+                <!-- Card principale avec détails -->
+                <VBox styleClass="card" spacing="20" maxWidth="900">
+                    
+                    <!-- En-tête avec titre et badge -->
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Text fx:id="titleLabel" text="Récolte de Tomates" 
+                              style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
+                        <Label fx:id="statusLabel" text="VALIDÉE" styleClass="badge badge-validated"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Publier une demande" styleClass="btn-primary"/>
+                    </HBox>
+                    
+                    <Separator/>
+                    
+                    <!-- Informations clés en grid -->
+                    <GridPane hgap="30" vgap="15">
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Text text="Lieu" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text fx:id="locationLabel" text="📍 Sidi Bousid" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Text text="Date" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text fx:id="dateLabel" text="📅 15/05/2025 - 20/05/2025" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                            <Text text="Nb. Ouvriers" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text fx:id="neededPeopleLabel" text="👥 5 personnes" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Text text="Salaire" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text text="💰 80 DT/jour" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Text text="Expérience" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text text="⭐ Expérience requise" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        </VBox>
+                        
+                        <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                            <Text text="Publié par" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            <Text text="👤 Ali Ben Ahmed" 
+                                  style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                        </VBox>
+                    </GridPane>
+                    
+                    <Separator/>
+                    
+                    <!-- Description -->
+                    <VBox spacing="10">
+                        <Text text="Description" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <TextArea fx:id="descriptionArea" 
+                                  text="Nous recherchons des ouvriers agricoles expérimentés pour la récolte de tomates dans notre exploitation à Sidi Bousid. Le travail consiste à cueillir les tomates mûres avec soin, les placer dans des caisses et les transporter vers la zone de stockage. Une expérience préalable dans la récolte est souhaitée mais pas obligatoire. Nous fournissons les équipements de protection nécessaires. Repas de midi fourni sur place."
+                                  editable="false" wrapText="true" prefHeight="150"
+                                  style="-fx-control-inner-background: #F9F9F9; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;"/>
+                    </VBox>
+                    
+                    <Separator/>
+                    
+                    <!-- Boutons d'action -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button text="Identifier les employeurs" styleClass="btn-primary" prefWidth="250"/>
+                        <Button text="Voir" styleClass="btn-secondary" prefWidth="150"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="Postuler" styleClass="btn-orange" prefWidth="200" 
+                                onAction="#handleApply" 
+                                style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                    </HBox>
+                    
+                </VBox>
+                
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

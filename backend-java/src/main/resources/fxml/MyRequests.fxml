@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.MyRequestsController"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Button text="← Retour" styleClass="btn-secondary" onAction="#handleBack"/>
+                <Text text="AGRIFLOW" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="Mes Demandes" style="-fx-font-size: 18px; -fx-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox spacing="20" style="-fx-padding: 40;">
+            
+            <VBox spacing="5">
+                <Text text="Mes Demandes" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <Text text="(Demandes de collaboration publiées)" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
+            </VBox>
+            
+            <!-- Card avec liste des demandes -->
+            <VBox styleClass="card" spacing="20">
+                
+                <!-- Demande 1 -->
+                <VBox spacing="15" style="-fx-padding: 15; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                    <HBox spacing="15" alignment="CENTER_LEFT">
+                        <VBox spacing="5" HBox.hgrow="ALWAYS">
+                            <Text text="Récolte de Tomates" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Text text="📅 01/05/2025 - 20/05/2026" style="-fx-fill: #757575;"/>
+                        </VBox>
+                        <Label text="VALIDÉE" styleClass="badge badge-validated"/>
+                    </HBox>
+                    
+                    <VBox spacing="8" style="-fx-padding: 0 0 0 20;">
+                        <Text text="Candidatures reçues:" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                        
+                        <HBox spacing="20" alignment="CENTER_LEFT" 
+                              style="-fx-padding: 10; -fx-background-color: #F9F9F9; -fx-background-radius: 8;">
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Text text="👤 Amine Gnidef" style="-fx-font-weight: bold;"/>
+                                <Text text="Personne" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <Label text="RENOUVELLÉ" styleClass="badge badge-accepted"/>
+                        </HBox>
+                        
+                        <HBox spacing="20" alignment="CENTER_LEFT" 
+                              style="-fx-padding: 10; -fx-background-color: #F9F9F9; -fx-background-radius: 8;">
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Text text="👤 Abdellsif Zelss" style="-fx-font-weight: bold;"/>
+                                <Text text="Première inscription" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <Label text="REJETÉE" styleClass="badge badge-rejected"/>
+                        </HBox>
+                        
+                        <HBox spacing="20" alignment="CENTER_LEFT" 
+                              style="-fx-padding: 10; -fx-background-color: #F9F9F9; -fx-background-radius: 8;">
+                            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                <Text text="👤 Noétal Zlmlm" style="-fx-font-weight: bold;"/>
+                                <Text text="Personne" style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                            </VBox>
+                            <Label text="ACCEPTÉE" styleClass="badge badge-accepted"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+                
+                <!-- Demande 2 -->
+                <HBox spacing="15" alignment="CENTER_LEFT" 
+                      style="-fx-padding: 15; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Text text="Désherbage de champs" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="📅 01/01/2026" style="-fx-fill: #757575;"/>
+                    </VBox>
+                    <Label text="CLÔTURÉE" styleClass="badge badge-closed"/>
+                    <Button text="Voir" styleClass="btn-secondary" onAction="#handleViewDetails"/>
+                </HBox>
+                
+                <!-- Demande 3 -->
+                <HBox spacing="15" alignment="CENTER_LEFT" 
+                      style="-fx-padding: 15; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Text text="Taille des arbres" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="📅 En attente de validation" style="-fx-fill: #757575;"/>
+                    </VBox>
+                    <Label text="EN ATTENTE" styleClass="badge badge-pending"/>
+                    <Label text="Éliminatoire" styleClass="badge badge-rejected"/>
+                    <Button text="Voir" styleClass="btn-secondary" onAction="#handleViewDetails"/>
+                </HBox>
+                
+                <!-- Demande 4 -->
+                <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 15;">
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Text text="Maintenance Serres" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="📅 30/01/2026" style="-fx-fill: #757575;"/>
+                    </VBox>
+                    <Label text="CLÔTURÉE" styleClass="badge badge-closed"/>
+                    <Button text="Voir" styleClass="btn-secondary" onAction="#handleViewDetails"/>
+                </HBox>
+                
+            </VBox>
+            
+            <!-- Boutons d'action -->
+            <HBox spacing="15">
+                <Button text="Voir détails" styleClass="btn-primary" onAction="#handleViewDetails"/>
+                <Button text="Supprimer" styleClass="btn-secondary" onAction="#handleDelete" 
+                        style="-fx-background-color: #D32F2F; -fx-text-fill: white;"/>
+            </HBox>
+            
+        </VBox>
+    </center>
+</BorderPane>

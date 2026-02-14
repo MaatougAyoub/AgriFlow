@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.MyApplicationsController"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Button text="← Retour" styleClass="btn-secondary" onAction="#handleBack"/>
+                <Text text="AGRIFLOW" styleClass="header-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="Mes Candidatures" style="-fx-font-size: 18px; -fx-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox spacing="20" style="-fx-padding: 40;">
+            
+            <VBox spacing="5">
+                <Text text="Mes Candidatures" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <Text text="(Candidatures soumises aux demandes)" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
+            </VBox>
+            
+            <!-- Card avec liste des candidatures -->
+            <VBox styleClass="card" spacing="20">
+                
+                <!-- Candidature 1 -->
+                <HBox spacing="20" alignment="CENTER_LEFT" 
+                      style="-fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Text text="Récolte de Pommes de Terre" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="Nouvelle demande" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
+                    </VBox>
+                    <VBox spacing="5" alignment="CENTER_RIGHT">
+                        <Label text="EN ATTENTE" styleClass="badge badge-pending"/>
+                    </VBox>
+                    <Button text="Voir demande" styleClass="btn-orange" 
+                            onAction="#handleViewRequest" prefWidth="150"/>
+                </HBox>
+                
+                <!-- Candidature 2 -->
+                <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 20;">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Text text="Taille d'Oliviers" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                        <Text text="Taille d'Oliviers" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
+                    </VBox>
+                    <VBox spacing="5" alignment="CENTER_RIGHT">
+                        <Label text="ACCEPTÉE" styleClass="badge badge-accepted"/>
+                    </VBox>
+                    <Button text="Voir demande" styleClass="btn-orange" 
+                            onAction="#handleViewRequest" prefWidth="150"/>
+                </HBox>
+                
+            </VBox>
+            
+            <!-- Section informative -->
+            <VBox styleClass="card" spacing="10" style="-fx-background-color: #E8F5E9;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Text text="ℹ️" style="-fx-font-size: 20px;"/>
+                    <VBox spacing="5">
+                        <Text text="Statut de vos candidatures" style="-fx-font-weight: bold;"/>
+                        <Text text="• EN ATTENTE: Votre candidature est en cours d'examen" 
+                              style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                        <Text text="• ACCEPTÉE: Félicitations! Vous avez été sélectionné" 
+                              style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                        <Text text="• REJETÉE: Votre candidature n'a pas été retenue" 
+                              style="-fx-fill: #757575; -fx-font-size: 12px;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            
+            <!-- Boutons d'action -->
+            <HBox spacing="15">
+                <Button text="Voir détails" styleClass="btn-primary" onAction="#handleViewRequest"/>
+                <Button text="Retirer candidature" styleClass="btn-secondary" onAction="#handleWithdraw" 
+                        style="-fx-background-color: #FF9800;"/>
+            </HBox>
+            
+        </VBox>
+    </center>
+</BorderPane>

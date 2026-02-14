@@ -79,6 +79,22 @@
                 <configuration>
                     <mainClass>MainApp</mainClass>
                 </configuration>
+                <executions>
+                    <!-- Execution par défaut avec MainApp -->
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>MainApp</mainClass>
+                        </configuration>
+                    </execution>
+                    <!-- Execution alternative avec MainFX pour les nouvelles interfaces -->
+                    <execution>
+                        <id>run-mainfx</id>
+                        <configuration>
+                            <mainClass>mains.MainFX</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Maven Surefire Plugin (pour exécuter les tests) -->

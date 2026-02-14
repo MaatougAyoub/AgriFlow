@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="controllers.ExploreCollaborationsController"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+    
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Text text="AGRIFLOW" styleClass="header-title"/>
+                <TextField fx:id="searchField" promptText="Rechercher une collaboration..." 
+                          styleClass="search-bar" prefWidth="400" onAction="#handleSearch"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Publier" styleClass="btn-primary" onAction="#handlePublishRequest"/>
+                <Button text="Mes Demandes" styleClass="btn-secondary" onAction="#handleMyRequests"/>
+                <Button text="Mes Candidatures" styleClass="btn-secondary" onAction="#handleMyApplications"/>
+                <Button text="Admin" styleClass="btn-orange" onAction="#handleAdminValidation"/>
+            </HBox>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox spacing="20" style="-fx-padding: 30;">
+            
+            <!-- Titre et filtres -->
+            <VBox spacing="10">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Text text="Explore Collaborations" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                    <Text text="(Demandes disponibles)" style="-fx-font-size: 14px; -fx-fill: #757575;"/>
+                </HBox>
+                
+                <!-- Filtres -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <ComboBox fx:id="locationFilter" promptText="Lieu" prefWidth="150"/>
+                    <DatePicker promptText="Date début" prefWidth="150"/>
+                    <DatePicker promptText="Date fin" prefWidth="150"/>
+                    <ComboBox promptText="Type" prefWidth="150"/>
+                    <ComboBox fx:id="statusFilter" promptText="Statut" prefWidth="150"/>
+                    <TextField promptText="Salaire min." prefWidth="120"/>
+                </HBox>
+            </VBox>
+            
+            <!-- Grid de cards -->
+            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+                <GridPane hgap="20" vgap="20" styleClass="grid-container">
+                    
+                    <!-- Card 1 -->
+                    <VBox styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Récolte de Tomates" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="VALIDÉ" styleClass="badge badge-validated"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Sidi Khaled" style="-fx-fill: #757575;"/>
+                            <Text text="📅 15/05/2025 - 20/05/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 80 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                    <!-- Card 2 -->
+                    <VBox styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="0" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Plantation d'Oliviers" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="VALIDÉ" styleClass="badge badge-validated"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Sfax" style="-fx-fill: #757575;"/>
+                            <Text text="📅 01/06/2025 - 10/06/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 120 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                    <!-- Card 3 -->
+                    <VBox styleClass="card" GridPane.columnIndex="2" GridPane.rowIndex="0" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Taille des Vignes" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="EN ATTENTE" styleClass="badge badge-pending"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Nabeul" style="-fx-fill: #757575;"/>
+                            <Text text="📅 20/05/2025 - 25/05/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 95 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                    <!-- Card 4 -->
+                    <VBox styleClass="card" GridPane.columnIndex="0" GridPane.rowIndex="1" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Récolte de Dattes" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="VALIDÉ" styleClass="badge badge-validated"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Tozeur" style="-fx-fill: #757575;"/>
+                            <Text text="📅 10/07/2025 - 20/07/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 150 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                    <!-- Card 5 -->
+                    <VBox styleClass="card" GridPane.columnIndex="1" GridPane.rowIndex="1" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Irrigation des Cultures" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="VALIDÉ" styleClass="badge badge-validated"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Kairouan" style="-fx-fill: #757575;"/>
+                            <Text text="📅 15/06/2025 - 30/06/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 70 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                    <!-- Card 6 -->
+                    <VBox styleClass="card" GridPane.columnIndex="2" GridPane.rowIndex="1" 
+                          spacing="10" prefWidth="350" prefHeight="200">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Text text="Entretien Potagers" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label text="VALIDÉ" styleClass="badge badge-validated"/>
+                        </HBox>
+                        <VBox spacing="5">
+                            <Text text="📍 Bizerte" style="-fx-fill: #757575;"/>
+                            <Text text="📅 05/05/2025 - 15/05/2025" style="-fx-fill: #757575;"/>
+                            <Text text="💰 85 DT/jour" style="-fx-font-weight: bold; -fx-fill: #2E7D32;"/>
+                        </VBox>
+                        <Region VBox.vgrow="ALWAYS"/>
+                        <Button text="Voir détails" styleClass="btn-primary" maxWidth="Infinity" 
+                                onAction="#handleViewDetails"/>
+                    </VBox>
+                    
+                </GridPane>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
