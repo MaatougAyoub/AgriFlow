@@ -1,64 +1,45 @@
-# 🌱 AGRIFLOW - Module Marketplace
+# 🌱 AGRIFLOW — Module Marketplace
 
-**Plateforme de Smart Farming pour la Tunisie**  
-*Projet PIDEV - TeamSpark*
+**Plateforme de Smart Farming pour la Tunisie**
+*Projet PIDEV 3A — TeamSpark*
 
 ---
 
 ## 📋 Description
 
-Module Marketplace de location et vente de matériel agricole en **Peer-to-Peer (P2P)**.
+Module **Marketplace P2P** — location et vente de matériel agricole entre agriculteurs.
 
-### Fonctionnalités
+### Fonctionnalités CRUD
+| Entité | Opérations |
+|--------|-----------|
+| **Annonces** | Créer, Lire, Modifier, Supprimer |
+| **Réservations** | Réserver, Consulter, Annuler |
 
-- 🚜 **Louer** du matériel agricole (tracteurs, moissonneuses, etc.)
-- 🌾 **Vendre** des produits agricoles (engrais, semences, récoltes)
-- 📋 **Gérer les réservations** entre agriculteurs
-- ✍️ **Signature automatique** sur les contrats PDF
-
----
-
-## 🗄️ Structure de la Base de Données
-
-| Table | Description |
-|-------|-------------|
-| `users` | Agriculteurs (avec signature_image pour signature auto) |
-| `annonces` | Annonces de location/vente |
-| `annonce_photos` | Photos des annonces |
-| `reservations` | Réservations entre agriculteurs |
-| `messages` | Messagerie P2P |
+### Fonctionnalités Métier Avancé
+- 🤖 **IA Gemini** — amélioration de description, suggestion de prix, modération
+- 🛡️ **Anti-fraude** — détection automatique de contenu suspect
+- 📄 **Contrats PDF** — génération automatique avec iText
+- ✍️ **Signature automatique** sur les contrats
 
 ---
 
 ## 🚀 Installation
 
-### 1. Configurer la base de données
-
-```bash
-mysql -u root -p < sql/marketplace_schema.sql
+### 1. Base de données MySQL
+```
+1. Ouvrir phpMyAdmin (http://localhost/phpmyadmin)
+2. Importer le fichier agriflow.sql (crée la BDD automatiquement)
 ```
 
-### 2. Configurer JavaFX dans IntelliJ
-
-- Ajouter le SDK JavaFX 17 aux librairies
-- VM Options: `--module-path "C:\javafx-sdk-17\lib" --add-modules javafx.controls,javafx.fxml`
-
-### 3. Lancer l'application
-
-```bash
-mvn clean compile
-mvn javafx:run
+### 2. Lancer dans IntelliJ
+```
+1. Ouvrir le projet dans IntelliJ IDEA
+2. Build → Rebuild Project
+3. Run Configuration → Main class : mains.AppLauncher
+4. Cliquer sur ▶️ Run
 ```
 
----
-
-## ✍️ Signature Automatique
-
-```
-1. Ayoub enregistre la signature dans users.signature_image
-2. Amenallah génère le contrat PDF avec iText
-3. La signature est intégrée automatiquement !
-```
+> L'utilisateur simulé est **Amenallah Jerbi** (id=39, AGRICULTEUR)
 
 ---
 
@@ -66,19 +47,38 @@ mvn javafx:run
 
 ```
 agriflow-marketplace/
-├── src/main/java/com/agriflow/marketplace/
-│   ├── Main.java
-│   ├── models/ (User, Annonce, Reservation, enums)
-│   ├── services/ (CRUD + ContratPDFService)
-│   ├── controllers/ (JavaFX)
-│   └── utils/ (MyDatabase)
+├── src/main/java/
+│   ├── controllers/    ← Contrôleurs JavaFX (7 fichiers)
+│   ├── entities/       ← Entités : User, Annonce, Reservation, etc.
+│   ├── services/       ← Services CRUD + IA + Anti-fraude
+│   ├── utils/          ← MyDatabase (Singleton BDD)
+│   └── mains/          ← AppLauncher + MainFX
 ├── src/main/resources/
-│   └── views/ (FXML)
-├── sql/marketplace_schema.sql
-└── pom.xml
+│   ├── *.fxml          ← Vues JavaFX (7 fichiers)
+│   ├── styles.css      ← Feuille de style
+│   └── images/         ← Logo
+├── src/test/java/      ← Tests JUnit
+├── contrats/           ← Contrats PDF générés
+├── agriflow.sql        ← Script BDD complet
+└── pom.xml             ← Dépendances Maven
 ```
 
 ---
 
-**TeamSpark - AGRIFLOW**  
-*Smart Farming Tunisia*
+## 🔧 Technologies
+
+| Technologie | Usage |
+|------------|-------|
+| Java 17 | Langage principal |
+| JavaFX 21 | Interface graphique |
+| MySQL | Base de données |
+| JDBC | Connexion BDD |
+| iText 7 | Génération PDF |
+| Google Gemini API | IA Métier Avancé |
+| JUnit 5 | Tests unitaires |
+| Maven | Gestion de dépendances |
+
+---
+
+**TeamSpark — AGRIFLOW**
+*Amenallah Jerbi — Marketplace*

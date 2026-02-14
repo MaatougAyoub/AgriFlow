@@ -23,7 +23,6 @@ public class AnnonceServiceTest {
         user.setPrenom("User");
         user.setEmail("test." + System.currentTimeMillis() + "@example.com");
         user.setTelephone("00000000");
-        user.setAdresse("Test");
         user.setRegion("Test");
 
         assertDoesNotThrow(() -> userService.ajouter(user));

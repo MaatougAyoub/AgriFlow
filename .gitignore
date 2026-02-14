@@ -1,6 +1,27 @@
+# Build
+target/
+*.class
+*.jar
+*.war
 
-# Large media files
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Media (trop volumineux pour Git)
 *.mp4
 *.avi
 *.mkv
 
+# Dossier des documents professeur (garder en local seulement)
+Profs/

@@ -20,13 +20,13 @@ public class MainFX extends Application {
             // Test connexion
             MyDatabase.getInstance().getConnection();
 
-            // Simuler utilisateur connecté (Sami — agriculteur dans la base agriflow)
+            // Simuler utilisateur connecté (Amenallah Jerbi — lead Marketplace)
             User currentUser = new User();
-            currentUser.setId(36);
-            currentUser.setNom("Maatoug");
-            currentUser.setPrenom("Sami");
-            currentUser.setCin(2030501);
-            currentUser.setEmail("sami@gmail.com");
+            currentUser.setId(39);
+            currentUser.setNom("Jerbi");
+            currentUser.setPrenom("Amenallah");
+            currentUser.setCin(12345678);
+            currentUser.setEmail("amenallah@agriflow.tn");
             currentUser.setRole("AGRICULTEUR");
             MainController.setCurrentUser(currentUser);
 

@@ -36,20 +36,21 @@ public class ContratPDFService {
         User proprietaire = reservation.getProprietaire();
         User demandeur = reservation.getDemandeur();
 
-        byte[] signatureProprietaire = userService.getSignature(proprietaire.getId());
-        byte[] signatureDemandeur = userService.getSignature(demandeur.getId());
+        // Charger les signatures depuis les chemins fichiers (table utilisateurs)
+        String sigPathProprio = proprietaire != null ? proprietaire.getSignature() : null;
+        String sigPathDemandeur = demandeur != null ? demandeur.getSignature() : null;
 
         String nomFichier = String.format("contrat_%d_%s.pdf",
             reservation.getId(),
             LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         String cheminFichier = CONTRATS_DIRECTORY + nomFichier;
 
-        genererPDF(reservation, signatureProprietaire, signatureDemandeur, cheminFichier);
+        genererPDF(reservation, sigPathProprio, sigPathDemandeur, cheminFichier);
 
         return cheminFichier;
     }
 
-    private void genererPDF(Reservation reservation, byte[] sigProprio, byte[] sigDemandeur, String chemin) throws Exception {
+    private void genererPDF(Reservation reservation, String sigPathProprio, String sigPathDemandeur, String chemin) throws Exception {
         Annonce annonce = reservation.getAnnonce();
         User proprietaire = reservation.getProprietaire();
         User demandeur = reservation.getDemandeur();
@@ -86,14 +87,14 @@ public class ContratPDFService {
         document.add(new Paragraph("PROPRIÉTAIRE:").setBold());
         document.add(new Paragraph("Nom: " + proprietaire.getNomComplet()));
         document.add(new Paragraph("Email: " + proprietaire.getEmail()));
-        document.add(new Paragraph("Téléphone: " + proprietaire.getTelephone()));
+        document.add(new Paragraph("CIN: " + proprietaire.getCin()));
 
         document.add(new Paragraph("\n"));
 
         document.add(new Paragraph("DEMANDEUR:").setBold());
         document.add(new Paragraph("Nom: " + demandeur.getNomComplet()));
         document.add(new Paragraph("Email: " + demandeur.getEmail()));
-        document.add(new Paragraph("Téléphone: " + demandeur.getTelephone()));
+        document.add(new Paragraph("CIN: " + demandeur.getCin()));
 
         document.add(new Paragraph("\n"));
 
@@ -125,13 +126,21 @@ public class ContratPDFService {
         cellProprio.add(new Paragraph("PROPRIÉTAIRE").setBold().setTextAlignment(TextAlignment.CENTER));
         cellProprio.add(new Paragraph(proprietaire.getNomComplet()).setTextAlignment(TextAlignment.CENTER));
 
-        if (sigProprio != null) {
-            ImageData imageData = ImageDataFactory.create(sigProprio);
-            com.itextpdf.layout.element.Image signatureImage = new com.itextpdf.layout.element.Image(imageData);
-            signatureImage.setWidth(150);
-            signatureImage.setHeight(60);
-            signatureImage.setTextAlignment(TextAlignment.CENTER);
-            cellProprio.add(signatureImage);
+        if (sigPathProprio != null && !sigPathProprio.isEmpty()) {
+            try {
+                File sigFile = new File(sigPathProprio);
+                if (sigFile.exists()) {
+                    ImageData imageData = ImageDataFactory.create(sigPathProprio);
+                    com.itextpdf.layout.element.Image signatureImage = new com.itextpdf.layout.element.Image(imageData);
+                    signatureImage.setWidth(150);
+                    signatureImage.setHeight(60);
+                    cellProprio.add(signatureImage);
+                } else {
+                    cellProprio.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
+                }
+            } catch (Exception e) {
+                cellProprio.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
+            }
         } else {
             cellProprio.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
         }
@@ -142,13 +151,21 @@ public class ContratPDFService {
         cellDemandeur.add(new Paragraph("DEMANDEUR").setBold().setTextAlignment(TextAlignment.CENTER));
         cellDemandeur.add(new Paragraph(demandeur.getNomComplet()).setTextAlignment(TextAlignment.CENTER));
 
-        if (sigDemandeur != null) {
-            ImageData imageData = ImageDataFactory.create(sigDemandeur);
-            com.itextpdf.layout.element.Image signatureImage = new com.itextpdf.layout.element.Image(imageData);
-            signatureImage.setWidth(150);
-            signatureImage.setHeight(60);
-            signatureImage.setTextAlignment(TextAlignment.CENTER);
-            cellDemandeur.add(signatureImage);
+        if (sigPathDemandeur != null && !sigPathDemandeur.isEmpty()) {
+            try {
+                File sigFile = new File(sigPathDemandeur);
+                if (sigFile.exists()) {
+                    ImageData imageData = ImageDataFactory.create(sigPathDemandeur);
+                    com.itextpdf.layout.element.Image signatureImage = new com.itextpdf.layout.element.Image(imageData);
+                    signatureImage.setWidth(150);
+                    signatureImage.setHeight(60);
+                    cellDemandeur.add(signatureImage);
+                } else {
+                    cellDemandeur.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
+                }
+            } catch (Exception e) {
+                cellDemandeur.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
+            }
         } else {
             cellDemandeur.add(new Paragraph("\n\n_________________").setTextAlignment(TextAlignment.CENTER));
         }
