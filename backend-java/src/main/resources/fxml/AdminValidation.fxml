@@ -52,9 +52,9 @@
                 <!-- En-têtes du tableau -->
                 <HBox spacing="20" style="-fx-padding: 15; -fx-background-color: #F5F5F5; -fx-background-radius: 8;">
                     <Text text="Titre" style="-fx-font-weight: bold; -fx-font-size: 14px;" HBox.hgrow="ALWAYS"/>
-                    <Text text="Statut" style="-fx-font-weight: bold; -fx-font-size: 14px;" prefWidth="120"/>
-                    <Text text="Date" style="-fx-font-weight: bold; -fx-font-size: 14px;" prefWidth="120"/>
-                    <Text text="Actions" style="-fx-font-weight: bold; -fx-font-size: 14px;" prefWidth="200"/>
+                    <Text text="Statut" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <Text text="Date" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+                    <Text text="Actions" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
                 </HBox>
                 
                 <!-- Ligne 1 -->

@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.text.Text;
 import mains.MainFX;
 import entities.CollabRequest;
 import services.CollabRequestService;
@@ -14,19 +15,19 @@ import java.sql.SQLException;
 public class CollabRequestDetailsController {
     
     @FXML
-    private Label titleLabel;
+    private Text titleLabel;
     
     @FXML
-    private Label locationLabel;
+    private Text locationLabel;
     
     @FXML
-    private Label dateLabel;
+    private Text dateLabel;
     
     @FXML
-    private Label neededPeopleLabel;
+    private Text neededPeopleLabel;
     
     @FXML
-    private Label statusLabel;
+    private Text statusLabel;
     
     @FXML
     private TextArea descriptionArea;

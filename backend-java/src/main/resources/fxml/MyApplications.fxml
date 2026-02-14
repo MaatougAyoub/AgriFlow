@@ -30,35 +30,37 @@
                 <Text text="(Candidatures soumises aux demandes)" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
             </VBox>
             
-            <!-- Card avec liste des candidatures -->
-            <VBox styleClass="card" spacing="20">
+            <!-- Card avec TableView des candidatures -->
+            <VBox styleClass="card" spacing="20" VBox.vgrow="ALWAYS">
                 
-                <!-- Candidature 1 -->
-                <HBox spacing="20" alignment="CENTER_LEFT" 
-                      style="-fx-padding: 20; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;">
-                    <VBox spacing="8" HBox.hgrow="ALWAYS">
-                        <Text text="Récolte de Pommes de Terre" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                        <Text text="Nouvelle demande" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
-                    </VBox>
-                    <VBox spacing="5" alignment="CENTER_RIGHT">
-                        <Label text="EN ATTENTE" styleClass="badge badge-pending"/>
-                    </VBox>
-                    <Button text="Voir demande" styleClass="btn-orange" 
-                            onAction="#handleViewRequest" prefWidth="150"/>
-                </HBox>
-                
-                <!-- Candidature 2 -->
-                <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 20;">
-                    <VBox spacing="8" HBox.hgrow="ALWAYS">
-                        <Text text="Taille d'Oliviers" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-                        <Text text="Taille d'Oliviers" style="-fx-fill: #757575; -fx-font-size: 14px;"/>
-                    </VBox>
-                    <VBox spacing="5" alignment="CENTER_RIGHT">
-                        <Label text="ACCEPTÉE" styleClass="badge badge-accepted"/>
-                    </VBox>
-                    <Button text="Voir demande" styleClass="btn-orange" 
-                            onAction="#handleViewRequest" prefWidth="150"/>
-                </HBox>
+                <!-- TableView -->
+                <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn text="Demande" prefWidth="300">
+                            <cellValueFactory>
+                                <javafx.scene.control.cell.PropertyValueFactory property="requestId"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Statut" prefWidth="150">
+                            <cellValueFactory>
+                                <javafx.scene.control.cell.PropertyValueFactory property="status"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Date candidature" prefWidth="150">
+                            <cellValueFactory>
+                                <javafx.scene.control.cell.PropertyValueFactory property="appliedDate"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn text="Motivation" prefWidth="250">
+                            <cellValueFactory>
+                                <javafx.scene.control.cell.PropertyValueFactory property="motivation"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                    <placeholder>
+                        <Text text="Aucune candidature trouvée" style="-fx-fill: #757575;"/>
+                    </placeholder>
+                </TableView>
                 
             </VBox>
             
