@@ -11,7 +11,8 @@
             fitToWidth="true"
             style="-fx-background-color: #F5F5F5;">
 
-    <VBox spacing="18" style="-fx-background-color: white; -fx-max-width: 900;">
+
+    <VBox spacing="18" style="-fx-background-color: white;">
         <padding>
             <Insets top="28" right="34" bottom="28" left="34"/>
         </padding>

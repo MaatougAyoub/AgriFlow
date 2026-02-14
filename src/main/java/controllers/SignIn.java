@@ -94,6 +94,8 @@ public class SignIn implements Initializable {
             stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
             stage.show();
+            //ouvrir la page en plein écran
+            stage.setMaximized(true);
 
         } catch (Exception e) {
             showError("Erreur lors de la connexion: " + e.getMessage());

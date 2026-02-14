@@ -11,16 +11,16 @@
             style="-fx-background-color: #F5F5F5;">
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: #2E7D32;">
+        <VBox spacing="10" style="-fx-background-color: white;">
             <padding>
                 <Insets top="16" right="18" bottom="16" left="18"/>
             </padding>
 
             <Label text="AgriFlow - Réclamations"
-                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
 
             <Label text="Gestion des réclamations"
-                   style="-fx-font-size: 14px; -fx-text-fill: #E8F5E9;"/>
+                   style="-fx-font-size: 14px; -fx-text-fill: #2E7D32;"/>
         </VBox>
     </top>
 

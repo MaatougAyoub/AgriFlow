@@ -1,3 +1,4 @@
+
 package controllers;
 
 import entities.Role;
@@ -6,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -20,11 +22,17 @@ public class ProfilUtilisateur {
 
     @FXML private Label roleLabel;
     @FXML private Label errorLabel;
-    //bouton Réclamation
-    @FXML private javafx.scene.control.Button reclamationsButton;
 
-    // ✅ bouton visible seulement pour AGRICULTEUR
+    // Drawer
+    @FXML private ImageView logoImage;
+    @FXML private Label connectedAsLabel;
+
+    // Boutons profil
+    @FXML private Button reclamationsButton;
+    //visible seulement pour l'agriculteur
     @FXML private Button listeParcellesButton;
+    //Bouton pour afficher la liste des utilisateur (seulrment pour l'admin)
+    @FXML private Button menuListeUtilisateurs;
 
     // commun
     @FXML private Label nomValue;
@@ -55,6 +63,15 @@ public class ProfilUtilisateur {
 
     private Map<String, Object> userData;
 
+    @FXML
+    public void initialize() {
+        // Charger le logo (Option 1: depuis uploads/logo/logo.png)
+        loadLocalLogo("uploads/logo/logo.png");
+
+        // Option 2 (recommandée): si tu mets logo dans resources/images/logo.png:
+        // logoImage.setImage(new Image(getClass().getResource("/images/logo.png").toExternalForm()));
+    }
+
     public void setUserData(Map<String, Object> userData) {
         this.userData = userData;
         renderUser();
@@ -66,15 +83,28 @@ public class ProfilUtilisateur {
         errorLabel.setVisible(false);
 
         String roleStr = safeString(userData.get("role"));
+        //-------------------------------------------------------------------------------------------------------
+        // ✅ bouton liste utilisateurs visible uniquement ADMIN
+        if (menuListeUtilisateurs != null) {
+            boolean isAdmin = "ADMIN".equalsIgnoreCase(roleStr);
+            menuListeUtilisateurs.setVisible(isAdmin);
+            menuListeUtilisateurs.setManaged(isAdmin);
+        }
+        //---------------------------------------------------------------------------------------------------------
         roleLabel.setText("Rôle: " + roleStr);
 
-        nomValue.setText(safeString(userData.get("nom")));
-        prenomValue.setText(safeString(userData.get("prenom")));
+        String nom = safeString(userData.get("nom"));
+        String prenom = safeString(userData.get("prenom"));
+        if (connectedAsLabel != null) {
+            connectedAsLabel.setText(nom + " " + prenom);
+        }
+
+        nomValue.setText(nom);
+        prenomValue.setText(prenom);
         cinValue.setText(safeString(userData.get("cin")));
         emailValue.setText(safeString(userData.get("email")));
         dateCreationValue.setText(safeString(userData.get("dateCreation")));
 
-        // signature image
         String signaturePath = safeString(userData.get("signature"));
         signaturePathValue.setText(signaturePath.isBlank() ? "-" : signaturePath);
         loadImageInto(signatureImage, signaturePath);
@@ -84,7 +114,7 @@ public class ProfilUtilisateur {
         setSectionVisible(expertBox, false);
         setSectionVisible(adminBox, false);
 
-        // ✅ cacher bouton parcelles par défaut
+        // bouton parcelles visible uniquement agriculteur
         if (listeParcellesButton != null) {
             listeParcellesButton.setVisible(false);
             listeParcellesButton.setManaged(false);
@@ -96,7 +126,6 @@ public class ProfilUtilisateur {
             if (role == Role.AGRICULTEUR) {
                 setSectionVisible(agriculteurBox, true);
 
-                // ✅ afficher bouton parcelles uniquement pour agriculteur
                 listeParcellesButton.setVisible(true);
                 listeParcellesButton.setManaged(true);
 
@@ -125,6 +154,16 @@ public class ProfilUtilisateur {
         }
     }
 
+    private void loadLocalLogo(String relativePath) {
+        try {
+            File f = new File(System.getProperty("user.dir"), relativePath);
+            if (!f.exists()) f = new File(relativePath);
+            if (f.exists() && logoImage != null) {
+                logoImage.setImage(new Image(f.toURI().toString(), true));
+            }
+        } catch (Exception ignored) {}
+    }
+
     private String safeString(Object v) {
         if (v == null) return "";
         String s = String.valueOf(v);
@@ -139,15 +178,12 @@ public class ProfilUtilisateur {
     private void loadImageInto(ImageView view, String path) {
         try {
             if (view == null) return;
-
             if (path == null || path.isBlank() || "null".equalsIgnoreCase(path)) {
                 view.setImage(null);
                 return;
             }
 
-            String normalized = path.trim();
-
-            normalized = normalized
+            String normalized = path.trim()
                     .replace("uploadssignatures", "uploads/signatures/")
                     .replace("uploadscertifications", "uploads/certifications/")
                     .replace("uploadscartes_pro", "uploads/cartes_pro/");
@@ -165,46 +201,70 @@ public class ProfilUtilisateur {
                 return;
             }
 
-            Image img = new Image(file.toURI().toString(), true);
-            view.setImage(img);
-
+            view.setImage(new Image(file.toURI().toString(), true));
         } catch (Exception e) {
             view.setImage(null);
-            e.printStackTrace();
         }
     }
 
-    @FXML
-    private void listeParcelles(ActionEvent event) {
-        // TODO: charger ListeParcelles.fxml et passer userData.get("id")
-        System.out.println("Ouvrir liste des parcelles pour agriculteur id=" + userData.get("id"));
+    // ========= Drawer navigation handlers (placeholders) =========
+
+    @FXML private void goProfil(ActionEvent event) {
+        // Déjà sur profil: rien à faire
+    }
+
+    @FXML private void goMarketplace(ActionEvent event) {
+        showNotImplemented("Marketplace");
+    }
+
+    @FXML private void goParcellesCultures(ActionEvent event) {
+        showNotImplemented("Parcelles et cultures");
+    }
+
+    @FXML private void goCollaborations(ActionEvent event) {
+        showNotImplemented("Collaborations");
+    }
+
+    @FXML private void goPlanIrrigation(ActionEvent event) {
+        showNotImplemented("Plan d'Irrigation");
     }
 
     @FXML
-    private void logout(ActionEvent event) {
+    private void goListeUtilisateurs(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeUtilisateurs.fxml"));
             Parent root = loader.load();
 
+            ListeUtilisateurs controller = loader.getController();
+            controller.setUserData(userData);
+
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Connexion");
+            stage.setTitle("AgriFlow - Liste des utilisateurs");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
             e.printStackTrace();
+            errorLabel.setText("Impossible d'ouvrir la liste des utilisateurs: " + e.getMessage());
+            errorLabel.setVisible(true);
         }
     }
+
+    private void showNotImplemented(String feature) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle("Information");
+        a.setHeaderText(feature);
+        a.setContentText("Module non implémenté pour le moment.");
+        a.showAndWait();
+    }
+
+    // ========= Boutons existants =========
 
     @FXML
     private void reclamations(ActionEvent event) {
         try {
-            var url = getClass().getResource("/ListeReclamtions.fxml"); // adapte si /fxml/
-            if (url == null) {
-                throw new IllegalStateException("FXML introuvable: /ListeReclamations.fxml (vérifie src/main/resources)");
-            }
-
-            FXMLLoader loader = new FXMLLoader(url);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeReclamtions.fxml"));
             Parent root = loader.load();
 
             ListeReclamations controller = loader.getController();
@@ -214,12 +274,18 @@ public class ProfilUtilisateur {
             stage.setTitle("AgriFlow - Réclamations");
             stage.setScene(new Scene(root));
             stage.show();
+            stage.setMaximized(true);
 
         } catch (Exception e) {
             e.printStackTrace();
-            errorLabel.setText("Impossible d'ouvrir Réclamations: " + e.getMessage());
+            errorLabel.setText("Impossible d'ouvrir la page Réclamations: " + e.getMessage());
             errorLabel.setVisible(true);
         }
+    }
+
+    @FXML
+    private void listeParcelles(ActionEvent event) {
+        System.out.println("Ouvrir liste des parcelles id=" + userData.get("id"));
     }
 
     @FXML
@@ -240,6 +306,22 @@ public class ProfilUtilisateur {
             e.printStackTrace();
             errorLabel.setText("Impossible d'ouvrir la page de modification: " + e.getMessage());
             errorLabel.setVisible(true);
+        }
+    }
+
+    @FXML
+    private void logout(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AgriFlow - Connexion");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
