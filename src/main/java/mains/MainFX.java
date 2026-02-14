@@ -20,14 +20,14 @@ public class MainFX extends Application {
             // Test connexion
             MyDatabase.getInstance().getConnection();
 
-            // Simuler utilisateur connecté
+            // Simuler utilisateur connecté (Sami — agriculteur dans la base agriflow)
             User currentUser = new User();
-            currentUser.setId(1);
-            currentUser.setNom("Jerbi");
-            currentUser.setPrenom("Amenallah");
-            currentUser.setEmail("amenallah@agriflow.tn");
-            currentUser.setTelephone("+216 20 123 456");
-            currentUser.setRegion("Sousse");
+            currentUser.setId(36);
+            currentUser.setNom("Maatoug");
+            currentUser.setPrenom("Sami");
+            currentUser.setCin(2030501);
+            currentUser.setEmail("sami@gmail.com");
+            currentUser.setRole("AGRICULTEUR");
             MainController.setCurrentUser(currentUser);
 
             // Charger la vue
