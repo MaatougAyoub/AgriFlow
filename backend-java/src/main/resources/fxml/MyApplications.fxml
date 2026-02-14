@@ -34,9 +34,9 @@
             <VBox styleClass="card" spacing="20" VBox.vgrow="ALWAYS">
                 
                 <!-- TableView -->
-                <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS">
+<TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn text="Demande" prefWidth="300">
+                        <TableColumn text="ID Request" prefWidth="120">
                             <cellValueFactory>
                                 <javafx.scene.control.cell.PropertyValueFactory property="requestId"/>
                             </cellValueFactory>
@@ -46,14 +46,9 @@
                                 <javafx.scene.control.cell.PropertyValueFactory property="status"/>
                             </cellValueFactory>
                         </TableColumn>
-                        <TableColumn text="Date candidature" prefWidth="150">
+                        <TableColumn text="Motivation" prefWidth="580">
                             <cellValueFactory>
-                                <javafx.scene.control.cell.PropertyValueFactory property="appliedDate"/>
-                            </cellValueFactory>
-                        </TableColumn>
-                        <TableColumn text="Motivation" prefWidth="250">
-                            <cellValueFactory>
-                                <javafx.scene.control.cell.PropertyValueFactory property="motivation"/>
+                                <javafx.scene.control.cell.PropertyValueFactory property="message"/>
                             </cellValueFactory>
                         </TableColumn>
                     </columns>
