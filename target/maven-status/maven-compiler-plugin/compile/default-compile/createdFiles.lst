@@ -25,6 +25,7 @@ services\IServiceAgriculteur.class
 services\ServiceAuth.class
 controllers\ListeUtilisateurs$3.class
 services\IServiceExpert.class
+controllers\ListeCultures.class
 controllers\ListeCultures$1.class
 services\ServiceProfil.class
 controllers\CulturesEnVente.class
@@ -37,3 +38,5 @@ controllers\SignIn.class
 services\ServiceReclamation.class
 entities\Expert.class
 controllers\ListeReclamations.class
+controllers\CulturesEnVente.class
+controllers\ListeParcelles$1.class
