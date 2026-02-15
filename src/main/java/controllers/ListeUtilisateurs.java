@@ -344,7 +344,7 @@ public class ListeUtilisateurs {
             e.printStackTrace();
             Alert err = new Alert(Alert.AlertType.ERROR);
             err.setTitle("Erreur");
-            err.setHeaderText("Suppression impossible");
+            err.setHeaderText("Suppression irmpossible");
             err.setContentText(e.getMessage());
             err.showAndWait();
         }
@@ -364,6 +364,7 @@ public class ListeUtilisateurs {
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
             stage.show();
+            stage.setFullScreen(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

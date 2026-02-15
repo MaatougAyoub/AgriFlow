@@ -1,3 +1,4 @@
+/*
 package services;
 
 import entities.Utilisateur;
@@ -50,4 +51,4 @@ public class ServiceUtilisateur {
         ps.executeUpdate();
         ps.close();
     }
-}
+}*/

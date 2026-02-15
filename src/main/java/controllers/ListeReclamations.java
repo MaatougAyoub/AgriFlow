@@ -779,6 +779,7 @@ public class ListeReclamations {
             stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
             stage.show();
+            stage.setFullScreen(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

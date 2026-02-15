@@ -242,6 +242,7 @@ public class ProfilUtilisateur {
             stage.setTitle("AgriFlow - Liste des utilisateurs");
             stage.setScene(new Scene(root));
             stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -275,6 +276,7 @@ public class ProfilUtilisateur {
             stage.setScene(new Scene(root));
             stage.show();
             stage.setMaximized(true);
+            stage.setFullScreen(true);
 
         } catch (Exception e) {
             e.printStackTrace();

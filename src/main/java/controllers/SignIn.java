@@ -93,6 +93,7 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
+            stage.setFullScreen(true);
             stage.show();
             //ouvrir la page en plein écran
             stage.setMaximized(true);
