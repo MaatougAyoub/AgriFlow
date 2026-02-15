@@ -10,7 +10,7 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/SignIn.fxml")); // vérifie le chemin
+        Parent root = FXMLLoader.load(getClass().getResource("/ListeParcelles.fxml")); // vérifie le chemin
         Scene scene = new Scene(root);
         stage.setTitle("AgriFlow - Connexion");
         stage.setScene(scene);

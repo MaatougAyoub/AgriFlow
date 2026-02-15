@@ -18,7 +18,7 @@ public class ServiceCulture implements IService<Culture> {
     @Override
     public void ajouter(Culture c) throws SQLException {
 
-        String req = "INSERT INTO culture(parcelle_id, proprietaire_id, nom, type_culture, " +
+        String req = "INSERT INTO cultures(parcelle_id, proprietaire_id, nom, type_culture, " +
                 "superficie, etat, date_recolte, recolte_estime) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -39,7 +39,7 @@ public class ServiceCulture implements IService<Culture> {
 
     @Override
     public void modifier(Culture c) throws SQLException {
-        String req = "UPDATE culture SET parcelle_id=?, proprietaire_id=?, nom=?, type_culture=?," +
+        String req = "UPDATE cultures SET parcelle_id=?, proprietaire_id=?, nom=?, type_culture=?," +
                 " superficie=?, etat=?, date_recolte=?, recolte_estime=? " +
                 "WHERE id=?";
         PreparedStatement ps = connection.prepareStatement(req);
@@ -58,7 +58,7 @@ public class ServiceCulture implements IService<Culture> {
 
     @Override
     public void supprimer(Culture c) throws SQLException {
-        String req = "DELETE FROM culture WHERE id=?";
+        String req = "DELETE FROM cultures WHERE id=?";
         PreparedStatement ps = connection.prepareStatement(req);
         ps.setInt(1, c.getId());
         ps.executeUpdate();
@@ -68,7 +68,7 @@ public class ServiceCulture implements IService<Culture> {
     @Override
     public List<Culture> recuperer() throws SQLException {
         List<Culture> cultures = new ArrayList<>();
-        String req = "SELECT * FROM culture";
+        String req = "SELECT * FROM cultures";
         Statement st = connection.createStatement();
         ResultSet rs = st.executeQuery(req);
 
