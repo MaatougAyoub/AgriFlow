@@ -4,32 +4,20 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 public class MainFX extends Application {
 
-    public static void main(String[] args) {
-        launch(args);
+    @Override
+    public void start(Stage stage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("/SignIn.fxml")); // vérifie le chemin
+        Scene scene = new Scene(root);
+        stage.setTitle("AgriFlow - Connexion");
+        stage.setScene(scene);
+        stage.show();
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-        FXMLLoader loader = new FXMLLoader(getClass()
-                .getResource("/..));
-        try {
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("");
-            primaryStage.show();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
+    public static void main(String[] args) {
+        launch(args);
     }
 }

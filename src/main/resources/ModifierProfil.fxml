@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.ModifierProfil"
+            prefHeight="650.0" prefWidth="800.0"
+            fitToWidth="true"
+            style="-fx-background-color: #F5F5F5;">
+
+
+    <VBox spacing="18" style="-fx-background-color: white;">
+        <padding>
+            <Insets top="28" right="34" bottom="28" left="34"/>
+        </padding>
+
+        <Label text="Modifier mon profil"
+               style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+
+        <Label fx:id="roleLabel"
+               text="Rôle: -"
+               style="-fx-font-size: 14px; -fx-text-fill: #616161; -fx-font-weight: bold;"/>
+
+        <Label fx:id="errorLabel"
+               visible="false"
+               wrapText="true"
+               style="-fx-text-fill: #F44336; -fx-background-color: #FFEBEE; -fx-padding: 10; -fx-background-radius: 6;"/>
+
+        <Label fx:id="successLabel"
+               visible="false"
+               wrapText="true"
+               style="-fx-text-fill: #2E7D32; -fx-background-color: #E8F5E9; -fx-padding: 10; -fx-background-radius: 6;"/>
+
+        <Separator/>
+
+        <!-- Etape 1 : édition -->
+        <VBox fx:id="stepEditBox" spacing="14">
+
+            <Label text="Informations générales"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #424242;"/>
+
+            <GridPane vgap="12" hgap="14">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="140" prefWidth="170"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Nom *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="nomField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Prénom *" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="prenomField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Email *" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="emailField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <!-- ✅ Signature upload -->
+                <Label text="Signature" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <TextField fx:id="signaturePathField"
+                               editable="false"
+                               promptText="Aucun fichier sélectionné"
+                               HBox.hgrow="ALWAYS"/>
+                    <Button text="Parcourir..."
+                            style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 15;"
+                            onAction="#uploadSignature"/>
+                </HBox>
+            </GridPane>
+
+            <Separator/>
+
+            <!-- Champs spécifiques Agriculteur -->
+            <VBox fx:id="agriculteurBox" spacing="10" visible="false" managed="false">
+                <Label text="Informations Agriculteur"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+
+                <GridPane vgap="12" hgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="170"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Adresse *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="adresseField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Parcelles" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="parcellesField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <!-- ✅ Carte pro upload -->
+                    <Label text="Carte pro" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                        <TextField fx:id="carteProPathField"
+                                   editable="false"
+                                   promptText="Aucun fichier sélectionné"
+                                   HBox.hgrow="ALWAYS"/>
+                        <Button text="Parcourir..."
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 15;"
+                                onAction="#uploadCartePro"/>
+                    </HBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Champs spécifiques Expert -->
+            <VBox fx:id="expertBox" spacing="10" visible="false" managed="false">
+                <Label text="Informations Expert"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+
+                <GridPane vgap="12" hgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="170"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <!-- ✅ Certification upload -->
+                    <Label text="Certification" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                        <TextField fx:id="certificationPathField"
+                                   editable="false"
+                                   promptText="Aucun fichier sélectionné"
+                                   HBox.hgrow="ALWAYS"/>
+                        <Button text="Parcourir..."
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 15;"
+                                onAction="#uploadCertification"/>
+                    </HBox>
+                </GridPane>
+            </VBox>
+
+            <!-- Admin -->
+            <VBox fx:id="adminBox" spacing="10" visible="false" managed="false">
+                <Label text="Informations Admin"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+
+                <GridPane vgap="12" hgap="14">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="170"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
+                    </columnConstraints>
+
+                    <Label text="Revenu" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="revenuField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Annuler"
+                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 10 18;"
+                        onAction="#annuler"/>
+
+                <Button text="Demander un code"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 10 18; -fx-font-weight: bold;"
+                        onAction="#demanderCode"/>
+            </HBox>
+
+        </VBox>
+
+        <Separator/>
+
+        <!-- Etape 2 : confirmation par code -->
+        <VBox fx:id="stepCodeBox" spacing="12" visible="false" managed="false">
+            <Label text="Validation"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #424242;"/>
+
+            <Label text="Saisissez le code de validation pour confirmer les modifications."
+                   style="-fx-text-fill: #616161;"/>
+
+            <GridPane vgap="12" hgap="14">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="140" prefWidth="170"/>
+                    <ColumnConstraints hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <Label text="Code *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="codeField" promptText="Ex: 123456" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Retour"
+                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 10 18;"
+                        onAction="#retourEdition"/>
+
+                <Button text="Confirmer et enregistrer"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 10 18; -fx-font-weight: bold;"
+                        onAction="#confirmerEtEnregistrer"/>
+            </HBox>
+        </VBox>
+
+    </VBox>
+</ScrollPane>
