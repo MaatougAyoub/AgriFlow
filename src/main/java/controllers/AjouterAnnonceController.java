@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
  * - Modération de contenu par IA avant publication
  *
  * Navigation : chargé dans le contentArea du MainController,
- * la sidebar reste visible en permanence.
+ * la sidebar to93od dima visible.
  */
 public class AjouterAnnonceController implements Initializable {
 
@@ -60,7 +60,7 @@ public class AjouterAnnonceController implements Initializable {
     @FXML
     private Button btnPublier;
 
-    // ── Boutons et labels IA ──
+    // ── Botons et labels IA ──
     @FXML
     private Button btnAmeliorerDesc;
     @FXML
@@ -109,14 +109,9 @@ public class AjouterAnnonceController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // IA — AMÉLIORATION DE DESCRIPTION
-    // ═══════════════════════════════════════════════════════════════
+    // Houni nsta3mlou l IA bech nriglou l description (Amelioration)
 
-    /**
-     * Appelle l'IA Gemini pour améliorer la description de l'annonce.
-     * L'appel est asynchrone (Thread séparé) pour ne pas bloquer l'UI.
-     */
+    // Thread séparé bech l'interface matetblockech (asynchrone)
     @FXML
     private void ameliorerDescription() {
         String titre = titreField.getText() != null ? titreField.getText().trim() : "";
@@ -162,14 +157,9 @@ public class AjouterAnnonceController implements Initializable {
         new Thread(task).start();
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // IA — SUGGESTION DE PRIX
-    // ═══════════════════════════════════════════════════════════════
+    // L'IA ta3tina soum a peu pres (Suggestion de prix)
 
-    /**
-     * Appelle l'IA Gemini pour suggérer un prix basé sur les détails de l'annonce.
-     * L'appel est asynchrone (Thread séparé) pour ne pas bloquer l'UI.
-     */
+    // Appelle l'IA pour suggérer un prix (asynchrone)
     @FXML
     private void suggererPrix() {
         String titre = titreField.getText() != null ? titreField.getText().trim() : "";
@@ -215,15 +205,13 @@ public class AjouterAnnonceController implements Initializable {
         new Thread(task).start();
     }
 
-    // ═══════════════════════════════════════════════════════════════
     // PUBLICATION (avec modération IA)
-    // ═══════════════════════════════════════════════════════════════
 
     @FXML
     private void publierAnnonce() {
         hideError();
 
-        // ── Validation des champs obligatoires ──
+        // Validation des champs obligatoires
         String titre = titreField.getText() != null ? titreField.getText().trim() : "";
         String description = descriptionArea.getText() != null ? descriptionArea.getText().trim() : "";
         String prixText = prixField.getText() != null ? prixField.getText().trim() : "";
@@ -244,7 +232,7 @@ public class AjouterAnnonceController implements Initializable {
             return;
         }
 
-        // ── Construire/Mettre à jour l'objet Annonce ──
+        // Construire/Mettre à jour l'objet Annonce
         Annonce annonce = (annonceEnModification != null) ? annonceEnModification : new Annonce();
 
         annonce.setTitre(titre);
@@ -277,7 +265,7 @@ public class AjouterAnnonceController implements Initializable {
             annonce.setPhotos(photos);
         }
 
-        // ── Smart Guard : Contrôle de Fraude (règles statiques) ──
+        // Smart Guard: nfixiw kan femma haja louche (anti-fraude)
         String motifRejet = FraudControlService.getMotifRejet(annonce);
         if (motifRejet != null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -288,7 +276,7 @@ public class AjouterAnnonceController implements Initializable {
             return;
         }
 
-        // ── Modération IA Gemini (métier avancé) ──
+        // Houni nla3bouha IA Gemini (Métier avancé)
         btnPublier.setDisable(true);
         btnPublier.setText("🤖 Modération IA en cours...");
 
@@ -303,7 +291,7 @@ public class AjouterAnnonceController implements Initializable {
             String motifIA = moderationTask.getValue();
 
             if (motifIA != null) {
-                // ── IA a rejeté l'annonce ──
+                // IA a rejeté l'annonce
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("🤖 Modération IA — Contenu Rejeté");
                 alert.setHeaderText("L'IA a détecté un problème");
@@ -314,23 +302,21 @@ public class AjouterAnnonceController implements Initializable {
                 return;
             }
 
-            // ── IA a validé → Enregistrement BDD ──
+            // IA a validé → Enregistrement BDD
             sauvegarderAnnonce(annonce, imageUrl);
         }));
 
         moderationTask.setOnFailed(event -> Platform.runLater(() -> {
             // Si l'IA échoue (réseau, etc.), on publie quand même
             // avec un avertissement mais sans bloquer l'utilisateur
-            System.err.println("⚠️ Modération IA indisponible : " + moderationTask.getException().getMessage());
+            System.err.println("Modération IA indisponible : " + moderationTask.getException().getMessage());
             sauvegarderAnnonce(annonce, imageUrl);
         }));
 
         new Thread(moderationTask).start();
     }
 
-    /**
-     * Sauvegarde l'annonce en BDD après validation.
-     */
+    // Sauvegarde l'annonce en BDD après validation
     private void sauvegarderAnnonce(Annonce annonce, String imageUrl) {
         try {
             if (annonceEnModification != null) {
@@ -344,7 +330,7 @@ public class AjouterAnnonceController implements Initializable {
                 if (!imageUrl.isEmpty() && annonce.getId() > 0) {
                     sauvegarderPhoto(annonce.getId(), imageUrl);
                 }
-                showSuccess("✅ Annonce publiée avec succès ! (Validée par IA ✨)");
+                showSuccess("✅ Annonce publiée avec succès !");
             }
             retourMarketplace();
         } catch (SQLException e) {

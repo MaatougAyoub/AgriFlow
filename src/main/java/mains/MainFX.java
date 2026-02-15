@@ -17,10 +17,10 @@ public class MainFX extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Test connexion
+            // Njarbou connectina m3a l base walla lé
             MyDatabase.getInstance().getConnection();
 
-            // Simuler utilisateur connecté (Amenallah Jerbi — lead Marketplace)
+            // Houni nsimuliw l user connecti (Amenallah Jerbi - moul l marketplace)
             User currentUser = new User();
             currentUser.setId(39);
             currentUser.setNom("Jerbi");
@@ -30,7 +30,7 @@ public class MainFX extends Application {
             currentUser.setRole("AGRICULTEUR");
             MainController.setCurrentUser(currentUser);
 
-            // Charger la vue
+            // Chargi l vue principale mte3na
             URL fxmlLocation = getClass().getResource("/Main.fxml");
 
             if (fxmlLocation == null) {
@@ -39,7 +39,7 @@ public class MainFX extends Application {
                 return;
             }
 
-            System.out.println("Loading FXML from: " + fxmlLocation);
+            System.out.println("C bon, l FXML tchargé mn : " + fxmlLocation);
 
             FXMLLoader loader = new FXMLLoader(fxmlLocation);
             Parent root = loader.load();
@@ -53,7 +53,7 @@ public class MainFX extends Application {
                     primaryStage.getIcons().add(icon);
                 }
             } catch (Exception e) {
-                System.err.println("Logo error: " + e.getMessage());
+                System.err.println("Mochkla fl logo: " + e.getMessage());
             }
 
             primaryStage.setTitle("AGRIFLOW - Marketplace");
@@ -62,7 +62,7 @@ public class MainFX extends Application {
             primaryStage.setMinHeight(700);
             primaryStage.show();
 
-            System.out.println("AGRIFLOW Marketplace started!");
+            System.out.println("AGRIFLOW Marketplace demarra 5/5 !");
 
         } catch (IOException e) {
             System.err.println("ERROR loading FXML: " + e.getMessage());

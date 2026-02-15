@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 public class AdminDashboardController implements Initializable {
 
-    // ─── Éléments FXML (liés au fichier AdminDashboard.fxml) ───
+    // Elements FXML
     @FXML private Label totalAnnoncesLabel;
     @FXML private Label totalReservationsLabel;
     @FXML private Label enAttenteLabel;
@@ -47,19 +47,17 @@ public class AdminDashboardController implements Initializable {
     @FXML private FlowPane annoncesContainer;      // conteneur des cartes annonces
     @FXML private FlowPane reservationsContainer;   // conteneur des cartes réservations
 
-    // ─── Services (accès à la base de données) ───
+    // Services
     private final AnnonceService annonceService = new AnnonceService();
     private final ServiceReservation reservationService = new ServiceReservation();
 
-    // ─── Données en mémoire ───
+    // Données en mémoire
     private ObservableList<Annonce> annoncesData = FXCollections.observableArrayList();
     private ObservableList<Reservation> reservationsData = FXCollections.observableArrayList();
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // ═══════════════════════════════════════════════════════════
-    //  INITIALISATION — se lance automatiquement au chargement
-    // ═══════════════════════════════════════════════════════════
+    // INITIALISATION — se lance automatiquement au chargement
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -72,9 +70,7 @@ public class AdminDashboardController implements Initializable {
         searchReservationsField.textProperty().addListener((obs, old, val) -> filtrerReservations(val));
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  ONGLET 1 : ANNONCES
-    // ═══════════════════════════════════════════════════════════
+    // ONGLET 1 : ANNONCES
 
     /** Charge TOUTES les annonces depuis la BDD et les affiche en cartes */
     @FXML
@@ -110,20 +106,10 @@ public class AdminDashboardController implements Initializable {
         afficherCartesAnnonces(filtered);
     }
 
-    // ─── Fabriquer UNE carte annonce ──────────────────────────
+    // Fabriquer UNE carte annonce
 
     /**
      * Crée une carte visuelle pour une annonce.
-     *
-     * Structure :
-     * ┌──────────────────────────────────┐
-     * │ [Badge Type]            [🗑️]     │  ← header
-     * │ Titre de l'annonce               │
-     * │ 💰 150.00 DT/jour                │  ← infos
-     * │ 👤 Amenallah Jerbi               │
-     * │ 📅 10/02/2026                    │
-     * │ ● Disponible                     │  ← statut
-     * └──────────────────────────────────┘
      */
     private VBox creerCarteAnnonce(Annonce annonce) {
         VBox card = new VBox(8);
@@ -131,7 +117,7 @@ public class AdminDashboardController implements Initializable {
         card.setPrefWidth(280);
         card.setPadding(new Insets(15));
 
-        // ── Header : badge type + bouton supprimer ──
+        // Header : badge type + bouton supprimer
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -154,19 +140,19 @@ public class AdminDashboardController implements Initializable {
 
         header.getChildren().addAll(badge, spacer, btnDelete);
 
-        // ── Titre ──
+        // Titre
         Label titre = new Label(annonce.getTitre());
         titre.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #212121;");
         titre.setWrapText(true);
 
-        // ── Infos ──
+        // Infos
         Label prix = creerInfoLabel("💰", annonce.getPrixFormate());
         Label proprio = creerInfoLabel("👤",
             annonce.getProprietaire() != null ? annonce.getProprietaire().getNomComplet() : "—");
         Label date = creerInfoLabel("📅",
             annonce.getDateCreation() != null ? annonce.getDateCreation().format(DATE_FMT) : "—");
 
-        // ── Badge statut ──
+        // Badge statut
         Label statut = new Label("● " + (annonce.getStatut() != null ? annonce.getStatut().getLabel() : "—"));
         String statutColor = annonce.getStatut() != null ? annonce.getStatut().getCouleur() : "#757575";
         statut.setStyle("-fx-text-fill: " + statutColor + "; -fx-font-weight: bold; -fx-font-size: 12px;");
@@ -198,9 +184,7 @@ public class AdminDashboardController implements Initializable {
         });
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  ONGLET 2 : RÉSERVATIONS
-    // ═══════════════════════════════════════════════════════════
+    // ONGLET 2 : RÉSERVATIONS
 
     /** Charge TOUTES les réservations depuis la BDD */
     @FXML
@@ -241,20 +225,10 @@ public class AdminDashboardController implements Initializable {
         afficherCartesReservations(filtered);
     }
 
-    // ─── Fabriquer UNE carte réservation ─────────────────────
+    // Fabriquer UNE carte réservation
 
     /**
      * Crée une carte visuelle pour une réservation.
-     *
-     * Structure :
-     * ┌──────────────────────────────────┐
-     * │ ● En attente              [❌]   │  ← header coloré
-     * │ Titre de l'annonce               │
-     * │ 👤 Client : Amenallah            │  ← infos
-     * │ 🏠 Proprio : Jerbi               │
-     * │ 📅 10/02 → 15/02                 │
-     * │ 💰 750.00 DT                     │
-     * └──────────────────────────────────┘
      */
     private VBox creerCarteReservation(Reservation res) {
         VBox card = new VBox(8);
@@ -262,7 +236,7 @@ public class AdminDashboardController implements Initializable {
         card.setPrefWidth(280);
         card.setPadding(new Insets(0));
 
-        // ── Header coloré selon statut ──
+        // Header coloré selon statut
         String statusColor = res.getStatut() != null ? res.getStatut().getCouleur() : "#757575";
         String statusLabel = res.getStatut() != null ? res.getStatut().getLabel() : "—";
 
@@ -297,7 +271,7 @@ public class AdminDashboardController implements Initializable {
             header.getChildren().add(btnCancel);
         }
 
-        // ── Contenu ──
+        // ── Conten ──
         VBox content = new VBox(6);
         content.setPadding(new Insets(12, 15, 15, 15));
 
@@ -348,9 +322,7 @@ public class AdminDashboardController implements Initializable {
         });
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  NAVIGATION
-    // ═══════════════════════════════════════════════════════════
+    // NAVIGATION
 
     @FXML
     private void retourMarketplace() {
@@ -367,15 +339,10 @@ public class AdminDashboardController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════
-    //  HELPERS — petites méthodes utilitaires réutilisables
-    // ═══════════════════════════════════════════════════════════
+    // HELPERS — petites méthodes utilitaires réutilisables
 
     /**
      * Crée un bouton rond avec une icône SVG.
-     * @param svgPath    le chemin SVG de l'icône
-     * @param fillColor  couleur de l'icône au repos
-     * @param hoverColor couleur de l'icône au survol
      */
     private Button creerBoutonIcone(String svgPath, String fillColor, String hoverColor) {
         SVGPath icon = new SVGPath();

@@ -7,33 +7,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Service CRUD pour gérer les annonces du Marketplace.
- * Implémente l'interface IService avec des PreparedStatement JDBC.
- */
+// Service Annonce: Houni na3mlou les opérations l koll (ajouter, supprimer, modif...)
 public class AnnonceService implements IService<Annonce> {
 
     private Connection cnx;
     private final UserService userService;
 
-    /**
-     * Constructeur : Récupère la connexion via le Singleton MyDatabase.
-     */
+
     public AnnonceService() {
         this.cnx = MyDatabase.getInstance().getConnection();
         this.userService = new UserService();
     }
 
-    /**
-     * Ajoute une nouvelle annonce dans la base de données.
-     *
-     * @param annonce L'annonce à ajouter
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     @Override
     public void ajouter(Annonce annonce) throws SQLException {
         if (annonce.getProprietaire() == null) {
-            throw new SQLException("Proprietaire obligatoire pour une annonce.");
+            throw new SQLException("Lezem femma proprietaire, sinon chkoun bech ybi3 ?");
         }
 
         TypeAnnonce type = annonce.getType() != null ? annonce.getType() : TypeAnnonce.LOCATION;
@@ -72,26 +62,21 @@ public class AnnonceService implements IService<Annonce> {
             int affectedRows = pst.executeUpdate();
 
             if (affectedRows > 0) {
-                // Récupérer l'ID généré automatiquement
+                // Nraj3ou l ID elli tkhla9 tawa (auto-increment)
                 try (ResultSet generatedKeys = pst.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         annonce.setId(generatedKeys.getInt(1));
                     }
                 }
-                System.out.println("✅ Annonce ajoutée avec succès : " + annonce.getTitre());
+                System.out.println("Annonce ajoutée : " + annonce.getTitre());
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de l'ajout de l'annonce : " + e.getMessage());
+            System.err.println("Erreur ajout annonce : " + e.getMessage());
             throw e;
         }
     }
 
-    /**
-     * Modifie une annonce existante dans la base de données.
-     *
-     * @param annonce L'annonce à modifier
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     @Override
     public void modifier(Annonce annonce) throws SQLException {
         TypeAnnonce type = annonce.getType() != null ? annonce.getType() : TypeAnnonce.LOCATION;
@@ -130,22 +115,17 @@ public class AnnonceService implements IService<Annonce> {
             int affectedRows = pst.executeUpdate();
 
             if (affectedRows > 0) {
-                System.out.println("✅ Annonce modifiée avec succès : " + annonce.getTitre());
+                System.out.println("Annonce modifiée : " + annonce.getTitre());
             } else {
-                System.out.println("⚠️ Aucune annonce trouvée avec l'ID : " + annonce.getId());
+                System.out.println("Aucune annonce trouvée avec ID : " + annonce.getId());
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la modification de l'annonce : " + e.getMessage());
+            System.err.println("Erreur modification annonce : " + e.getMessage());
             throw e;
         }
     }
 
-    /**
-     * Supprime une annonce de la base de données.
-     *
-     * @param annonce L'annonce à supprimer
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     @Override
     public void supprimer(Annonce annonce) throws SQLException {
         String query = "DELETE FROM annonces WHERE id=?";
@@ -156,22 +136,17 @@ public class AnnonceService implements IService<Annonce> {
             int affectedRows = pst.executeUpdate();
 
             if (affectedRows > 0) {
-                System.out.println("✅ Annonce supprimée avec succès : " + annonce.getTitre());
+                System.out.println("Annonce supprimée : " + annonce.getTitre());
             } else {
-                System.out.println("⚠️ Aucune annonce trouvée avec l'ID : " + annonce.getId());
+                System.out.println("Aucune annonce trouvée avec ID : " + annonce.getId());
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la suppression de l'annonce : " + e.getMessage());
+            System.err.println("Erreur suppression annonce : " + e.getMessage());
             throw e;
         }
     }
 
-    /**
-     * Récupère toutes les annonces de la base de données.
-     *
-     * @return Liste de toutes les annonces
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     @Override
     public List<Annonce> recuperer() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
@@ -184,22 +159,16 @@ public class AnnonceService implements IService<Annonce> {
                 }
             }
 
-            System.out.println("✅ " + annonces.size() + " annonce(s) récupérée(s).");
+            System.out.println(annonces.size() + " annonce(s) récupérée(s)");
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des annonces : " + e.getMessage());
+            System.err.println("Erreur récupération annonces : " + e.getMessage());
             throw e;
         }
 
         return annonces;
     }
 
-    /**
-     * Récupère une annonce par son identifiant.
-     *
-     * @param id L'identifiant de l'annonce
-     * @return L'annonce trouvée, ou null si elle n'existe pas
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     @Override
     public Annonce recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM annonces WHERE id=?";
@@ -211,25 +180,20 @@ public class AnnonceService implements IService<Annonce> {
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
                     annonce = mapResultSetToAnnonce(rs);
-                    System.out.println("✅ Annonce trouvée : " + annonce.getTitre());
+                    System.out.println("Annonce trouvée : " + annonce.getTitre());
                 } else {
-                    System.out.println("⚠️ Aucune annonce trouvée avec l'ID : " + id);
+                    System.out.println("Aucune annonce avec ID : " + id);
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération de l'annonce : " + e.getMessage());
+            System.err.println("Erreur récupération annonce : " + e.getMessage());
             throw e;
         }
 
         return annonce;
     }
 
-    /**
-     * Récupère toutes les annonces disponibles.
-     *
-     * @return Liste des annonces disponibles
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     public List<Annonce> recupererDisponibles() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
         String query = "SELECT * FROM annonces WHERE statut=? ORDER BY date_creation DESC";
@@ -243,22 +207,16 @@ public class AnnonceService implements IService<Annonce> {
                 }
             }
 
-            System.out.println("✅ " + annonces.size() + " annonce(s) disponible(s) récupérée(s).");
+            System.out.println(annonces.size() + " annonce(s) disponible(s)");
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des annonces : " + e.getMessage());
+            System.err.println("Erreur récupération annonces dispo : " + e.getMessage());
             throw e;
         }
 
         return annonces;
     }
 
-    /**
-     * Récupère toutes les annonces d'un propriétaire spécifique.
-     *
-     * @param proprietaireId L'identifiant du propriétaire
-     * @return Liste des annonces du propriétaire
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     public List<Annonce> recupererParProprietaire(int proprietaireId) throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
         String query = "SELECT * FROM annonces WHERE proprietaire_id=? ORDER BY date_creation DESC";
@@ -272,23 +230,16 @@ public class AnnonceService implements IService<Annonce> {
                 }
             }
 
-            System.out.println(
-                    "✅ " + annonces.size() + " annonce(s) récupérée(s) pour le propriétaire ID: " + proprietaireId);
+            System.out.println(annonces.size() + " annonce(s) pour proprietaire ID: " + proprietaireId);
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des annonces : " + e.getMessage());
+            System.err.println("Erreur récupération par proprietaire : " + e.getMessage());
             throw e;
         }
 
         return annonces;
     }
 
-    /**
-     * Recherche des annonces par type.
-     *
-     * @param type Le type d'annonce recherché
-     * @return Liste des annonces correspondantes
-     * @throws SQLException en cas d'erreur SQL
-     */
+
     public List<Annonce> rechercherParType(TypeAnnonce type) throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
         String query = "SELECT * FROM annonces WHERE type=? AND statut=? " +
@@ -304,22 +255,16 @@ public class AnnonceService implements IService<Annonce> {
                 }
             }
 
-            System.out.println("✅ " + annonces.size() + " annonce(s) trouvée(s) pour le type: " + type);
+            System.out.println(annonces.size() + " annonce(s) de type " + type);
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la recherche des annonces : " + e.getMessage());
+            System.err.println("Erreur recherche par type : " + e.getMessage());
             throw e;
         }
 
         return annonces;
     }
 
-    /**
-     * Méthode utilitaire pour mapper un ResultSet vers un objet Annonce.
-     *
-     * @param rs Le ResultSet à mapper
-     * @return L'objet Annonce créé
-     * @throws SQLException en cas d'erreur SQL
-     */
+    // Convertir un ResultSet en objet Annonce
     private Annonce mapResultSetToAnnonce(ResultSet rs) throws SQLException {
         Annonce annonce = new Annonce();
         annonce.setId(rs.getInt("id"));
@@ -369,7 +314,7 @@ public class AnnonceService implements IService<Annonce> {
             User proprietaire = userService.recupererParId(proprietaireId);
             annonce.setProprietaire(proprietaire);
         } catch (SQLException e) {
-            System.err.println("⚠️ Impossible de récupérer le propriétaire ID: " + proprietaireId);
+            System.err.println("Proprietaire introuvable ID: " + proprietaireId);
         }
 
         // Récupération des photos depuis annonce_photos
@@ -391,7 +336,7 @@ public class AnnonceService implements IService<Annonce> {
                 annonce.setPhotos(photos);
             }
         } catch (SQLException e) {
-            System.err.println("⚠️ Impossible de récupérer les photos pour annonce ID: " + annonce.getId());
+            System.err.println("Photos introuvables pour annonce ID: " + annonce.getId());
         }
 
         return annonce;

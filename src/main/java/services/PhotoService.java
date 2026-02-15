@@ -7,10 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Service pour gérer les photos 3D des annonces.
- * Permet d'ajouter, modifier, supprimer et récupérer les photos.
- */
+// Service CRUD pour les photos d'annonces
 public class PhotoService implements IService<PhotoAnnonce> {
 
     private Connection cnx;
@@ -36,10 +33,10 @@ public class PhotoService implements IService<PhotoAnnonce> {
                         photo.setId(generatedKeys.getInt(1));
                     }
                 }
-                System.out.println("✅ Photo ajoutée pour l'annonce " + photo.getAnnonceId());
+                System.out.println("Photo ajoutée pour annonce " + photo.getAnnonceId());
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de l'ajout de la photo : " + e.getMessage());
+            System.err.println("Erreur ajout photo : " + e.getMessage());
             throw e;
         }
     }
@@ -54,9 +51,9 @@ public class PhotoService implements IService<PhotoAnnonce> {
             pst.setInt(3, photo.getId());
 
             pst.executeUpdate();
-            System.out.println("✅ Photo modifiée : " + photo.getId());
+            System.out.println("Photo modifiée : " + photo.getId());
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la modification de la photo : " + e.getMessage());
+            System.err.println("Erreur modification photo : " + e.getMessage());
             throw e;
         }
     }
@@ -68,9 +65,9 @@ public class PhotoService implements IService<PhotoAnnonce> {
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setInt(1, photo.getId());
             pst.executeUpdate();
-            System.out.println("✅ Photo supprimée : " + photo.getId());
+            System.out.println("Photo supprimée : " + photo.getId());
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la suppression de la photo : " + e.getMessage());
+            System.err.println("Erreur suppression photo : " + e.getMessage());
             throw e;
         }
     }
@@ -87,9 +84,9 @@ public class PhotoService implements IService<PhotoAnnonce> {
                 photos.add(mapResultSetToPhoto(rs));
             }
 
-            System.out.println("✅ " + photos.size() + " photo(s) récupérée(s).");
+            System.out.println(photos.size() + " photo(s) récupérée(s)");
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des photos : " + e.getMessage());
+            System.err.println("Erreur récupération photos : " + e.getMessage());
             throw e;
         }
 
@@ -110,19 +107,14 @@ public class PhotoService implements IService<PhotoAnnonce> {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération de la photo : " + e.getMessage());
+            System.err.println("Erreur récupération photo : " + e.getMessage());
             throw e;
         }
 
         return photo;
     }
 
-    /**
-     * Récupère toutes les photos d'une annonce spécifique, triées par ordre.
-     *
-     * @param annonceId ID de l'annonce
-     * @return Liste des photos de l'annonce
-     */
+
     public List<PhotoAnnonce> recupererParAnnonce(int annonceId) throws SQLException {
         List<PhotoAnnonce> photos = new ArrayList<>();
         String query = "SELECT * FROM annonce_photos WHERE annonce_id = ? ORDER BY ordre ASC";
@@ -136,21 +128,16 @@ public class PhotoService implements IService<PhotoAnnonce> {
                 }
             }
 
-            System.out.println("✅ " + photos.size() + " photo(s) récupérée(s) pour l'annonce " + annonceId);
+            System.out.println(photos.size() + " photo(s) pour annonce " + annonceId);
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération des photos : " + e.getMessage());
+            System.err.println("Erreur récupération photos annonce : " + e.getMessage());
             throw e;
         }
 
         return photos;
     }
 
-    /**
-     * Récupère la photo principale d'une annonce (ordre = 0).
-     *
-     * @param annonceId ID de l'annonce
-     * @return La photo principale ou null
-     */
+
     public PhotoAnnonce recupererPhotoPrincipale(int annonceId) throws SQLException {
         String query = "SELECT * FROM annonce_photos WHERE annonce_id = ? AND ordre = 0 LIMIT 1";
 
@@ -163,36 +150,28 @@ public class PhotoService implements IService<PhotoAnnonce> {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la récupération de la photo principale : " + e.getMessage());
+            System.err.println("Erreur récupération photo principale : " + e.getMessage());
             throw e;
         }
 
         return null;
     }
 
-    /**
-     * Supprime toutes les photos d'une annonce.
-     *
-     * @param annonceId ID de l'annonce
-     */
+
     public void supprimerToutesPhotosAnnonce(int annonceId) throws SQLException {
         String query = "DELETE FROM annonce_photos WHERE annonce_id = ?";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setInt(1, annonceId);
             int nbSupprimes = pst.executeUpdate();
-            System.out.println("✅ " + nbSupprimes + " photo(s) supprimée(s) pour l'annonce " + annonceId);
+            System.out.println(nbSupprimes + " photo(s) supprimée(s) pour annonce " + annonceId);
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors de la suppression des photos : " + e.getMessage());
+            System.err.println("Erreur suppression photos : " + e.getMessage());
             throw e;
         }
     }
 
-    /**
-     * Ajoute plusieurs photos en une seule transaction.
-     *
-     * @param photos Liste de photos à ajouter
-     */
+
     public void ajouterPlusieursPhotos(List<PhotoAnnonce> photos) throws SQLException {
         String query = "INSERT INTO annonce_photos (annonce_id, url_photo, ordre) VALUES (?, ?, ?)";
 
@@ -209,23 +188,18 @@ public class PhotoService implements IService<PhotoAnnonce> {
 
                 int[] results = pst.executeBatch();
                 cnx.commit();
-                System.out.println("✅ " + results.length + " photo(s) ajoutée(s) en batch");
+                System.out.println(results.length + " photo(s) ajoutée(s) en batch");
             }
         } catch (SQLException e) {
             cnx.rollback();
-            System.err.println("❌ Erreur lors de l'ajout batch des photos : " + e.getMessage());
+            System.err.println("Erreur ajout batch photos : " + e.getMessage());
             throw e;
         } finally {
             cnx.setAutoCommit(true);
         }
     }
 
-    /**
-     * Compte le nombre de photos pour une annonce.
-     *
-     * @param annonceId ID de l'annonce
-     * @return Nombre de photos
-     */
+
     public int compterPhotosAnnonce(int annonceId) throws SQLException {
         String query = "SELECT COUNT(*) FROM annonce_photos WHERE annonce_id = ?";
 
@@ -238,16 +212,14 @@ public class PhotoService implements IService<PhotoAnnonce> {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("❌ Erreur lors du comptage des photos : " + e.getMessage());
+            System.err.println("Erreur comptage photos : " + e.getMessage());
             throw e;
         }
 
         return 0;
     }
 
-    /**
-     * Mappe un ResultSet vers un objet PhotoAnnonce.
-     */
+    // Convertir un ResultSet en PhotoAnnonce
     private PhotoAnnonce mapResultSetToPhoto(ResultSet rs) throws SQLException {
         PhotoAnnonce photo = new PhotoAnnonce();
         photo.setId(rs.getInt("id"));

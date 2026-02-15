@@ -9,24 +9,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-/**
- * Service d'Intelligence Artificielle — Google Gemini.
- *
- * Métier avancé : intègre l'IA générative de Google pour enrichir
- * l'expérience utilisateur du Marketplace Agriflow.
- *
- * Fonctionnalités :
- * 1. Amélioration automatique des descriptions d'annonces
- * 2. Suggestion intelligente de prix
- * 3. Modération de contenu par IA (détection fraude/contenu inapproprié)
- *
- * Utilise l'API REST Gemini via java.net.http.HttpClient.
- */
+// Service IA (Google Gemini) pour améliorer les annonces et modérer le contenu
 public class GeminiAIService {
 
-    // ── Configuration API ──
+    // Config API Gemini
     private static final String API_KEY = "AIzaSyCYIKlpxAFhF_uMJu-AFQdu0UQ5uMiRueE";
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key="
+    private static final String GEMINI_URL = "https:// generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key="
             + API_KEY;
 
     private final HttpClient httpClient;
@@ -37,20 +25,9 @@ public class GeminiAIService {
                 .build();
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // 1. AMÉLIORATION DE DESCRIPTION
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * Utilise l'IA pour réécrire et améliorer la description d'une annonce.
-     * Le prompt est contextualisé au domaine agricole tunisien.
-     *
-     * @param titre       Le titre de l'annonce
-     * @param description La description originale à améliorer
-     * @param categorie   La catégorie du produit/équipement
-     * @return La description améliorée par l'IA
-     * @throws Exception en cas d'erreur réseau ou API
-     */
+
+    // Améliore la description d'une annonce via l'IA
     public String ameliorerDescription(String titre, String description, String categorie) throws Exception {
         String prompt = String.format(
                 "Tu es un expert en rédaction d'annonces pour un marketplace agricole en Tunisie (AgriFlow). "
@@ -68,21 +45,9 @@ public class GeminiAIService {
         return envoyerRequete(prompt);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // 2. SUGGESTION DE PRIX
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * Utilise l'IA pour suggérer un prix optimal basé sur les détails de l'annonce.
-     *
-     * @param titre        Le titre de l'annonce
-     * @param description  La description
-     * @param categorie    La catégorie
-     * @param localisation La localisation (ville/région)
-     * @param type         Le type (Location ou Vente)
-     * @return Le prix suggéré en DT (Dinar Tunisien)
-     * @throws Exception en cas d'erreur réseau ou API
-     */
+
+    // Suggère un prix réaliste via l'IA
     public double suggererPrix(String titre, String description, String categorie,
             String localisation, String type) throws Exception {
         String prompt = String.format(
@@ -113,22 +78,9 @@ public class GeminiAIService {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // 3. MODÉRATION DE CONTENU PAR IA
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * Analyse le contenu d'une annonce avec l'IA pour détecter :
-     * - Contenu frauduleux ou suspect
-     * - Produits illégaux ou interdits
-     * - Langage inapproprié
-     * - Incohérences dans l'annonce
-     *
-     * @param titre       Le titre de l'annonce
-     * @param description La description de l'annonce
-     * @return null si le contenu est acceptable, sinon le motif de rejet
-     * @throws Exception en cas d'erreur réseau ou API
-     */
+
+    // Vérifie si le contenu est acceptable (retourne null si OK, sinon le motif)
     public String modererContenu(String titre, String description) throws Exception {
         String prompt = String.format(
                 "Tu es un modérateur de contenu pour AgriFlow, un marketplace agricole en Tunisie. "
@@ -156,19 +108,11 @@ public class GeminiAIService {
         return reponse.trim(); // Retourne le motif de rejet
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // MÉTHODE INTERNE — Appel API Gemini
-    // ═══════════════════════════════════════════════════════════════
 
-    /**
-     * Envoie une requête à l'API Google Gemini et retourne la réponse textuelle.
-     *
-     * @param prompt Le prompt à envoyer
-     * @return Le texte de la réponse générée
-     * @throws Exception en cas d'erreur
-     */
+
+    // Envoie le prompt à l'API Gemini et retourne la réponse texte
     private String envoyerRequete(String prompt) throws Exception {
-        // Construction du body JSON selon le format Gemini API
+        // Construire le JSON
         JSONObject textPart = new JSONObject();
         textPart.put("text", prompt);
 
@@ -184,7 +128,7 @@ public class GeminiAIService {
         JSONObject requestBody = new JSONObject();
         requestBody.put("contents", contentsArray);
 
-        // Envoi de la requête HTTP POST
+        // Envoyer la requête
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(GEMINI_URL))
                 .header("Content-Type", "application/json")
@@ -194,7 +138,7 @@ public class GeminiAIService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // Vérification du code HTTP avec messages clairs
+        // Vérifier la réponse
         if (response.statusCode() != 200) {
             switch (response.statusCode()) {
                 case 429:
@@ -208,7 +152,7 @@ public class GeminiAIService {
             }
         }
 
-        // Extraction du texte de la réponse JSON
+        // Extraire le texte
         JSONObject responseJson = new JSONObject(response.body());
         JSONArray candidates = responseJson.getJSONArray("candidates");
 

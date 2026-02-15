@@ -17,23 +17,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-/**
- * Service de génération de contrats PDF pour les réservations AgriFlow.
- * Utilise la librairie iText 7 pour créer des documents professionnels.
- */
+// Génère des contrats PDF pour les réservations (iText 7)
 public class PDFService {
 
         private static final String CONTRATS_DIR = "contrats";
         private static final DeviceRgb AGRI_GREEN = new DeviceRgb(46, 125, 50);
         private static final DeviceRgb AGRI_GRAY = new DeviceRgb(117, 117, 117);
 
-        /**
-         * Génère un contrat PDF pour une réservation donnée.
-         *
-         * @param reservation La réservation pour laquelle générer le contrat
-         * @return Le fichier PDF généré
-         * @throws IOException en cas d'erreur d'écriture
-         */
+        // Génère un contrat PDF à partir d'une réservation
         public File genererContrat(Reservation reservation) throws IOException {
                 // Créer le dossier contrats s'il n'existe pas
                 File dossier = new File(CONTRATS_DIR);
@@ -51,9 +42,7 @@ public class PDFService {
                 PdfDocument pdfDoc = new PdfDocument(writer);
                 Document document = new Document(pdfDoc);
 
-                // ============================
-                // EN-TÊTE DU CONTRAT
-                // ============================
+                // En-tête
                 document.add(new Paragraph("CONTRAT DE LOCATION AGRIFLOW")
                                 .setFontSize(22)
                                 .setBold()
@@ -73,9 +62,7 @@ public class PDFService {
                                 .setTextAlignment(TextAlignment.CENTER)
                                 .setMarginBottom(15));
 
-                // ============================
-                // INFORMATIONS DU CONTRAT
-                // ============================
+                // Infos du contrat
                 String nomProprietaire = "N/A";
                 if (reservation.getProprietaire() != null) {
                         nomProprietaire = reservation.getProprietaire().getNomComplet();
@@ -111,9 +98,7 @@ public class PDFService {
                                 .setFontSize(12)
                                 .setMarginBottom(20));
 
-                // ============================
-                // TABLEAU DES DÉTAILS FINANCIERS
-                // ============================
+                // Tableau financier
                 document.add(new Paragraph("DÉTAILS FINANCIERS")
                                 .setBold()
                                 .setFontSize(14)
@@ -165,9 +150,7 @@ public class PDFService {
 
                 document.add(table);
 
-                // ============================
-                // CONDITIONS
-                // ============================
+                // Conditions
                 document.add(new Paragraph("CONDITIONS GÉNÉRALES")
                                 .setBold()
                                 .setFontSize(14)
@@ -183,9 +166,7 @@ public class PDFService {
                                 .setFontSize(11)
                                 .setMarginBottom(25));
 
-                // ============================
-                // SIGNATURE NUMÉRIQUE
-                // ============================
+                // Signature numérique
                 document.add(new Paragraph("═════════════════════════════════════════════════")
                                 .setFontColor(AGRI_GRAY)
                                 .setTextAlignment(TextAlignment.CENTER)
@@ -217,7 +198,7 @@ public class PDFService {
                 // Fermer le document
                 document.close();
 
-                System.out.println("✅ Contrat PDF généré : " + fichierPdf.getAbsolutePath());
+                System.out.println("Contrat PDF genere : " + fichierPdf.getAbsolutePath());
                 return fichierPdf;
         }
 }

@@ -1,4 +1,4 @@
-# 🌱 AGRIFLOW — Module Marketplace
+# 🌿 AGRIFLOW — Module Marketplace
 
 **Plateforme de Smart Farming pour la Tunisie**
 *Projet PIDEV 3A — TeamSpark*
@@ -36,7 +36,7 @@ Module **Marketplace P2P** — location et vente de matériel agricole entre agr
 1. Ouvrir le projet dans IntelliJ IDEA
 2. Build → Rebuild Project
 3. Run Configuration → Main class : mains.AppLauncher
-4. Cliquer sur ▶️ Run
+4. Cliquer sur Run
 ```
 
 > L'utilisateur simulé est **Amenallah Jerbi** (id=39, AGRICULTEUR)

@@ -48,7 +48,7 @@ public class MainController implements Initializable {
         afficherMarketplace();
     }
 
-    // ─── Navigation ────────────────────────────────────────────
+    // Navigation
 
     @FXML
     public void afficherMarketplace() {
@@ -74,7 +74,7 @@ public class MainController implements Initializable {
         setActiveButton(btnAdmin);
     }
 
-    // ─── Helpers ───────────────────────────────────────────────
+    // Helpers
 
     private void loadView(String fxmlPath) {
         try {
@@ -100,7 +100,7 @@ public class MainController implements Initializable {
         }
     }
 
-    // ─── Gestion Utilisateur ───────────────────────────────────
+    // Gestion Utilisateur
 
     public static void setCurrentUser(User user) {
         currentUser = user;

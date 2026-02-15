@@ -1,11 +1,11 @@
-# 🚀 AGRIFLOW Marketplace — Guide de Démarrage
+# 🌿 AGRIFLOW Marketplace — Guide de Démarrage
 
 ## Prérequis
 - **IntelliJ IDEA** avec JDK 17+
 - **MySQL** (XAMPP ou WampServer) sur `localhost:3306`, user `root`, pas de mot de passe
 - **Maven** (intégré dans IntelliJ)
 
-## Étape 1 — Créer la base de données
+## 📦 Étape 1 — Créer la base de données
 
 1. Lancer **XAMPP** → Démarrer **Apache** + **MySQL**
 2. Ouvrir **phpMyAdmin** (`http://localhost/phpmyadmin`)
@@ -13,37 +13,37 @@
 4. Importer le fichier **`agriflow.sql`** (à la racine du projet)
    - Cliquer sur la base `agriflow` → Onglet **Importer** → Choisir `agriflow.sql` → **Exécuter**
 
-> ⚠️ Si la base existe déjà, la supprimer d'abord (DROP) puis la recréer et importer.
+> Si la base existe déjà, la supprimer d'abord (DROP) puis la recréer et importer.
 
-## Étape 2 — Ouvrir le projet dans IntelliJ
+## 💻 Étape 2 — Ouvrir le projet dans IntelliJ
 
 1. **File → Open** → sélectionner le dossier `agriflow-marketplace`
 2. IntelliJ détecte automatiquement le `pom.xml` Maven
 3. Attendre que Maven télécharge les dépendances (barre de progression en bas)
 4. Si demandé : **Trust Project** → Yes
 
-## Étape 3 — Lancer l'application
+## 🚀 Étape 3 — Lancer l'application
 
 1. Naviguer vers `src/main/java/mains/AppLauncher.java`
 2. **Clic droit** → **Run 'AppLauncher.main()'**
 3. L'application se lance en tant que **Amenallah Jerbi** (AGRICULTEUR, id=39)
 
-> 📝 Le point d'entrée est `AppLauncher.java`, pas `MainFX.java`.
+> Le point d'entrée est `AppLauncher.java`, pas `MainFX.java`.
 > `AppLauncher` appelle `MainFX.main()` pour contourner l'erreur de module JavaFX.
 
-## Étape 4 — Tester
+## ✅ Étape 4 — Tester
 
 ### Tests unitaires
 - Clic droit sur `src/test/java` → **Run All Tests**
 - 4 classes de tests : `AnnonceTest`, `ReservationTest`, `AnnonceServiceTest`, `ReservationServiceTest`
 
 ### Test manuel
-- ✅ Le Marketplace affiche 3 annonces de test avec images
-- ✅ Navigation : Marketplace, Ajouter Annonce, Mes Réservations, Admin Dashboard
-- ✅ Fonctionnalités AI : Amélioration de description, suggestion de prix, modération
-- ✅ Génération de contrats PDF dans le dossier `contrats/`
+- Le Marketplace affiche les annonces de test avec images
+- Navigation : Marketplace, Ajouter Annonce, Mes Réservations, Admin Dashboard
+- Fonctionnalités AI : Amélioration de description, suggestion de prix, modération
+- Génération de contrats PDF dans le dossier `contrats/`
 
-## Architecture du projet
+## 📁 Architecture du projet
 
 ```
 src/main/java/
@@ -59,7 +59,7 @@ src/main/resources/
 └── sql/schema.sql  → Script de création des tables Marketplace
 ```
 
-## Base de données — Tables Marketplace
+## 🗄️ Base de données — Tables Marketplace
 
 | Table | Description |
 |-------|-------------|
@@ -69,5 +69,5 @@ src/main/resources/
 | `reservations` | Réservations P2P entre agriculteurs |
 | `messages` | Messagerie P2P entre utilisateurs |
 
-## Membre responsable
+## 👤 Membre responsable
 **Amenallah Jerbi** — Lead Tech & Marketplace — TeamSpark
