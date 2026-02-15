@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-/**
- * Contrôleur pour la vue "Mes Réservations" — mode CARDS vectorielles.
- * Design moderne avec SVGPath — palette bleu/vert sans orange.
- */
+// Controleur mta3 "Mes Reservations" - ytalla3 les reservations mta3 el user
+// kol reservation tetaffiche f carte (card) fih les details + bouton PDF
 public class MesReservationsController implements Initializable {
 
     // SVG Path Constants

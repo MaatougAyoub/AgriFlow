@@ -22,6 +22,7 @@ public class ContentValidator {
             ".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp");
 
 
+    // nvalidaw kol chay w nraj3aw liste mta3 les erreurs (ken vide = kol chay behi)
     public List<String> validerAnnonce(Annonce a) {
         List<String> erreurs = new ArrayList<>();
 
@@ -30,7 +31,7 @@ public class ContentValidator {
             return erreurs;
         }
 
-        // Champs obligatoires
+        // 1. nchoufou el champs obligatoires (titre, description, type, proprietaire)
         if (a.getTitre() == null || a.getTitre().trim().isEmpty()) {
             erreurs.add("Le titre est obligatoire");
         }
@@ -44,7 +45,7 @@ public class ContentValidator {
             erreurs.add("Le propriétaire est obligatoire");
         }
 
-        // Mots interdits
+        // 2. nchoufou ken fih mots interdits (drogue, arnaque, etc)
         String contenuComplet = "";
         if (a.getTitre() != null)
             contenuComplet += a.getTitre().toLowerCase() + " ";
@@ -57,7 +58,7 @@ public class ContentValidator {
             }
         }
 
-        // Validation des images
+        // 3. nchoufou format el photos (lazem jpg, png, etc)
         List<String> photos = a.getPhotos();
         if (photos != null && !photos.isEmpty()) {
             for (String url : photos) {
@@ -71,7 +72,7 @@ public class ContentValidator {
             }
         }
 
-        // Prix
+        // 4. nchoufou el prix (bin 1 DT w 50000 DT)
         if (a.getPrix() < PRIX_MIN) {
             erreurs.add("Le prix minimum est " + PRIX_MIN + " DT");
         }
@@ -79,7 +80,7 @@ public class ContentValidator {
             erreurs.add("Le prix maximum est " + PRIX_MAX + " DT");
         }
 
-        // Dates
+        // 5. nchoufou ken date debut < date fin
         if (a.getDateDebutDisponibilite() != null && a.getDateFinDisponibilite() != null) {
             if (a.getDateDebutDisponibilite().isAfter(a.getDateFinDisponibilite())) {
                 erreurs.add("La date de début doit être avant la date de fin");
@@ -89,7 +90,8 @@ public class ContentValidator {
         return erreurs;
     }
 
-    // Score de confiance 0-100 pour une annonce
+    // score de confiance mta3 l annonce (0 l 100)
+    // akther ma l annonce kamla w s7i7a, akther el score ya3la
     public int calculerScoreConfiance(Annonce a) {
         if (a == null)
             return 0;

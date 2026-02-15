@@ -24,16 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Contrôleur pour le formulaire d'ajout d'annonce.
- * Intègre le GeminiAIService (IA Métier Avancé) :
- * - Amélioration de description par IA
- * - Suggestion de prix par IA
- * - Modération de contenu par IA avant publication
- *
- * Navigation : chargé dans le contentArea du MainController,
- * la sidebar to93od dima visible.
- */
+// Controleur mta3 formulaire Ajouter/Modifier Annonce
+// fiha 3 fonctions IA :
+//   1. ameliorerDescription() -> Gemini y7assinlek el description
+//   2. suggererPrix() -> Gemini y9ollek el soum el mouneseb
+//   3. moderation -> 9bal ma tpubli, Gemini ychouf ken el contenu behi
+// kol appel IA yemchi f Thread w7dou bech el interface ma tetblokch
 public class AjouterAnnonceController implements Initializable {
 
     @FXML
@@ -60,18 +56,18 @@ public class AjouterAnnonceController implements Initializable {
     @FXML
     private Button btnPublier;
 
-    // ── Botons et labels IA ──
+    // les boutons et labels mta3 l'IA
     @FXML
     private Button btnAmeliorerDesc;
     @FXML
     private Button btnSuggererPrix;
     @FXML
-    private Label aiDescStatus;
+    private Label aiDescStatus;  // label elli ytalla3 "en cours..." wella "reussi"
     @FXML
     private Label aiPrixStatus;
 
     private final AnnonceService annonceService = new AnnonceService();
-    private final GeminiAIService aiService = new GeminiAIService();
+    private final GeminiAIService aiService = new GeminiAIService(); // l'IA Gemini
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -82,10 +78,8 @@ public class AjouterAnnonceController implements Initializable {
         typeCombo.setValue(TypeAnnonce.LOCATION.getLabel());
     }
 
-    /**
-     * Initialise le contrôleur en mode MODIFICATION.
-     * Pré-remplit les champs avec les données de l'annonce.
-     */
+    // ken na3tiw annonce deja mawjouda, nraj3ouha l modification (mech ajout)
+    // nremplissou les champs bel valeurs mta3 l annonce
     public void setAnnonce(Annonce annonce) {
         this.annonceEnModification = annonce;
 
@@ -109,9 +103,9 @@ public class AjouterAnnonceController implements Initializable {
         }
     }
 
-    // Houni nsta3mlou l IA bech nriglou l description (Amelioration)
-
-    // Thread séparé bech l'interface matetblockech (asynchrone)
+    // ===== BOUTON IA 1 : AMELIORER DESCRIPTION =====
+    // nab3thou el description l Gemini, w howa yredha 7sanner
+    // Task = thread separe (asynchrone) bech el interface ma tetblokch
     @FXML
     private void ameliorerDescription() {
         String titre = titreField.getText() != null ? titreField.getText().trim() : "";
@@ -131,7 +125,7 @@ public class AjouterAnnonceController implements Initializable {
         aiDescStatus.setVisible(true);
         aiDescStatus.setManaged(true);
 
-        // Appel asynchrone pour ne pas bloquer le thread JavaFX
+        // Task = thread separe. call() tkhdem fi background, setOnSucceeded ytall3 el resultat
         Task<String> task = new Task<>() {
             @Override
             protected String call() throws Exception {
@@ -157,9 +151,8 @@ public class AjouterAnnonceController implements Initializable {
         new Thread(task).start();
     }
 
-    // L'IA ta3tina soum a peu pres (Suggestion de prix)
-
-    // Appelle l'IA pour suggérer un prix (asynchrone)
+    // ===== BOUTON IA 2 : SUGGERER PRIX =====
+    // nab3thou les details l Gemini, w howa y9ollna el soum el mouneseb
     @FXML
     private void suggererPrix() {
         String titre = titreField.getText() != null ? titreField.getText().trim() : "";
@@ -189,10 +182,10 @@ public class AjouterAnnonceController implements Initializable {
 
         task.setOnSucceeded(event -> Platform.runLater(() -> {
             double prix = task.getValue();
-            prixField.setText(String.format("%.2f", prix));
+            prixField.setText(String.format(java.util.Locale.US, "%.2f", prix));
             btnSuggererPrix.setDisable(false);
             btnSuggererPrix.setText("💡 Suggérer un prix");
-            aiPrixStatus.setText("✅ Prix suggéré par Gemini IA : " + String.format("%.2f", prix) + " DT");
+            aiPrixStatus.setText("✅ Prix suggéré par Gemini IA : " + String.format(java.util.Locale.US, "%.2f", prix) + " DT");
         }));
 
         task.setOnFailed(event -> Platform.runLater(() -> {
@@ -205,7 +198,8 @@ public class AjouterAnnonceController implements Initializable {
         new Thread(task).start();
     }
 
-    // PUBLICATION (avec modération IA)
+    // ===== PUBLICATION / MODIFICATION =====
+    // houni el logique el principale : validation + anti-fraude + moderation IA + INSERT/UPDATE
 
     @FXML
     private void publierAnnonce() {
@@ -232,7 +226,7 @@ public class AjouterAnnonceController implements Initializable {
             return;
         }
 
-        // Construire/Mettre à jour l'objet Annonce
+        // nebniw l objet Annonce mel champs (ken modification, nesta3mlou l annonce existante)
         Annonce annonce = (annonceEnModification != null) ? annonceEnModification : new Annonce();
 
         annonce.setTitre(titre);

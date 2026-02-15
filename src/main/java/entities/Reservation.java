@@ -3,11 +3,13 @@ package entities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// Entity Reservation - tmathel table "reservations" fl base
+// fih relation m3a Annonce + 2 Users (demandeur w proprietaire)
 public class Reservation {
     private int id;
-    private Annonce annonce;
-    private User demandeur;
-    private User proprietaire;
+    private Annonce annonce;             // l annonce elli bech nekrewha
+    private User demandeur;              // el user elli 7abb yakri
+    private User proprietaire;           // el user elli 3andou el materiel
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private int quantite;

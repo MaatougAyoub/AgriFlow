@@ -7,25 +7,31 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Service Annonce: Houni na3mlou les opérations l koll (ajouter, supprimer, modif...)
+// Service CRUD mta3 les Annonces - houni na3mlou kol les operations (ajouter, modifier, supprimer, recuperer)
+// yimplementi IService<Annonce> ya3ni lazem y7ot les 4 methodes CRUD
 public class AnnonceService implements IService<Annonce> {
 
-    private Connection cnx;
-    private final UserService userService;
+    private Connection cnx; // el connexion mta3 la base
+    private final UserService userService; // bech nrec5periw l user mta3 kol annonce
 
 
     public AnnonceService() {
+        // njibou el connexion men el Singleton MyDatabase
         this.cnx = MyDatabase.getInstance().getConnection();
         this.userService = new UserService();
     }
 
 
+    // ===== AJOUTER = INSERT INTO annonces =====
+    // na3mlou INSERT fl base, nesta3mlou PreparedStatement bech na7miw men SQL Injection
+    // les ? yet3awdhou bel valeurs (setString, setInt...)
     @Override
     public void ajouter(Annonce annonce) throws SQLException {
         if (annonce.getProprietaire() == null) {
             throw new SQLException("Lezem femma proprietaire, sinon chkoun bech ybi3 ?");
         }
 
+        // valeurs par defaut ken ma7athomch
         TypeAnnonce type = annonce.getType() != null ? annonce.getType() : TypeAnnonce.LOCATION;
         StatutAnnonce statut = annonce.getStatut() != null ? annonce.getStatut() : StatutAnnonce.DISPONIBLE;
         String unitePrix = annonce.getUnitePrix();
@@ -33,11 +39,13 @@ public class AnnonceService implements IService<Annonce> {
             unitePrix = "jour";
         }
 
+        // el query INSERT bel ? (PreparedStatement ya7mi men SQL Injection)
         String query = "INSERT INTO annonces (titre, description, type, statut, prix, unite_prix, " +
                 "categorie, marque, modele, annee_fabrication, localisation, proprietaire_id, " +
                 "date_debut_disponibilite, date_fin_disponibilite, avec_operateur, caution) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+        // RETURN_GENERATED_KEYS bech ba3d l INSERT, nraj3ou l ID elli tkhla9 (auto_increment)
         try (PreparedStatement pst = cnx.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, annonce.getTitre());
             pst.setString(2, annonce.getDescription());
@@ -77,6 +85,8 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
+    // ===== MODIFIER = UPDATE annonces SET ... WHERE id=? =====
+    // nbadlou les valeurs mta3 annonce deja mawjouda fl base
     @Override
     public void modifier(Annonce annonce) throws SQLException {
         TypeAnnonce type = annonce.getType() != null ? annonce.getType() : TypeAnnonce.LOCATION;
@@ -126,6 +136,8 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
+    // ===== SUPPRIMER = DELETE FROM annonces WHERE id=? =====
+    // nfas5ou l annonce mel base b el ID mta3ha
     @Override
     public void supprimer(Annonce annonce) throws SQLException {
         String query = "DELETE FROM annonces WHERE id=?";
@@ -147,6 +159,8 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
+    // ===== RECUPERER TOUT = SELECT * FROM annonces =====
+    // njibou lkol les annonces mel base, trié bel date (le plus recent l foug)
     @Override
     public List<Annonce> recuperer() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
@@ -169,6 +183,8 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
+    // ===== RECUPERER PAR ID = SELECT * FROM annonces WHERE id=? =====
+    // njibou annonce wa7da precisa bel ID mta3ha
     @Override
     public Annonce recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM annonces WHERE id=?";
@@ -194,6 +210,7 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
+    // njibou ken les annonces DISPONIBLES (elli mazelt ma tkraw/tbaw)
     public List<Annonce> recupererDisponibles() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
         String query = "SELECT * FROM annonces WHERE statut=? ORDER BY date_creation DESC";
@@ -264,7 +281,8 @@ public class AnnonceService implements IService<Annonce> {
         return annonces;
     }
 
-    // Convertir un ResultSet en objet Annonce
+    // Houni n7awlou el ResultSet (elli jey mel base) l objet Annonce Java
+    // ya3ni kol colonne fl base -> attribut fl objet (mapping)
     private Annonce mapResultSetToAnnonce(ResultSet rs) throws SQLException {
         Annonce annonce = new Annonce();
         annonce.setId(rs.getInt("id"));
@@ -308,7 +326,7 @@ public class AnnonceService implements IService<Annonce> {
             annonce.setDateModification(dateModification.toLocalDateTime());
         }
 
-        // Récupération du propriétaire
+        // njibou el proprietaire men table utilisateurs (JOIN manuelle)
         int proprietaireId = rs.getInt("proprietaire_id");
         try {
             User proprietaire = userService.recupererParId(proprietaireId);
@@ -317,7 +335,7 @@ public class AnnonceService implements IService<Annonce> {
             System.err.println("Proprietaire introuvable ID: " + proprietaireId);
         }
 
-        // Récupération des photos depuis annonce_photos
+        // njibou les photos mel table annonce_photos (SELECT bel annonce_id)
         try {
             List<String> photos = new ArrayList<>();
             String photoQuery = "SELECT url_photo FROM annonce_photos WHERE annonce_id=? ORDER BY ordre";

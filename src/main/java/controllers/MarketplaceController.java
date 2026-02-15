@@ -24,12 +24,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-/**
- * Contrôleur Marketplace.
- * Affiche les annonces en grille (FlowPane), avec recherche temps réel
- * et filtre par type. Navigation complète vers Ajouter Annonce et Mes
- * Réservations.
- */
+// Controleur mta3 el page Marketplace - hiya el page principale
+// tchouf les annonces f grille (FlowPane), recherche en temps reel, filtre par type
 public class MarketplaceController implements Initializable {
 
     @FXML
@@ -49,26 +45,24 @@ public class MarketplaceController implements Initializable {
         annonceService = new AnnonceService();
         toutesLesAnnonces = new ArrayList<>();
 
-        // Initialiser le filtre type avec option "Tous"
+        // nremplissou el ComboBox mta3 type (LOCATION, VENTE) + option "Tous"
         typeFilter.getItems().add("Tous les types");
         for (TypeAnnonce t : TypeAnnonce.values()) {
             typeFilter.getItems().add(t.getLabel());
         }
         typeFilter.setValue("Tous les types");
 
-        // Recherche en temps réel
+        // recherche en temps reel : kol ma el user yakteb, nfiltriwha
         searchField.textProperty().addListener((obs, oldVal, newVal) -> appliquerFiltres());
 
-        // Filtre par type
+        // filtre par type : ki el user ybadel el ComboBox, nfiltriwha
         typeFilter.setOnAction(event -> appliquerFiltres());
 
-        // Charger les annonces
+        // njibou les annonces mel base
         loadAnnonces();
     }
 
-    /**
-     * Charge toutes les annonces disponibles depuis la BDD.
-     */
+    // njibou les annonces DISPONIBLES mel base w naffichiwhoum
     private void loadAnnonces() {
         annoncesContainer.getChildren().clear();
         try {

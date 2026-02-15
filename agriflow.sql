@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `agriflow`
 --
-CREATE DATABASE IF NOT EXISTS `agriflow` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `agriflow`;
 
 -- --------------------------------------------------------
 
@@ -116,9 +114,9 @@ CREATE TABLE `annonces` (
 --
 
 INSERT INTO `annonces` (`id`, `titre`, `description`, `type`, `statut`, `prix`, `unite_prix`, `categorie`, `marque`, `modele`, `annee_fabrication`, `localisation`, `latitude`, `longitude`, `proprietaire_id`, `date_debut_disponibilite`, `date_fin_disponibilite`, `date_creation`, `date_modification`, `avec_operateur`, `assurance_incluse`, `caution`, `conditions_location`, `quantite_disponible`, `unite_quantite`) VALUES
-(1, 'Tracteur John Deere 6120M', 'Tracteur puissant 120CV, entretien régulier chez concessionnaire. GPS intégré, climatisation. Idéal pour labour et semis.', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', 'John Deere', '6120M', 2020, 'Sousse', 35.82560000, 10.63690000, 36, '2026-02-01', '2026-06-30', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 1, 1000.00, 'Carburant à la charge du locataire. Restitution avec réservoir plein.', 1, 'unité'),
-(2, 'Moissonneuse New Holland CR9080', 'Moissonneuse-batteuse dernière génération avec barre de coupe 7m. Système de nettoyage performant. Opérateur expérimenté inclus.', 'LOCATION', 'DISPONIBLE', 800.00, 'jour', 'Moissonneuse', 'New Holland', 'CR9080', 2019, 'Sfax', 34.74060000, 10.76030000, 36, '2026-03-01', '2026-05-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 1, 3000.00, 'Location minimum 3 jours. Opérateur inclus. Carburant à la charge du locataire.', 1, 'unité'),
-(3, 'Engrais NPK 20-20-20 - 50 sacs', '50 sacs de 50kg disponibles. Engrais équilibré NPK pour cultures maraîchères et céréalières. Livraison possible.', 'VENTE', 'DISPONIBLE', 85.00, 'sac', 'Engrais', 'SIAPE', 'NPK 20-20-20', 2026, 'Tunis', 36.80650000, 10.18150000, 39, '2026-01-01', '2026-12-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 0, 0, 0.00, 'Vente par lot. Prix unitaire par sac de 50kg.', 50, 'sac');
+(1, 'Tracteur John Deere 6120M', 'Tracteur puissant, entretien régulier', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', 'John Deere', '6120M', 2020, 'Sousse', NULL, NULL, 1, '2026-02-01', '2026-06-30', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 0, 1000.00, NULL, 0, 'kg'),
+(2, 'Moissonneuse New Holland CR9080', 'Moissonneuse dernière génération', 'LOCATION', 'DISPONIBLE', 800.00, 'jour', 'Moissonneuse', 'New Holland', 'CR9080', 2019, 'Sfax', NULL, NULL, 2, '2026-03-01', '2026-05-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 0, 3000.00, NULL, 0, 'kg'),
+(3, 'Engrais NPK 20-20-20', '50 sacs de 50kg disponibles', 'VENTE', 'DISPONIBLE', 85.00, 'sac', 'Engrais', 'SIAPE', 'NPK 20-20-20', NULL, 'Tunis', NULL, NULL, 3, '2026-01-01', '2026-12-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 0, 0, 0.00, NULL, 0, 'kg');
 
 -- --------------------------------------------------------
 
@@ -151,7 +149,7 @@ INSERT INTO `annonce_photos` (`id`, `annonce_id`, `url_photo`, `ordre`) VALUES
 CREATE TABLE `collab_applications` (
   `id` bigint(20) NOT NULL,
   `request_id` bigint(20) NOT NULL,
-  `candidate_id` int(11) NOT NULL,
+  `candidate_id` bigint(20) NOT NULL,
   `message` varchar(255) DEFAULT NULL,
   `status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
   `applied_at` timestamp NOT NULL DEFAULT current_timestamp()
@@ -162,9 +160,9 @@ CREATE TABLE `collab_applications` (
 --
 
 INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `message`, `status`, `applied_at`) VALUES
-(1, 1, 36, 'Expert en récolte, disponible ces dates', 'APPROVED', '2026-02-07 15:40:22'),
-(2, 1, 37, 'Je suis disponible et j\'ai de l\'expérience', 'PENDING', '2026-02-07 15:40:22'),
-(3, 2, 35, 'Intéressé par cette mission', 'PENDING', '2026-02-07 15:40:22');
+(1, 1, 3, 'Expert en récolte, disponible ces dates', 'APPROVED', '2026-02-07 15:40:22'),
+(2, 1, 4, 'Je suis disponible et j\'ai de l\'expérience', 'PENDING', '2026-02-07 15:40:22'),
+(3, 2, 2, 'Intéressé par cette mission', 'PENDING', '2026-02-07 15:40:22');
 
 -- --------------------------------------------------------
 
@@ -174,7 +172,7 @@ INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `message`
 
 CREATE TABLE `collab_requests` (
   `id` bigint(20) NOT NULL,
-  `requester_id` int(11) NOT NULL,
+  `requester_id` bigint(20) NOT NULL,
   `title` varchar(150) NOT NULL,
   `description` text DEFAULT NULL,
   `start_date` date DEFAULT NULL,
@@ -190,9 +188,9 @@ CREATE TABLE `collab_requests` (
 --
 
 INSERT INTO `collab_requests` (`id`, `requester_id`, `title`, `description`, `start_date`, `end_date`, `needed_people`, `status`, `created_at`, `updated_at`) VALUES
-(1, 36, 'Récolte olives - Nabeul', 'Besoin de 2 personnes pour récolte olives bio', '2026-02-10', '2026-02-15', 2, 'APPROVED', '2026-02-07 15:40:22', '2026-02-12 11:10:11'),
-(2, 37, 'Plantation tomates - Bizerte', 'Recherche 3 agriculteurs expérimentés pour plantation tomates', '2026-03-01', '2026-03-05', 3, 'REJECTED', '2026-02-07 15:40:22', '2026-02-14 18:46:55'),
-(3, 38, 'Irrigation orangers - Sousse', 'Besoin expertise irrigation goutte-à-goutte', '2026-02-20', '2026-02-22', 1, 'REJECTED', '2026-02-07 15:40:22', '2026-02-12 11:10:22');
+(1, 2, 'Récolte olives - Nabeul', 'Besoin de 2 personnes pour récolte olives bio', '2026-02-10', '2026-02-15', 2, 'APPROVED', '2026-02-07 15:40:22', '2026-02-12 11:10:11'),
+(2, 3, 'Plantation tomates - Bizerte', 'Recherche 3 agriculteurs expérimentés pour plantation tomates', '2026-03-01', '2026-03-05', 3, 'REJECTED', '2026-02-07 15:40:22', '2026-02-14 18:46:55'),
+(3, 4, 'Irrigation orangers - Sousse', 'Besoin expertise irrigation goutte-à-goutte', '2026-02-20', '2026-02-22', 1, 'REJECTED', '2026-02-07 15:40:22', '2026-02-12 11:10:22');
 
 -- --------------------------------------------------------
 
@@ -313,7 +311,7 @@ CREATE TABLE `plans_irrigation` (
 --
 
 INSERT INTO `plans_irrigation` (`plan_id`, `id_culture`, `nom_culture`, `date_demande`, `statut`, `volume_eau_propose`, `temp_irrigation`, `temp`, `donnees_meteo_json`) VALUES
-(1, NULL, NULL, '2026-02-14 17:46:32', 'brouillon', 35, '00:00:00', '2026-02-14 17:46:32', NULL),
+(1, 1, NULL, '2026-02-14 17:46:32', 'brouillon', 35, '00:00:00', '2026-02-14 17:46:32', NULL),
 (2, NULL, 'Tomates Test', '2026-02-14 17:49:31', 'en_attente', 45.5, '06:30:00', '2026-02-14 17:49:31', '{\"temperature\": 28, \"humidite\": 65}');
 
 -- --------------------------------------------------------
@@ -433,8 +431,7 @@ INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`,
 (35, 'oussama', 'Fattoumi', 88554411, 'oussama@gmail.com', 'oussama1', 'EXPERT', '2026-02-10', 'uploadssignatures1770758047802_Logo_ESPRIT_Ariana.jpg'),
 (36, 'Sami', 'Maatoug', 2030501, 'sami@gmail.com', 'sami*11', 'AGRICULTEUR', '2026-02-10', 'uploads/signatures/1770850459714_TuNour.jpg'),
 (37, 'Ayoub22', 'Maatoug22', 11429920, 'maatougayoub7@gmail.com', 'pwayoub', 'EXPERT', '2026-02-11', 'uploadssignatures1770843103211_user.png'),
-(38, 'Maatoug', 'Ayoub', 585, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-13', 'uploads/signatures/1771084885464_Gemini_Generated_Image_mq403hmq403hmq40.png'),
-(39, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'amenallah1', 'AGRICULTEUR', '2026-02-10', '');
+(38, 'Maatoug', 'Ayoub', 585, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-13', 'uploads/signatures/1771084885464_Gemini_Generated_Image_mq403hmq403hmq40.png');
 
 --
 -- Indexes for dumped tables
@@ -487,29 +484,6 @@ ALTER TABLE `collab_requests`
   ADD KEY `requester_id` (`requester_id`),
   ADD KEY `idx_status` (`status`),
   ADD KEY `idx_dates` (`start_date`,`end_date`);
-
---
--- Indexes for table `cultures`
---
-ALTER TABLE `cultures`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_parcelle` (`parcelle_id`),
-  ADD KEY `idx_proprietaire` (`proprietaire_id`);
-
---
--- Indexes for table `culture_vendue`
---
-ALTER TABLE `culture_vendue`
-  ADD PRIMARY KEY (`id_vente`),
-  ADD KEY `idx_culture` (`id_culture`),
-  ADD KEY `idx_acheteur` (`id_acheteur`);
-
---
--- Indexes for table `parcelle`
---
-ALTER TABLE `parcelle`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_agriculteur` (`agriculteur_id`);
 
 --
 -- Indexes for table `experts`
@@ -596,24 +570,6 @@ ALTER TABLE `collab_requests`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `cultures`
---
-ALTER TABLE `cultures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `culture_vendue`
---
-ALTER TABLE `culture_vendue`
-  MODIFY `id_vente` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `parcelle`
---
-ALTER TABLE `parcelle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
@@ -647,17 +603,11 @@ ALTER TABLE `reservations`
 -- AUTO_INCREMENT for table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `agriculteurs` — add Amenallah Jerbi
---
-INSERT INTO `agriculteurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `carte_pro`, `adresse`, `parcelles`) VALUES
-(39, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'amenallah1', 'AGRICULTEUR', '2026-02-10', '', NULL, 'Sousse', '');
 
 --
 -- Constraints for table `admins`
@@ -672,46 +622,17 @@ ALTER TABLE `agriculteurs`
   ADD CONSTRAINT `fk_agriculteurs_utilisateurs` FOREIGN KEY (`id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `annonces`
---
-ALTER TABLE `annonces`
-  ADD CONSTRAINT `fk_annonce_proprietaire` FOREIGN KEY (`proprietaire_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `annonce_photos`
---
-ALTER TABLE `annonce_photos`
-  ADD CONSTRAINT `fk_photo_annonce` FOREIGN KEY (`annonce_id`) REFERENCES `annonces` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `reservations`
---
-ALTER TABLE `reservations`
-  ADD CONSTRAINT `fk_reservation_annonce` FOREIGN KEY (`annonce_id`) REFERENCES `annonces` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_reservation_demandeur` FOREIGN KEY (`demandeur_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_reservation_proprietaire` FOREIGN KEY (`proprietaire_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `messages`
---
-ALTER TABLE `messages`
-  ADD CONSTRAINT `fk_message_expediteur` FOREIGN KEY (`expediteur_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_message_destinataire` FOREIGN KEY (`destinataire_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_message_annonce` FOREIGN KEY (`annonce_id`) REFERENCES `annonces` (`id`) ON DELETE SET NULL,
-  ADD CONSTRAINT `fk_message_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`id`) ON DELETE SET NULL;
-
---
 -- Constraints for table `collab_applications`
 --
 ALTER TABLE `collab_applications`
   ADD CONSTRAINT `collab_applications_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `collab_requests` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `collab_applications_ibfk_2` FOREIGN KEY (`candidate_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `collab_applications_ibfk_2` FOREIGN KEY (`candidate_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `collab_requests`
 --
 ALTER TABLE `collab_requests`
-  ADD CONSTRAINT `collab_requests_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `collab_requests_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `experts`
@@ -723,7 +644,7 @@ ALTER TABLE `experts`
 -- Constraints for table `plans_irrigation`
 --
 ALTER TABLE `plans_irrigation`
-  ADD CONSTRAINT `plans_irrigation_ibfk_1` FOREIGN KEY (`id_culture`) REFERENCES `cultures` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `plans_irrigation_ibfk_1` FOREIGN KEY (`id_culture`) REFERENCES `culture` (`id_culture`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `plans_irrigation_jour`

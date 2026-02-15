@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+// Controleur mta3 el dialog (popup) bech na3mlou reservation
+// el user ykhayyer les dates, yekteb message, w ychouf el prix total
 public class ReservationDialogController {
 
     @FXML

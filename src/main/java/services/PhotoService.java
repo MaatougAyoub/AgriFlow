@@ -7,7 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// Service CRUD pour les photos d'annonces
+// Service CRUD mta3 les photos (table annonce_photos)
+// kol annonce fih barcha photos, hedha el service yajoutihoum w yfas5houm
 public class PhotoService implements IService<PhotoAnnonce> {
 
     private Connection cnx;
@@ -16,6 +17,7 @@ public class PhotoService implements IService<PhotoAnnonce> {
         this.cnx = MyDatabase.getInstance().getConnection();
     }
 
+    // ===== AJOUTER PHOTO = INSERT INTO annonce_photos =====
     @Override
     public void ajouter(PhotoAnnonce photo) throws SQLException {
         String query = "INSERT INTO annonce_photos (annonce_id, url_photo, ordre) VALUES (?, ?, ?)";
@@ -172,6 +174,9 @@ public class PhotoService implements IService<PhotoAnnonce> {
     }
 
 
+    // ===== AJOUTER BARCHA PHOTOS D'UN COUP (BATCH) =====
+    // nesta3mlou batch insert bech nzidou barcha photos f wa9t wa7ed
+    // autoCommit=false bech ken fih erreur, nraj3ou kol chay (rollback)
     public void ajouterPlusieursPhotos(List<PhotoAnnonce> photos) throws SQLException {
         String query = "INSERT INTO annonce_photos (annonce_id, url_photo, ordre) VALUES (?, ?, ?)";
 
@@ -219,7 +224,7 @@ public class PhotoService implements IService<PhotoAnnonce> {
         return 0;
     }
 
-    // Convertir un ResultSet en PhotoAnnonce
+    // n7awlou el ResultSet l objet PhotoAnnonce (mapping)
     private PhotoAnnonce mapResultSetToPhoto(ResultSet rs) throws SQLException {
         PhotoAnnonce photo = new PhotoAnnonce();
         photo.setId(rs.getInt("id"));

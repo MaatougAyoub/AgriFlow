@@ -26,16 +26,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-/**
- * Contrôleur Back-Office Admin — version CARTES.
- *
- * EXPLICATION SIMPLE :
- * - initialize()       → se lance au démarrage, charge les données
- * - chargerAnnonces()  → lit les annonces depuis la BDD et crée une carte pour chacune
- * - chargerReservations() → idem pour les réservations
- * - creerCarteAnnonce()   → fabrique UNE carte visuelle pour une annonce
- * - creerCarteReservation() → fabrique UNE carte pour une réservation
- */
+// Controleur mta3 Dashboard Admin - ytalla3 les statistiques w yger les annonces/reservations
+// initialize() = yet5arjou les donnees, chargerAnnonces/chargerReservations = nbniw les cartes
 public class AdminDashboardController implements Initializable {
 
     // Elements FXML

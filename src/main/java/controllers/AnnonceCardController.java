@@ -15,11 +15,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-/**
- * Contrôleur pour les cartes d'annonces dans la Marketplace.
- * Gère l'affichage de l'image avec fallback sur un placeholder coloré par
- * catégorie.
- */
+// Controleur mta3 carte annonce wa7da (el card elli tetaffiche fl grille)
+// kol annonce 3andha carte fiha : taswira + titre + prix + boutons
 public class AnnonceCardController implements Initializable {
 
     @FXML

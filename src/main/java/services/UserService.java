@@ -8,18 +8,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Service CRUD pour les utilisateurs — table 'utilisateurs'.
- * Compatible avec le module Gestion Utilisateurs d'Ayoub.
- */
+// Service CRUD mta3 les utilisateurs (table 'utilisateurs')
+// hedhi el table mta3 Ayoub (module Gestion Utilisateurs) - n9rawha ken bech njibou les users
 public class UserService implements IService<User> {
 
     private Connection cnx;
 
     public UserService() {
+        // njibou el connexion mel Singleton
         this.cnx = MyDatabase.getInstance().getConnection();
     }
 
+    // ===== AJOUTER USER = INSERT INTO utilisateurs =====
     @Override
     public void ajouter(User user) throws SQLException {
         String query = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature) " +
@@ -43,6 +43,7 @@ public class UserService implements IService<User> {
         }
     }
 
+    // ===== MODIFIER USER = UPDATE utilisateurs SET ... WHERE id=? =====
     @Override
     public void modifier(User user) throws SQLException {
         String query = "UPDATE utilisateurs SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, signature=? WHERE id=?";
@@ -59,6 +60,7 @@ public class UserService implements IService<User> {
         }
     }
 
+    // ===== SUPPRIMER USER = DELETE FROM utilisateurs WHERE id=? =====
     @Override
     public void supprimer(User user) throws SQLException {
         String query = "DELETE FROM utilisateurs WHERE id=?";
@@ -68,6 +70,7 @@ public class UserService implements IService<User> {
         }
     }
 
+    // ===== RECUPERER PAR ID =====
     @Override
     public User recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM utilisateurs WHERE id=?";
@@ -81,6 +84,7 @@ public class UserService implements IService<User> {
         return null;
     }
 
+    // ===== RECUPERER TOUT = SELECT * FROM utilisateurs =====
     @Override
     public List<User> recuperer() throws SQLException {
         List<User> users = new ArrayList<>();
@@ -94,10 +98,7 @@ public class UserService implements IService<User> {
         return users;
     }
 
-    /**
-     * Mappe un ResultSet vers un objet User.
-     * Colonnes: id, nom, prenom, cin, email, motDePasse, role, dateCreation, signature
-     */
+    // n7awlou el ResultSet (mel base) l objet User (mapping kol colonne -> attribut)
     private User mapResultSet(ResultSet rs) throws SQLException {
         User user = new User();
         user.setId(rs.getInt("id"));

@@ -2,10 +2,8 @@ package entities;
 
 import java.time.LocalDate;
 
-/**
- * Entité Utilisateur — correspond à la table 'utilisateurs' dans la base agriflow.
- * Champs hérités par admins, agriculteurs, experts via FK.
- */
+// Entity User - tmathel table "utilisateurs" fl base (mta3 Ayoub)
+// hedhi partajee m3a module gestion utilisateurs
 public class User {
     private int id;
     private String nom;

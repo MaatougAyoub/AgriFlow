@@ -17,27 +17,31 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-// Génère des contrats PDF pour les réservations (iText 7)
+// Service PDF - nesta3mlou bibliotheque iText 7 bech nkhalkou contrats PDF
+// ki user ya3mel reservation, ngeneriw contrat PDF automatiquement
 public class PDFService {
 
+        // el dossier win nsajlou les PDFs
         private static final String CONTRATS_DIR = "contrats";
+        // les couleurs mta3 el design (akhdar AgriFlow + gris)
         private static final DeviceRgb AGRI_GREEN = new DeviceRgb(46, 125, 50);
         private static final DeviceRgb AGRI_GRAY = new DeviceRgb(117, 117, 117);
 
-        // Génère un contrat PDF à partir d'une réservation
+        // ===== GENERER UN CONTRAT PDF =====
+        // njibou les infos mel reservation, nebniw el PDF page par page
         public File genererContrat(Reservation reservation) throws IOException {
-                // Créer le dossier contrats s'il n'existe pas
+                // n5alkou el dossier "contrats" ken mawjoudch
                 File dossier = new File(CONTRATS_DIR);
                 if (!dossier.exists()) {
                         dossier.mkdirs();
                 }
 
-                // Générer un identifiant unique pour le contrat
+                // UUID = identifiant unique bech ma ysirch conflit f les fichiers
                 String uuid = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
                 String nomFichier = String.format("Contrat_AgriFlow_%s_%s.pdf", reservation.getId(), uuid);
                 File fichierPdf = new File(dossier, nomFichier);
 
-                // Créer le document PDF
+                // n5alkou el document PDF bel iText 7
                 PdfWriter writer = new PdfWriter(fichierPdf);
                 PdfDocument pdfDoc = new PdfDocument(writer);
                 Document document = new Document(pdfDoc);

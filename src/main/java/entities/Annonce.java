@@ -5,13 +5,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// Entity Annonce - tmathel table "annonces" fl base
+// POJO = classe bel getters/setters ken, ma fihech logique
 public class Annonce {
-    private int id;
-    private String titre;
-    private String description;
-    private TypeAnnonce type;
-    private StatutAnnonce statut;
-    private double prix;
+    private int id;                      // ID auto-increment mel base
+    private String titre;                // esm el annonce
+    private String description;          // el wsef mta3 el materiel
+    private TypeAnnonce type;            // LOCATION wella VENTE
+    private StatutAnnonce statut;        // DISPONIBLE, RESERVEE, etc
+    private double prix;                 // el soum bel DT
     private String unitePrix;
     private String categorie;
     private String marque;

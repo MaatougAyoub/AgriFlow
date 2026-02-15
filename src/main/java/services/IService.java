@@ -3,7 +3,8 @@ package services;
 import java.sql.SQLException;
 import java.util.List;
 
-// Interface CRUD générique
+// Interface CRUD generique - kol service lezem yimplementi hedhi (ajouter, modifier, supprimer, recuperer)
+// ya3ni kol service yebda 3andou nes les methodes (polymorphisme)
 public interface IService<T> {
 
     void ajouter(T entity) throws SQLException;
