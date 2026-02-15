@@ -1,60 +1,177 @@
 package controllers;
 
 import entities.User;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
-// Controleur principal - yger la navigation bin les vues (Marketplace, Ajout, Reservations, Admin)
-// el sidebar m3a les boutons kenou houni, w el contenu yetbadel fl contentArea
 public class MainController implements Initializable {
 
-    // @FXML = houni JavaFX yrabat el element mel FXML (fichier XML mta3 el interface)
-    @FXML
-    private BorderPane mainContainer; // el layout principal (sidebar + contenu)
-    @FXML
-    private Label userNameLabel; // esm el user fl sidebar
-    @FXML
-    private StackPane contentArea; // el zone win ncharjou les vues
+    @FXML private BorderPane mainContainer;
+    @FXML private StackPane contentArea;
 
-    @FXML
-    private Button btnMarketplace;
-    @FXML
-    private Button btnAjout;
-    @FXML
-    private Button btnReservations;
-    @FXML
-    private Button btnAdmin;
+    // Drawer
+    @FXML private ImageView logoImage;
+    @FXML private Label connectedAsLabel;
 
-    private Button activeButton; // le bouton actif fl sidebar (pour le style)
-    private static User currentUser; // el user connecte (static bech nwsloulou mel controllers lokhrin)
+    @FXML private Button menuProfil;
+    @FXML private Button menuListeUtilisateurs;
+    @FXML private Button menuMarketplace;
+    @FXML private Button menuParcellesCultures;
+    @FXML private Button menuCollaborations;
+    @FXML private Button menuPlanIrrigation;
 
-    // initialize() = tetna3da automatiquement ki el FXML yet5arj
+    // Boutons à conserver
+    @FXML private Button btnAjout;
+    @FXML private Button btnReservations;
+    @FXML private Button btnAdmin;
+
+    private Map<String, Object> userData;
+
+    public void setUserData(Map<String, Object> userData) {
+        this.userData = userData;
+    }
+
+
+    private Button activeButton;
+    private static User currentUser;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if (currentUser != null) {
-            userNameLabel.setText(currentUser.getNomComplet());
-        }
-        // par defaut, n7ammlou la vue Marketplace
-        afficherMarketplace();
+        refreshDrawerUserInfo();
+
+        // Par défaut: Marketplace
+        goMarketplace();
     }
 
-    // ===== NAVIGATION : kol methode t7amel vue FXML mokhtalfa =====
+    private void loadImageInto(ImageView view, String path) {
+        try {
+            if (view == null) return;
+            if (path == null || path.isBlank() || "null".equalsIgnoreCase(path)) {
+                view.setImage(null);
+                return;
+            }
+
+            String normalized = path.trim()
+                    .replace("uploadssignatures", "uploads/signatures/")
+                    .replace("uploadscertifications", "uploads/certifications/")
+                    .replace("uploadscartes_pro", "uploads/cartes_pro/");
+
+            if (normalized.startsWith("uploads") && !normalized.startsWith("uploads/")) {
+                normalized = normalized.replaceFirst("^uploads", "uploads/");
+            }
+
+            File file = new File(System.getProperty("user.dir"), normalized);
+            if (!file.exists()) file = new File(normalized);
+
+            if (!file.exists()) {
+                System.out.println("[Profil] Image introuvable: " + normalized);
+                view.setImage(null);
+                return;
+            }
+
+            view.setImage(new Image(file.toURI().toString(), true));
+        } catch (Exception e) {
+            view.setImage(null);
+        }
+    }
+
+
+
+    private void refreshDrawerUserInfo() {
+        if (connectedAsLabel != null) {
+            connectedAsLabel.setText(currentUser != null ? currentUser.getNomComplet() : "-");
+        }
+
+        // Masquer "Liste des utilisateurs" si pas ADMIN (si ton User expose getRole())
+        if (menuListeUtilisateurs != null) {
+            boolean isAdmin = currentUser != null
+                    && currentUser.getRole() != null
+                    && "ADMIN".equalsIgnoreCase(currentUser.getRole());
+
+            menuListeUtilisateurs.setVisible(isAdmin);
+            menuListeUtilisateurs.setManaged(isAdmin);
+        }
+    }
+
+
+    // ===== Navigation Drawer =====
 
     @FXML
-    public void afficherMarketplace() {
-        loadView("/Marketplace.fxml");
-        setActiveButton(btnMarketplace);
+    private void goProfil(Event event) {
+        //loadView("/ProfilUtilisateur.fxml");
+        //setActiveButton(menuProfil);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
+            Parent root = loader.load();
+
+            ProfilUtilisateur profil = loader.getController();
+            profil.setUserData(userData);
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AgriFlow - Profil");
+            stage.setScene(new Scene(root));
+            stage.show();
+            stage.setFullScreen(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    @FXML
+    private void goListeUtilisateurs() {
+        if (!isAdmin()) {
+            System.out.println("Accès refusé: ADMIN uniquement");
+            return;
+        }
+        loadView("/ListeUtilisateurs.fxml");
+        setActiveButton(menuListeUtilisateurs);
+    }
+
+    @FXML
+    private void goMarketplace() {
+        loadView("/Marketplace.fxml");
+        setActiveButton(menuMarketplace);
+    }
+
+    @FXML
+    private void goParcellesCultures() {
+        // Quand tu auras la vue, change le chemin:
+        // loadView("/ParcellesCultures.fxml");
+        System.out.println("Parcelles et cultures - non implémenté");
+        setActiveButton(menuParcellesCultures);
+    }
+
+    @FXML
+    private void goCollaborations() {
+        System.out.println("Collaborations - non implémenté");
+        setActiveButton(menuCollaborations);
+    }
+
+    @FXML
+    private void goPlanIrrigation() {
+        System.out.println("Plan d'Irrigation - non implémenté");
+        setActiveButton(menuPlanIrrigation);
+    }
+
+    // ===== Boutons conservés =====
 
     @FXML
     public void afficherAjout() {
@@ -70,19 +187,31 @@ public class MainController implements Initializable {
 
     @FXML
     public void afficherAdmin() {
+        // si tu veux restreindre aux admins:
+        // if (!isAdmin()) return;
+
         loadView("/AdminDashboard.fxml");
         setActiveButton(btnAdmin);
     }
 
     // ===== Helpers =====
 
-    // n7ammlou el fichier FXML w n7attoueh fl contentArea (zone mta3 el contenu)
     private void loadView(String fxmlPath) {
         try {
-            // FXMLLoader y9ra el fichier FXML w yraj3a l interface
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
-            // nbadlou el contenu fl StackPane
+
+            // ✅ si certains contrôleurs ont besoin du user connecté,
+            // tu peux les alimenter ici au cas par cas:
+            Object controller = loader.getController();
+            if (controller instanceof ProfilUtilisateur profilCtrl) {
+                // si ProfilUtilisateur utilise Map<String,Object>, tu dois adapter ici.
+                // profilCtrl.setUserData(...);
+            }
+            if (controller instanceof ListeUtilisateurs usersCtrl) {
+                // usersCtrl.setUserData(...);
+            }
+
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
             System.err.println("Erreur chargement vue : " + fxmlPath);
@@ -90,18 +219,41 @@ public class MainController implements Initializable {
         }
     }
 
-    // nbadlou el style mta3 el bouton actif (bech el user ychouf winou houwa)
+
+
     private void setActiveButton(Button button) {
         if (activeButton != null) {
-            activeButton.getStyleClass().remove("nav-button-active");
+            // style non-actif (uniforme)
+            activeButton.setStyle(
+                    "-fx-background-color: transparent;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-padding: 10 12;" +
+                            "-fx-border-color: rgba(255,255,255,0.35);" +
+                            "-fx-border-radius: 10;"
+            );
         }
+
         activeButton = button;
+
         if (activeButton != null) {
-            activeButton.getStyleClass().add("nav-button-active");
+            // style actif
+            activeButton.setStyle(
+                    "-fx-background-color: #1B5E20;" +
+                            "-fx-text-fill: white;" +
+                            "-fx-font-weight: bold;" +
+                            "-fx-padding: 10 12;" +
+                            "-fx-background-radius: 10;"
+            );
         }
     }
 
-    // ===== Gestion User (static bech n9raw min n7eb men ay controller) =====
+    private boolean isAdmin() {
+        return currentUser != null
+                && currentUser.getRole() != null
+                && "ADMIN".equalsIgnoreCase(currentUser.getRole());
+    }
+
+    // ===== Gestion User (utilisé par ReservationDialogController etc.) =====
 
     public static void setCurrentUser(User user) {
         currentUser = user;

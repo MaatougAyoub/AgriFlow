@@ -213,8 +213,33 @@ public class ProfilUtilisateur {
         // Déjà sur profil: rien à faire
     }
 
-    @FXML private void goMarketplace(ActionEvent event) {
-        showNotImplemented("Marketplace");
+    @FXML
+    private void goMarketplace(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
+            Parent root = loader.load();
+
+            MainController main = loader.getController(); // ✅ bon controller
+
+            // ✅ si tu as besoin d'initialiser currentUser côté marketplace
+            // (à adapter: ici je mets un placeholder si tu n'as pas encore la conversion)
+            // MainController.setCurrentUser(...);
+
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("AgriFlow - Marketplace");
+            stage.setScene(new Scene(root));
+
+            // Choisis un seul mode:
+            stage.setMaximized(true);
+            stage.setFullScreen(true); // optionnel (mais pas nécessaire si maximized)
+
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorLabel.setText("Impossible d'ouvrir Marketplace: " + e.getMessage());
+            errorLabel.setVisible(true);
+        }
     }
 
     @FXML private void goParcellesCultures(ActionEvent event) {
