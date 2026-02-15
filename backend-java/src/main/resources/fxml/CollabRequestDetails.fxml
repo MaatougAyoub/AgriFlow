@@ -33,7 +33,7 @@
                     <HBox alignment="CENTER_LEFT" spacing="15">
                         <Text fx:id="titleLabel" text="Récolte de Tomates" 
                               style="-fx-font-size: 32px; -fx-font-weight: bold;"/>
-                        <Label fx:id="statusLabel" text="VALIDÉE" styleClass="badge badge-validated"/>
+                        <Text fx:id="statusLabel" text="VALIDÉE" styleClass="badge badge-validated"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <Button text="Publier une demande" styleClass="btn-primary"/>
                     </HBox>
