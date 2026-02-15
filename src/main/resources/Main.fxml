@@ -103,12 +103,22 @@
             <Separator style="-fx-opacity: 0.35;"/>
 
             <!-- User footer -->
-            <VBox spacing="4">
+            <VBox spacing="6">
                 <Label text="Connecté en tant que"
-                       style="-fx-text-fill: rgba(255,255,255,0.75);"/>
+                       style="-fx-text-fill: rgba(255,255,255,0.60); -fx-font-size: 11px;"/>
                 <Label fx:id="connectedAsLabel"
                        text="-"
-                       style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                       style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;"/>
+                <Label fx:id="connectedEmailLabel"
+                       text=""
+                       style="-fx-text-fill: rgba(255,255,255,0.75); -fx-font-size: 11px;"/>
+                <Label fx:id="connectedRoleLabel"
+                       text=""
+                       style="-fx-text-fill: #A5D6A7; -fx-font-weight: bold; -fx-font-size: 11px;"/>
+                <Button fx:id="btnDeconnexion" text="🚪 Déconnexion"
+                        onAction="#deconnecter"
+                        maxWidth="1.7976931348623157E308"
+                        style="-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-padding: 6 10; -fx-background-radius: 8; -fx-font-size: 11px; -fx-cursor: hand;"/>
             </VBox>
         </VBox>
     </left>

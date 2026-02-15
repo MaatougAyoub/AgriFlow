@@ -14,7 +14,7 @@ import java.time.Duration;
 public class GeminiAIService {
 
     // el cle API mta3 Gemini (men Google Cloud Console)
-    private static final String API_KEY = "AIzaSyDkwXGRdu7eyhHSk_T_C3bWEkWI5Jtk67k";
+    private static final String API_KEY = "AIzaSyBnIK2KXC3SrRZN-s4xd4M6dwMr78-KEqM";
     // el URL mta3 l'API (endpoint REST)
     private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key="
             + API_KEY;
@@ -29,10 +29,9 @@ public class GeminiAIService {
                 .build();
     }
 
-
-
     // ===== 1. AMELIORER DESCRIPTION =====
-    // neb3thou el titre + description l Gemini, w howa yredha 7sanner w plus professionnelle
+    // neb3thou el titre + description l Gemini, w howa yredha 7sanner w plus
+    // professionnelle
     public String ameliorerDescription(String titre, String description, String categorie) throws Exception {
         // el prompt = el texte elli nab3thousou l l'IA (kifech na7ki m3aha)
         String prompt = String.format(
@@ -51,10 +50,9 @@ public class GeminiAIService {
         return envoyerRequete(prompt);
     }
 
-
-
     // ===== 2. SUGGERER PRIX =====
-    // nab3thou les details mta3 l annonce l Gemini, w howa y9ollna 9addech el soum el mouneseb
+    // nab3thou les details mta3 l annonce l Gemini, w howa y9ollna 9addech el soum
+    // el mouneseb
     public double suggererPrix(String titre, String description, String categorie,
             String localisation, String type) throws Exception {
         String prompt = String.format(
@@ -80,11 +78,13 @@ public class GeminiAIService {
 
         String reponse = envoyerRequete(prompt);
 
-        // Gemini yredlna string (ex: "250.00" wella "1,500.00"), lezem n7awlouha l double
+        // Gemini yredlna string (ex: "250.00" wella "1,500.00"), lezem n7awlouha l
+        // double
         // nna7iw kol haja mahich chiffre, point, wella virgule
         String prixStr = reponse.replaceAll("[^0-9.,]", "");
         // ken fih virgule comme separateur milliers (ex: 1,500.00), nna7iwha
-        // sinon ken fih virgule comme separateur decimal (ex: 250,00), nbadlouha b point
+        // sinon ken fih virgule comme separateur decimal (ex: 250,00), nbadlouha b
+        // point
         if (prixStr.contains(",") && prixStr.contains(".")) {
             // Format 1,500.00 -> nna7iw el virgule
             prixStr = prixStr.replace(",", "");
@@ -99,10 +99,9 @@ public class GeminiAIService {
         }
     }
 
-
-
     // ===== 3. MODERER CONTENU =====
-    // nab3thou el titre + description l Gemini, w howa y9ollna ken fih mochkla wella ok
+    // nab3thou el titre + description l Gemini, w howa y9ollna ken fih mochkla
+    // wella ok
     // retourne null = OK, sinon retourne le motif de rejet
     public String modererContenu(String titre, String description) throws Exception {
         String prompt = String.format(
@@ -130,8 +129,6 @@ public class GeminiAIService {
         }
         return reponse.trim(); // Retourne le motif de rejet
     }
-
-
 
     // ===== METHODE PRIVEE : Envoi de la requete HTTP a Gemini =====
     // hedhi hiya el methode elli tab3ath el prompt l Google w traj3a el reponse

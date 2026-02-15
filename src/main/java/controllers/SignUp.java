@@ -27,32 +27,48 @@ import java.util.ResourceBundle;
 
 public class SignUp implements Initializable {
 
-    @FXML private ComboBox<String> typeUtilisateurCombo;
+    @FXML
+    private ComboBox<String> typeUtilisateurCombo;
 
     // Champs communs
-    @FXML private TextField nomField;
-    @FXML private TextField prenomField;
-    @FXML private TextField cinField;
-    @FXML private TextField emailField;
-    @FXML private PasswordField motDePasseField;
-    @FXML private PasswordField confirmMotDePasseField;
+    @FXML
+    private TextField nomField;
+    @FXML
+    private TextField prenomField;
+    @FXML
+    private TextField cinField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField motDePasseField;
+    @FXML
+    private PasswordField confirmMotDePasseField;
 
     // Signature upload (champ non editable + bouton parcourir dans FXML)
-    @FXML private TextField signaturePathField;
+    @FXML
+    private TextField signaturePathField;
 
     // Labels feedback
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
 
     // Champs Agriculteur
-    @FXML private VBox agriculteurFieldsBox;
-    @FXML private TextField adresseField;
-    @FXML private TextField parcellesField;
-    @FXML private TextField carteProPathField;
+    @FXML
+    private VBox agriculteurFieldsBox;
+    @FXML
+    private TextField adresseField;
+    @FXML
+    private TextField parcellesField;
+    @FXML
+    private TextField carteProPathField;
 
     // Champs Expert
-    @FXML private VBox expertFieldsBox;
-    @FXML private TextField certificationPathField;
+    @FXML
+    private VBox expertFieldsBox;
+    @FXML
+    private TextField certificationPathField;
 
     // Chemins fichiers (valeurs enregistrées en DB)
     private String signaturePath = null;
@@ -123,13 +139,13 @@ public class SignUp implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
-        );
+                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
         return fileChooser.showOpenDialog(nomField.getScene().getWindow());
     }
 
     /**
-     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin relatif (court) à stocker en DB :
+     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin
+     * relatif (court) à stocker en DB :
      * ex: uploads/signatures/1700_file.png
      *
      * ⚠️ Important : ne jamais stocker un chemin absolu Windows dans la DB.
@@ -162,7 +178,8 @@ public class SignUp implements Initializable {
         hideMessages();
 
         try {
-            if (!validateFields()) return;
+            if (!validateFields())
+                return;
 
             String type = typeUtilisateurCombo.getValue();
             if ("Agriculteur".equals(type)) {
@@ -204,8 +221,7 @@ public class SignUp implements Initializable {
                 signaturePath,
                 carteProPath,
                 adresseField.getText().trim(),
-                parcellesField.getText().trim()
-        );
+                parcellesField != null ? parcellesField.getText().trim() : "");
 
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
 
@@ -232,8 +248,7 @@ public class SignUp implements Initializable {
                 Role.EXPERT.toString(),
                 LocalDate.now(),
                 signaturePath,
-                certificationPath
-        );
+                certificationPath);
 
         serviceExpert.ajouterExpert(expert);
 
@@ -304,6 +319,7 @@ public class SignUp implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Connexion");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
@@ -352,7 +368,8 @@ public class SignUp implements Initializable {
 
         signaturePathField.clear();
         adresseField.clear();
-        parcellesField.clear();
+        if (parcellesField != null)
+            parcellesField.clear();
         carteProPathField.clear();
         certificationPathField.clear();
 

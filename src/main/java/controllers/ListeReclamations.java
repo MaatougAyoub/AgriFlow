@@ -404,34 +404,54 @@ import java.util.stream.Collectors;
 public class ListeReclamations {
 
     // TAB1
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> categorieFilterCombo;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> categorieFilterCombo;
 
-    @FXML private TableView<ReclamationRow> table;
+    @FXML
+    private TableView<ReclamationRow> table;
 
-    @FXML private TableColumn<ReclamationRow, String> colNom;
-    @FXML private TableColumn<ReclamationRow, String> colPrenom;
-    @FXML private TableColumn<ReclamationRow, String> colRole;
-    @FXML private TableColumn<ReclamationRow, String> colEmail;
+    @FXML
+    private TableColumn<ReclamationRow, String> colNom;
+    @FXML
+    private TableColumn<ReclamationRow, String> colPrenom;
+    @FXML
+    private TableColumn<ReclamationRow, String> colRole;
+    @FXML
+    private TableColumn<ReclamationRow, String> colEmail;
 
-    @FXML private TableColumn<ReclamationRow, String> colCategorie;
-    @FXML private TableColumn<ReclamationRow, String> colTitre;
-    @FXML private TableColumn<ReclamationRow, String> colDescription;
-    @FXML private TableColumn<ReclamationRow, String> colDate;
-    @FXML private TableColumn<ReclamationRow, String> colStatut;
-    @FXML private TableColumn<ReclamationRow, String> colReponse;
+    @FXML
+    private TableColumn<ReclamationRow, String> colCategorie;
+    @FXML
+    private TableColumn<ReclamationRow, String> colTitre;
+    @FXML
+    private TableColumn<ReclamationRow, String> colDescription;
+    @FXML
+    private TableColumn<ReclamationRow, String> colDate;
+    @FXML
+    private TableColumn<ReclamationRow, String> colStatut;
+    @FXML
+    private TableColumn<ReclamationRow, String> colReponse;
 
-    @FXML private TableColumn<ReclamationRow, Void> colActions;
+    @FXML
+    private TableColumn<ReclamationRow, Void> colActions;
 
-    @FXML private Label countLabel;
+    @FXML
+    private Label countLabel;
 
     // TAB2
-    @FXML private ComboBox<String> categorieAddCombo;
-    @FXML private TextField titreField;
-    @FXML private TextArea descriptionArea;
+    @FXML
+    private ComboBox<String> categorieAddCombo;
+    @FXML
+    private TextField titreField;
+    @FXML
+    private TextArea descriptionArea;
 
-    @FXML private Label addErrorLabel;
-    @FXML private Label addSuccessLabel;
+    @FXML
+    private Label addErrorLabel;
+    @FXML
+    private Label addSuccessLabel;
 
     private final ServiceReclamation service = new ServiceReclamation();
     private final ObservableList<ReclamationRow> masterData = FXCollections.observableArrayList();
@@ -457,14 +477,12 @@ public class ListeReclamations {
     private void initCategoryCombos() {
         categorieFilterCombo.setItems(FXCollections.observableArrayList(
                 "Toutes",
-                "TECHNIQUE", "ACCESS", "DELIVERY", "PAIMENT", "SERVICE", "AUTRE"
-        ));
+                "TECHNIQUE", "ACCESS", "DELIVERY", "PAIMENT", "SERVICE", "AUTRE"));
         categorieFilterCombo.getSelectionModel().selectFirst();
         categorieFilterCombo.setOnAction(e -> rechercher(null));
 
         categorieAddCombo.setItems(FXCollections.observableArrayList(
-                "TECHNIQUE", "ACCESS", "DELIVERY", "PAIMENT", "SERVICE", "AUTRE"
-        ));
+                "TECHNIQUE", "ACCESS", "DELIVERY", "PAIMENT", "SERVICE", "AUTRE"));
     }
 
     private void setupColumns() {
@@ -597,7 +615,8 @@ public class ListeReclamations {
     }
 
     private void onReplyClicked(int index) {
-        if (index < 0 || index >= table.getItems().size()) return;
+        if (index < 0 || index >= table.getItems().size())
+            return;
         ReclamationRow row = table.getItems().get(index);
 
         TextInputDialog dialog = new TextInputDialog();
@@ -606,10 +625,12 @@ public class ListeReclamations {
         dialog.setContentText("Votre réponse :");
 
         var res = dialog.showAndWait();
-        if (res.isEmpty()) return;
+        if (res.isEmpty())
+            return;
 
         String reponse = res.get().trim();
-        if (reponse.isEmpty()) return;
+        if (reponse.isEmpty())
+            return;
 
         String formatted = getConnectedIdentity() + " : " + reponse;
 
@@ -624,7 +645,8 @@ public class ListeReclamations {
     }
 
     private void onDeleteClicked(int index) {
-        if (index < 0 || index >= table.getItems().size()) return;
+        if (index < 0 || index >= table.getItems().size())
+            return;
         ReclamationRow row = table.getItems().get(index);
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -632,7 +654,8 @@ public class ListeReclamations {
         confirm.setHeaderText("Supprimer la réclamation");
         confirm.setContentText("Voulez-vous vraiment supprimer cette réclamation ?");
         var res = confirm.showAndWait();
-        if (res.isEmpty() || res.get() != ButtonType.OK) return;
+        if (res.isEmpty() || res.get() != ButtonType.OK)
+            return;
 
         try {
             service.supprimerReclamation(new Reclamation(row.getId(), row.getUtilisateurId(), null, null, null));
@@ -769,17 +792,17 @@ public class ListeReclamations {
     @FXML
     private void retourProfil(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
             Parent root = loader.load();
 
-            ProfilUtilisateur profil = loader.getController();
-            profil.setUserData(userData);
+            MainController mainController = loader.getController();
+            mainController.setUserDataAndGoToProfil(userData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Profil");
+            stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
-            stage.setFullScreen(true);
         } catch (Exception e) {
             e.printStackTrace();
         }

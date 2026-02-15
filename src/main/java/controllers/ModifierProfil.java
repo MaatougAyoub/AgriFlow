@@ -22,38 +22,56 @@ import java.util.Map;
 
 public class ModifierProfil {
 
-    @FXML private Label roleLabel;
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
+    @FXML
+    private Label roleLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
 
     // step boxes
-    @FXML private VBox stepEditBox;
-    @FXML private VBox stepCodeBox;
+    @FXML
+    private VBox stepEditBox;
+    @FXML
+    private VBox stepCodeBox;
 
     // commun
-    @FXML private TextField nomField;
-    @FXML private TextField prenomField;
-    @FXML private TextField emailField;
+    @FXML
+    private TextField nomField;
+    @FXML
+    private TextField prenomField;
+    @FXML
+    private TextField emailField;
 
     // fichiers
-    @FXML private TextField signaturePathField;
+    @FXML
+    private TextField signaturePathField;
 
     // agri
-    @FXML private VBox agriculteurBox;
-    @FXML private TextField adresseField;
-    @FXML private TextField parcellesField;
-    @FXML private TextField carteProPathField;
+    @FXML
+    private VBox agriculteurBox;
+    @FXML
+    private TextField adresseField;
+    @FXML
+    private TextField parcellesField;
+    @FXML
+    private TextField carteProPathField;
 
     // expert
-    @FXML private VBox expertBox;
-    @FXML private TextField certificationPathField;
+    @FXML
+    private VBox expertBox;
+    @FXML
+    private TextField certificationPathField;
 
     // admin
-    @FXML private VBox adminBox;
-    @FXML private TextField revenuField;
+    @FXML
+    private VBox adminBox;
+    @FXML
+    private TextField revenuField;
 
     // code
-    @FXML private TextField codeField;
+    @FXML
+    private TextField codeField;
 
     private Map<String, Object> userData;
     private Map<String, Object> pendingData;
@@ -154,19 +172,20 @@ public class ModifierProfil {
         fc.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
-        );
+                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
         return fc.showOpenDialog(nomField.getScene().getWindow());
     }
 
     /**
-     * Copie le fichier dans uploads/<folderName>/ et retourne le chemin relatif à stocker en DB.
+     * Copie le fichier dans uploads/<folderName>/ et retourne le chemin relatif à
+     * stocker en DB.
      * ex: uploads/signatures/1700_x.png
      */
     private String saveFileAndReturnDbPath(File file, String folderName) {
         try {
             Path uploadDir = Paths.get("uploads", folderName);
-            if (!Files.exists(uploadDir)) Files.createDirectories(uploadDir);
+            if (!Files.exists(uploadDir))
+                Files.createDirectories(uploadDir);
 
             String fileName = System.currentTimeMillis() + "_" + file.getName();
             Path targetPath = uploadDir.resolve(fileName);
@@ -187,7 +206,8 @@ public class ModifierProfil {
     private void demanderCode(ActionEvent event) {
         hideMessages();
 
-        if (!validateForm()) return;
+        if (!validateForm())
+            return;
 
         pendingData = collectFormData();
 
@@ -232,18 +252,18 @@ public class ModifierProfil {
             ServiceAuth auth = new ServiceAuth();
             Map<String, Object> refreshed = auth.loginAndFetchProfile(
                     String.valueOf(pendingData.get("email")),
-                    String.valueOf(userData.get("motDePasse"))
-            );
+                    String.valueOf(userData.get("motDePasse")));
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
             Parent root = loader.load();
 
-            ProfilUtilisateur profilController = loader.getController();
-            profilController.setUserData(refreshed != null ? refreshed : pendingData);
+            MainController mainController = loader.getController();
+            mainController.setUserDataAndGoToProfil(refreshed != null ? refreshed : pendingData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Profil");
+            stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
 
         } catch (Exception e) {
@@ -255,15 +275,16 @@ public class ModifierProfil {
     @FXML
     private void annuler(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
             Parent root = loader.load();
 
-            ProfilUtilisateur profilController = loader.getController();
-            profilController.setUserData(userData);
+            MainController mainController = loader.getController();
+            mainController.setUserDataAndGoToProfil(userData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Profil");
+            stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.show();
         } catch (Exception e) {
             showError("Impossible de revenir au profil: " + e.getMessage());
@@ -308,7 +329,8 @@ public class ModifierProfil {
         m.put("prenom", prenomField.getText().trim());
         m.put("email", emailField.getText().trim());
 
-        // ✅ si l'utilisateur a uploadé une nouvelle image, utiliser newXxxPath (DB path)
+        // ✅ si l'utilisateur a uploadé une nouvelle image, utiliser newXxxPath (DB
+        // path)
         // sinon garder l'ancien path depuis userData
         m.put("signature", newSignaturePath != null ? newSignaturePath : safeString(userData.get("signature")));
 
@@ -318,7 +340,8 @@ public class ModifierProfil {
             m.put("parcelles", parcellesField.getText() == null ? "" : parcellesField.getText().trim());
             m.put("carte_pro", newCarteProPath != null ? newCarteProPath : safeString(userData.get("carte_pro")));
         } else if (role == Role.EXPERT) {
-            m.put("certification", newCertificationPath != null ? newCertificationPath : safeString(userData.get("certification")));
+            m.put("certification",
+                    newCertificationPath != null ? newCertificationPath : safeString(userData.get("certification")));
         } else if (role == Role.ADMIN) {
             String rev = revenuField.getText() == null ? "" : revenuField.getText().trim();
             m.put("revenu", rev.isBlank() ? null : rev);
@@ -349,7 +372,8 @@ public class ModifierProfil {
     }
 
     private String safeString(Object v) {
-        if (v == null) return "";
+        if (v == null)
+            return "";
         String s = String.valueOf(v);
         return "null".equalsIgnoreCase(s) ? "" : s;
     }
