@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AgriFlow" />
         <module name="my-project" />
+        <module name="AgriFlow-PI" />
       </profile>
     </annotationProcessing>
   </component>

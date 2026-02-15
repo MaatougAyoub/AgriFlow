@@ -1,9 +1,13 @@
 <<<<<<< HEAD
+# Build
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
+*.class
+*.jar
+*.war
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -11,6 +15,8 @@ target/
 .idea/compiler.xml
 .idea/libraries/
 *.iws
+# IDE
+.idea/
 *.iml
 *.ipr
 =======
@@ -23,6 +29,8 @@ out/
 
 ### Eclipse ###
 .apt_generated
+.vscode/
+.settings/
 .classpath
 .factorypath
 .project
@@ -48,9 +56,21 @@ build/
 !**/src/test/**/build/
 =======
 >>>>>>> badis
+.factorypath
 
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Media (trop volumineux pour Git)
+*.mp4
+*.avi
+*.mkv
+
+# Dossier des documents professeur (garder en local seulement)
+Profs/

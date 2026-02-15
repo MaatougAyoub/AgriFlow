@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceCulture implements IService<Culture> {
+public class ServiceCulture implements IServiceB<Culture> {
 
     private  Connection connection;
 
