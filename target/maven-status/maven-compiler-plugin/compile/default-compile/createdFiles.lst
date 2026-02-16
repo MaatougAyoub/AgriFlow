@@ -15,7 +15,6 @@ controllers\ProfilUtilisateur.class
 mains\MainFX.class
 controllers\SignUp.class
 controllers\ListeUtilisateurs$3.class
-controllers\AnnonceCardController.class
 services\FraudControlService.class
 services\IServiceExpert.class
 controllers\ReservationDialogController.class
@@ -29,9 +28,11 @@ entities\PhotoAnnonce.class
 controllers\ListeUtilisateurs$2.class
 controllers\AjouterAnnonceController$3.class
 controllers\SignIn.class
+controllers\ListeCultures$2.class
 entities\StatutAnnonce.class
 controllers\AdminDashboardController.class
 controllers\MesReservationsController.class
+controllers\ParcellesCulturesController.class
 controllers\ListeReclamations$2.class
 controllers\ListeUtilisateurs.class
 services\ServiceAgriculteur.class
@@ -42,6 +43,7 @@ entities\Categorie.class
 services\IServiceAdmin.class
 entities\Reclamation.class
 services\AnnonceService.class
+controllers\ListeCultures$3.class
 services\ServiceAdmin.class
 entities\ReclamationRow.class
 controllers\ListeCultures.class
@@ -65,6 +67,7 @@ controllers\CulturesEnVente.class
 entities\Role.class
 controllers\ListeParcelles$1.class
 controllers\MotDePasseOublie.class
+controllers\CulturesEnVente$1.class
 entities\Reservation.class
 services\ServiceReclamation.class
 entities\Expert.class

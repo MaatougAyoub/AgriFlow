@@ -4,63 +4,74 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.CulturesEnVente"
-            prefHeight="650.0" prefWidth="1100.0"
-            style="-fx-background-color: #F5F5F5;">
+            style="-fx-background-color: #F4F6F3;"
+            prefWidth="1200" prefHeight="720">
 
     <top>
-        <VBox spacing="10" style="-fx-background-color: white;">
+        <VBox spacing="12" style="-fx-background-color: white;">
             <padding>
-                <Insets top="16" right="18" bottom="16" left="18"/>
+                <Insets top="18" right="20" bottom="18" left="20"/>
             </padding>
 
-            <Label text="AgriFlow - Cultures en vente"
-                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="Cultures en vente"
+                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;"/>
+                <Region HBox.hgrow="ALWAYS"/>
 
-            <Label text="Consultez les cultures disponibles et contactez leur proprietaire"
-                   style="-fx-font-size: 14px; -fx-text-fill: #2E7D32;"/>
+                <Button text="Retour"
+                        onAction="#retourParcellesCultures"
+                        style="-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding: 10 16; -fx-background-radius: 10;"/>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Rechercher par nom..."
+                           style="-fx-padding: 10 14; -fx-background-radius: 10;"
+                           HBox.hgrow="ALWAYS"/>
+
+                <Button fx:id="btnRafraichir" text="Rafraîchir" onAction="#rafraichir"
+                        style="-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding: 10 16; -fx-background-radius: 10;"/>
+
+                <Label fx:id="countLabel" text="0"
+                       style="-fx-text-fill:#616161; -fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <Label fx:id="errorLabel" visible="false" managed="false"
+                   style="-fx-text-fill:#D32F2F; -fx-background-color:#FFEBEE; -fx-padding:10; -fx-background-radius:10;"/>
         </VBox>
     </top>
 
     <center>
-        <VBox spacing="12">
-            <padding>
-                <Insets top="14" right="18" bottom="14" left="18"/>
-            </padding>
+        <StackPane style="-fx-padding: 16;">
 
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Type:" style="-fx-font-weight: bold;"/>
-                <ComboBox fx:id="typeFilterCombo" prefWidth="200"/>
+            <!-- ADMIN PANE -->
+            <VBox fx:id="adminPane" spacing="10" visible="false" managed="false">
+                <TableView fx:id="table" prefHeight="600">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="colProprietaireId" text="Propriétaire ID" prefWidth="110"/>
+                        <TableColumn fx:id="colNom" text="Nom" prefWidth="180"/>
+                        <TableColumn fx:id="colType" text="Type" prefWidth="140"/>
+                        <TableColumn fx:id="colSuperficie" text="Superficie (m²)" prefWidth="140"/>
+                        <TableColumn fx:id="colRecolteEstime" text="Récolte estimée (Kg)" prefWidth="170"/>
+                        <TableColumn fx:id="colDateRecolte" text="Date récolte" prefWidth="140"/>
+                        <TableColumn fx:id="colActions" text="Actions" prefWidth="120"/>
+                    </columns>
+                </TableView>
+            </VBox>
 
-                <TextField fx:id="searchField"
-                           promptText="Rechercher par nom..."
-                           HBox.hgrow="ALWAYS"/>
+            <!-- AGRICULTEUR PANE -->
+            <VBox fx:id="agriculteurPane" spacing="10" visible="false" managed="false">
+                <ScrollPane fx:id="cardsScroll" fitToWidth="true"
+                            style="-fx-background-color: transparent; -fx-background: transparent;">
+                    <content>
+                        <VBox fx:id="cardsContainer" spacing="14" style="-fx-padding: 4;"/>
+                    </content>
+                </ScrollPane>
+            </VBox>
 
-                <Button text="Rechercher" onAction="#rechercher"
-                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 8 18;"/>
-
-                <Button text="Rafraîchir" onAction="#rafraichir"
-                        style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 18;"/>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <Button text="Retour" onAction="#retour"
-                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 8 18;"/>
-            </HBox>
-
-            <Label fx:id="countLabel" text="0 culture(s) en vente" style="-fx-text-fill: #616161;"/>
-
-            <ScrollPane fitToWidth="true" style="-fx-background-color:transparent;">
-                <content>
-                    <FlowPane fx:id="cardsPane"
-                              hgap="18" vgap="18"
-                              prefWrapLength="980"
-                              style="-fx-background-color:transparent;"/>
-                </content>
-            </ScrollPane>
-        </VBox>
+        </StackPane>
     </center>
 
 </BorderPane>

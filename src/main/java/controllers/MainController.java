@@ -53,7 +53,7 @@ public class MainController implements Initializable {
     private Button activeButton;
     private static User currentUser;
 
-    @Override
+   @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         refreshDrawerUserInfo();
 
@@ -153,9 +153,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void goParcellesCultures() {
-        // Quand tu auras la vue, change le chemin:
-        // loadView("/ParcellesCultures.fxml");
-        System.out.println("Parcelles et cultures - non implémenté");
+        loadView("/ParcellesCultures.fxml");
         setActiveButton(menuParcellesCultures);
     }
 
