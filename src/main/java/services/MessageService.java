@@ -104,7 +104,7 @@ public class MessageService implements IService<Message> {
         return messages;
     }
 
-    @Override
+
     public Message recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM messages WHERE id = ?";
         Message message = null;

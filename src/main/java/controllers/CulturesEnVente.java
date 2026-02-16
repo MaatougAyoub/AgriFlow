@@ -1,3 +1,4 @@
+/*
 package controllers;
 
 import entities.Culture;
@@ -169,3 +170,4 @@ public class CulturesEnVente {
         a.show();
     }
 }
+*/

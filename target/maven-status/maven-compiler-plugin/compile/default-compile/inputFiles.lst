@@ -1,6 +1,9 @@
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AdminDashboardController.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AjouterAnnonceController.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AnnonceCardController.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContCultureDetails.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContDashboard.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContPlanIrrigation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\CulturesEnVente.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeCultures.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeParcelles.java
@@ -25,6 +28,7 @@ C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Expert.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Message.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Parcelle.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\PhotoAnnonce.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\PlanIrrigation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Reclamation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\ReclamationRow.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Reservation.java
@@ -38,6 +42,7 @@ C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Utilisateur.ja
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\AppLauncher.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\Main.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\MainFX.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\MainPlanIrrigation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\AnnonceService.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ContentValidator.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\FraudControlService.java
@@ -58,10 +63,14 @@ C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceAuth.ja
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceCulture.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceCultureVendue.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceExpert.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceGenerateurPlan.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceParcelle.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServicePlanIrrigation.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServicePlanIrrigationJour.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceProfil.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceReclamation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceReservation.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceUtilisateur.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\UserService.java
+C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\utils\MyConnection.java
 C:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\utils\MyDatabase.java

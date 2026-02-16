@@ -71,7 +71,7 @@ public class UserService implements IService<User> {
     }
 
     // ===== RECUPERER PAR ID =====
-    @Override
+
     public User recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM utilisateurs WHERE id=?";
         try (PreparedStatement pst = cnx.prepareStatement(query)) {

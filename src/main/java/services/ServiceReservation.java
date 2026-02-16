@@ -155,7 +155,7 @@ public class ServiceReservation implements IService<Reservation> {
     }
 
     // ===== RECUPERER PAR ID =====
-    @Override
+
     public Reservation recupererParId(int id) throws SQLException {
         if (id <= 0) {
             throw new SQLException("ID reservation invalide.");

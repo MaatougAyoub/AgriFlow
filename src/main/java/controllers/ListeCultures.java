@@ -1,3 +1,4 @@
+/*
 package controllers;
 
 import entities.Culture;
@@ -346,3 +347,4 @@ public class ListeCultures {
         addErrorLabel.setVisible(false);
     }
 }
+*/
