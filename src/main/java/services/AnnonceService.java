@@ -210,10 +210,15 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
-    // njibou ken les annonces DISPONIBLES (elli mazelt ma tkraw/tbaw)
+    // njibou ken les annonces DISPONIBLES w elli ma3andhomch reservation ACCEPTEE
+    // ya3ni ken famma contrat deja signe 3la annonce, ma taffichihech fl marketplace
     public List<Annonce> recupererDisponibles() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
-        String query = "SELECT * FROM annonces WHERE statut=? ORDER BY date_creation DESC";
+        String query = "SELECT * FROM annonces a WHERE a.statut=? " +
+                "AND NOT EXISTS (" +
+                "  SELECT 1 FROM reservations r " +
+                "  WHERE r.annonce_id = a.id AND r.statut = 'ACCEPTEE'" +
+                ") ORDER BY a.date_creation DESC";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setString(1, StatutAnnonce.DISPONIBLE.name());

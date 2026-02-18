@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.CulturesEnVente"
+            prefHeight="650.0" prefWidth="1100.0"
+            style="-fx-background-color: #F5F5F5;">
+
+    <top>
+        <VBox spacing="10" style="-fx-background-color: white;">
+            <padding>
+                <Insets top="16" right="18" bottom="16" left="18"/>
+            </padding>
+
+            <Label text="AgriFlow - Cultures en vente"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+
+            <Label text="Consultez les cultures disponibles et contactez leur proprietaire"
+                   style="-fx-font-size: 14px; -fx-text-fill: #2E7D32;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="12">
+            <padding>
+                <Insets top="14" right="18" bottom="14" left="18"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Type:" style="-fx-font-weight: bold;"/>
+                <ComboBox fx:id="typeFilterCombo" prefWidth="200"/>
+
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par nom..."
+                           HBox.hgrow="ALWAYS"/>
+
+                <Button text="Rechercher" onAction="#rechercher"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 8 18;"/>
+
+                <Button text="Rafraîchir" onAction="#rafraichir"
+                        style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 18;"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Button text="Retour" onAction="#retour"
+                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 8 18;"/>
+            </HBox>
+
+            <Label fx:id="countLabel" text="0 culture(s) en vente" style="-fx-text-fill: #616161;"/>
+
+            <ScrollPane fitToWidth="true" style="-fx-background-color:transparent;">
+                <content>
+                    <FlowPane fx:id="cardsPane"
+                              hgap="18" vgap="18"
+                              prefWrapLength="980"
+                              style="-fx-background-color:transparent;"/>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>

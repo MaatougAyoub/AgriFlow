@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="controllers.ListeUtilisateurs"
+            prefHeight="650.0" prefWidth="1100.0"
+            style="-fx-background-color: #F5F5F5;">
+
+    <top>
+        <VBox spacing="8" style="-fx-background-color: #2E7D32;">
+            <padding>
+                <Insets top="16" right="18" bottom="16" left="18"/>
+            </padding>
+            <Label text="AgriFlow - Utilisateurs"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+            <Label text="Liste des utilisateurs (Admin)"
+                   style="-fx-font-size: 14px; -fx-text-fill: #E8F5E9;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="12">
+            <padding>
+                <Insets top="14" right="18" bottom="14" left="18"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField" promptText="Rechercher par nom / prénom / email..." HBox.hgrow="ALWAYS"/>
+                <Button text="Rechercher" onAction="#rechercher"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 8 18;"/>
+                <Button text="Rafraîchir" onAction="#rafraichir"
+                        style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-padding: 8 18;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Retour profil" onAction="#retourProfil"
+                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 8 18;"/>
+            </HBox>
+
+            <TableView fx:id="table" prefHeight="520.0">
+                <columns>
+                    <TableColumn fx:id="colNom" text="Nom"/>
+                    <TableColumn fx:id="colPrenom" text="Prénom"/>
+                    <TableColumn fx:id="colCin" text="CIN"/>
+                    <TableColumn fx:id="colEmail" text="Email"/>
+                    <TableColumn fx:id="colRole" text="Rôle"/>
+                    <TableColumn fx:id="colDateCreation" text="Date création"/>
+
+                    <!-- ✅ images -->
+                    <TableColumn fx:id="colSignatureImg" text="Signature"/>
+                    <TableColumn fx:id="colCarteProImg" text="Carte pro"/>
+                    <TableColumn fx:id="colCertificationImg" text="Certification"/>
+
+                    <!-- ✅ spécifiques -->
+                    <TableColumn fx:id="colAdresse" text="Adresse"/>
+                    <TableColumn fx:id="colParcelles" text="Parcelles"/>
+
+                    <TableColumn fx:id="colActions" text="Action"/>
+                </columns>
+            </TableView>
+
+            <Label fx:id="countLabel" text="0 utilisateur(s)" style="-fx-text-fill: #616161;"/>
+        </VBox>
+    </center>
+
+</BorderPane>
