@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +34,50 @@ public class ServiceReservation implements IService<Reservation> {
         this.userService = new UserService();
     }
 
+    // ===== VERIFICATION DISPONIBILITE =====
+    // nchoufou ken famma reservation ACCEPTEE 3la nafs el annonce w nafs el dates
+    // chevauchement = (debut1 < fin2) AND (fin1 > debut2)
+    // reservationIdExclue : nista3mlouha bech manblokiwch reservation nafsaha (utile fi accepter)
+    private boolean verifierDisponibilite(int annonceId, LocalDate dateDebut, LocalDate dateFin, int reservationIdExclue) throws SQLException {
+        String query = "SELECT COUNT(*) FROM reservations " +
+                "WHERE annonce_id = ? AND statut = 'ACCEPTEE' " +
+                "AND date_debut < ? AND date_fin > ? " +
+                "AND id != ?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, annonceId);
+            pst.setDate(2, Date.valueOf(dateFin));
+            pst.setDate(3, Date.valueOf(dateDebut));
+            pst.setInt(4, reservationIdExclue);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0; // true = disponible, false = conflit
+                }
+            }
+        }
+        return true;
+    }
+
     // ===== AJOUTER RESERVATION = INSERT INTO reservations =====
     // 9bal ma na3mlou INSERT, nvalidaw (dates s7a7, prix > 0, etc)
-    // w nzidou commission 10% 3al prix
+    // w nchoufou ken el periode deja mahdouza (ACCEPTEE) + nzidou commission 10%
     @Override
     public void ajouter(Reservation reservation) throws SQLException {
         // njibou el proprietaire mel annonce automatiquement ken ma7attouch
         autoSetProprietaire(reservation);
         validateReservationForInsert(reservation);
+
+        // nchoufou ken el periode deja mahdouza b reservation ACCEPTEE
+        boolean disponible = verifierDisponibilite(
+                reservation.getAnnonce().getId(),
+                reservation.getDateDebut(),
+                reservation.getDateFin(),
+                0 // 0 = pas d'exclusion (nouvelle reservation)
+        );
+        if (!disponible) {
+            throw new SQLException("Cette période est déjà réservée (contrat signé). Veuillez choisir d'autres dates.");
+        }
 
         if (reservation.getQuantite() <= 0) {
             reservation.setQuantite(1);
@@ -189,6 +226,81 @@ public class ServiceReservation implements IService<Reservation> {
             }
         }
         return reservations;
+    }
+
+    // ===== RECUPERER PAR PROPRIETAIRE (demandes recues sur mon materiel) =====
+    // njibou el reservations win ana proprietaire el annonce
+    public List<Reservation> recupererParProprietaire(int proprietaireId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (proprietaireId <= 0) return reservations;
+        String query = "SELECT * FROM reservations WHERE proprietaire_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, proprietaireId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== RECUPERER PAR DEMANDEUR (mes demandes envoyées) =====
+    // njibou el reservations elli ana ba3athom (demandeur)
+    public List<Reservation> recupererParDemandeur(int demandeurId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (demandeurId <= 0) return reservations;
+        String query = "SELECT * FROM reservations WHERE demandeur_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, demandeurId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== ACCEPTER RESERVATION =====
+    // 9bal ma n acceptiw, nchoufou ken famma conflit m3a reservation okhra deja ACCEPTEE
+    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE
+    public void accepterReservation(int reservationId, String reponse) throws SQLException {
+        Reservation reservation = recupererParId(reservationId);
+        if (reservation == null) {
+            throw new SQLException("Réservation introuvable.");
+        }
+
+        // verification disponibilite 9bal ma n acceptiw
+        boolean disponible = verifierDisponibilite(
+                reservation.getAnnonce().getId(),
+                reservation.getDateDebut(),
+                reservation.getDateFin(),
+                reservation.getId() // on exclut la reservation actuelle
+        );
+        if (!disponible) {
+            throw new SQLException("Impossible d'accepter : un contrat existe déjà pour ces dates sur cet équipement.");
+        }
+
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=NOW() WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.ACCEPTEE.name());
+            pst.setString(2, reponse);
+            pst.setInt(3, reservationId);
+            pst.executeUpdate();
+        }
+    }
+
+    // ===== REFUSER RESERVATION =====
+    // nbadlou el statut l REFUSEE w n7ottou raison el refus
+    public void refuserReservation(int reservationId, String reponse) throws SQLException {
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=NOW() WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.REFUSEE.name());
+            pst.setString(2, reponse);
+            pst.setInt(3, reservationId);
+            pst.executeUpdate();
+        }
     }
 
     /**
