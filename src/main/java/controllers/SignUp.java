@@ -27,48 +27,32 @@ import java.util.ResourceBundle;
 
 public class SignUp implements Initializable {
 
-    @FXML
-    private ComboBox<String> typeUtilisateurCombo;
+    @FXML private ComboBox<String> typeUtilisateurCombo;
 
     // Champs communs
-    @FXML
-    private TextField nomField;
-    @FXML
-    private TextField prenomField;
-    @FXML
-    private TextField cinField;
-    @FXML
-    private TextField emailField;
-    @FXML
-    private PasswordField motDePasseField;
-    @FXML
-    private PasswordField confirmMotDePasseField;
+    @FXML private TextField nomField;
+    @FXML private TextField prenomField;
+    @FXML private TextField cinField;
+    @FXML private TextField emailField;
+    @FXML private PasswordField motDePasseField;
+    @FXML private PasswordField confirmMotDePasseField;
 
-    // Signature upload (champ non editable + bouton parcourir dans FXML)
-    @FXML
-    private TextField signaturePathField;
+    // Uploads (champ non editable + bouton parcourir dans FXML)
+    @FXML private TextField signaturePathField;
 
     // Labels feedback
-    @FXML
-    private Label errorLabel;
-    @FXML
-    private Label successLabel;
+    @FXML private Label errorLabel;
+    @FXML private Label successLabel;
 
     // Champs Agriculteur
-    @FXML
-    private VBox agriculteurFieldsBox;
-    @FXML
-    private TextField adresseField;
-    @FXML
-    private TextField parcellesField;
-    @FXML
-    private TextField carteProPathField;
+    @FXML private VBox agriculteurFieldsBox;
+    @FXML private TextField adresseField;
+    @FXML private TextField parcellesField;
+    @FXML private TextField carteProPathField;
 
     // Champs Expert
-    @FXML
-    private VBox expertFieldsBox;
-    @FXML
-    private TextField certificationPathField;
+    @FXML private VBox expertFieldsBox;
+    @FXML private TextField certificationPathField;
 
     // Chemins fichiers (valeurs enregistrées en DB)
     private String signaturePath = null;
@@ -86,6 +70,14 @@ public class SignUp implements Initializable {
         serviceExpert = new ServiceExpert();
 
         typeUtilisateurCombo.setItems(FXCollections.observableArrayList("Agriculteur", "Expert"));
+
+        // ✅ CONTRÔLE CIN À LA SAISIE : uniquement chiffres + max 8
+        cinField.setTextFormatter(new TextFormatter<String>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) return change;          // autoriser vide pendant saisie
+            if (!newText.matches("\\d{0,8}")) return null; // 0..8 chiffres max
+            return change;
+        }));
 
         hideMessages();
         hideSpecificBoxes();
@@ -139,16 +131,14 @@ public class SignUp implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
                 new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
+                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
+        );
         return fileChooser.showOpenDialog(nomField.getScene().getWindow());
     }
 
     /**
-     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin
-     * relatif (court) à stocker en DB :
+     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin DB relatif:
      * ex: uploads/signatures/1700_file.png
-     *
-     * ⚠️ Important : ne jamais stocker un chemin absolu Windows dans la DB.
      */
     private String saveFileAndReturnDbPath(File file, String folderName) {
         try {
@@ -162,7 +152,6 @@ public class SignUp implements Initializable {
 
             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            // ✅ chemin DB relatif et normalisé avec '/'
             return "uploads/" + folderName + "/" + fileName;
 
         } catch (IOException e) {
@@ -178,8 +167,7 @@ public class SignUp implements Initializable {
         hideMessages();
 
         try {
-            if (!validateFields())
-                return;
+            if (!validateFields()) return;
 
             String type = typeUtilisateurCombo.getValue();
             if ("Agriculteur".equals(type)) {
@@ -221,7 +209,8 @@ public class SignUp implements Initializable {
                 signaturePath,
                 carteProPath,
                 adresseField.getText().trim(),
-                parcellesField != null ? parcellesField.getText().trim() : "");
+                parcellesField != null ? parcellesField.getText().trim() : ""
+        );
 
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
 
@@ -248,7 +237,8 @@ public class SignUp implements Initializable {
                 Role.EXPERT.toString(),
                 LocalDate.now(),
                 signaturePath,
-                certificationPath);
+                certificationPath
+        );
 
         serviceExpert.ajouterExpert(expert);
 
@@ -269,16 +259,18 @@ public class SignUp implements Initializable {
             showError("Le prénom est obligatoire.");
             return false;
         }
-        if (cinField.getText().trim().isEmpty()) {
+
+        // ✅ CIN: exactement 8 chiffres
+        String cinText = cinField.getText() == null ? "" : cinField.getText().trim();
+        if (cinText.isEmpty()) {
             showError("Le CIN est obligatoire.");
             return false;
         }
-        try {
-            Integer.parseInt(cinField.getText().trim());
-        } catch (NumberFormatException e) {
-            showError("Le CIN doit être un nombre valide.");
+        if (!cinText.matches("\\d{8}")) {
+            showError("Le CIN doit contenir exactement 8 chiffres.");
             return false;
         }
+
         if (emailField.getText().trim().isEmpty()) {
             showError("L'email est obligatoire.");
             return false;
@@ -313,7 +305,7 @@ public class SignUp implements Initializable {
     @FXML
     private void allerVersConnexion(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml")); // adapte si /fxml/
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -368,8 +360,7 @@ public class SignUp implements Initializable {
 
         signaturePathField.clear();
         adresseField.clear();
-        if (parcellesField != null)
-            parcellesField.clear();
+        if (parcellesField != null) parcellesField.clear();
         carteProPathField.clear();
         certificationPathField.clear();
 
