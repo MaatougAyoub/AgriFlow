@@ -263,7 +263,8 @@ public class ModifierProfil {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -284,7 +285,8 @@ public class ModifierProfil {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             showError("Impossible de revenir au profil: " + e.getMessage());

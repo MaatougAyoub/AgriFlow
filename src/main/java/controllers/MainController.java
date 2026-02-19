@@ -269,7 +269,8 @@ public class MainController implements Initializable {
             Stage stage = (Stage) mainContainer.getScene().getWindow();
             stage.setTitle("AgriFlow - Connexion");
             stage.setScene(new Scene(root));
-            stage.setMaximized(false);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (IOException e) {
             System.err.println("Erreur déconnexion : " + e.getMessage());
@@ -303,14 +304,23 @@ public class MainController implements Initializable {
     }
 
     private void setActiveButton(Button button) {
+        final String common =
+            "-fx-font-size: 20;" +
+                "-fx-text-fill: white;" +
+                "-fx-padding: 10 12;" +
+                "-fx-background-insets: 0;" +
+                "-fx-border-insets: 0;" +
+                "-fx-border-radius: 10;" +
+                "-fx-background-radius: 10;";
+
         if (activeButton != null) {
             // style non-actif (uniforme)
             activeButton.setStyle(
+                common +
+                    "-fx-font-weight: normal;" +
                     "-fx-background-color: transparent;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-padding: 10 12;" +
-                            "-fx-border-color: rgba(255,255,255,0.35);" +
-                            "-fx-border-radius: 10;");
+                    "-fx-border-color: rgba(255,255,255,0.35);" +
+                    "-fx-border-width: 1;");
         }
 
         activeButton = button;
@@ -318,11 +328,11 @@ public class MainController implements Initializable {
         if (activeButton != null) {
             // style actif
             activeButton.setStyle(
+                common +
+                    "-fx-font-weight: bold;" +
                     "-fx-background-color: #1B5E20;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-padding: 10 12;" +
-                            "-fx-background-radius: 10;");
+                    "-fx-border-color: transparent;" +
+                    "-fx-border-width: 1;");
         }
     }
 

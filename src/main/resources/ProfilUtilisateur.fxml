@@ -126,16 +126,16 @@
             <HBox alignment="CENTER_RIGHT" spacing="12">
                 <Button fx:id="reclamationsButton"
                         onAction="#reclamations"
-                    style="-fx-background-color: #616161; -fx-text-fill: white; -fx-font-size: 22px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
+                    style="-fx-background-color: #616161; -fx-text-fill: white; -fx-font-size: 20px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
                     text="Réclamations"/>
 
                 <Button fx:id="listeParcellesButton"
                         onAction="#listeParcelles"
-                    style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 22px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
+                    style="-fx-background-color: #1976d2; -fx-text-fill: white; -fx-font-size: 20px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
                         text="Liste des parcelles"/>
 
                 <Button onAction="#modifierProfil"
-                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 22px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 20px; -fx-padding: 16 30; -fx-background-radius: 8; -fx-cursor: hand;"
                         text="Modifier"/>
             </HBox>
         </VBox>

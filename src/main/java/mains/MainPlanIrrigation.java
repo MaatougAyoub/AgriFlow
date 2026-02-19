@@ -24,6 +24,7 @@ public class MainPlanIrrigation extends Application {
         stage.setScene(scene);
         stage.setMinWidth(900);
         stage.setMinHeight(600);
+        stage.setMaximized(true);
         stage.show();
     }
 

@@ -17,7 +17,8 @@ public class MainFX extends Application {
         Scene scene = new Scene(root);
         stage.setTitle("AgriFlow - Connexion");
         stage.setScene(scene);
-        stage.setMaximized(true);
+        //stage.setMaximized(true);
+        stage.setFullScreen(true);
         stage.show();
         /*
          * public void start(Stage primaryStage) {
