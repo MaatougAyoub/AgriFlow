@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 14, 2026 at 10:15 PM
+-- Generation Time: Feb 20, 2026 at 02:20 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,62 +18,8 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `agriflow`
+-- Database: `agriflow4`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admins`
---
-
-CREATE TABLE `admins` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(255) NOT NULL,
-  `prenom` varchar(255) NOT NULL,
-  `cin` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `motDePasse` varchar(255) NOT NULL,
-  `role` varchar(40) NOT NULL,
-  `dateCreation` date NOT NULL,
-  `signature` varchar(500) NOT NULL,
-  `revenu` double DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `admins`
---
-
-INSERT INTO `admins` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`) VALUES
-(38, 'Maatoug', 'Ayoub', 585, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-13', 'uploads/signatures/1771084885464_Gemini_Generated_Image_mq403hmq403hmq40.png', 200.5);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `agriculteurs`
---
-
-CREATE TABLE `agriculteurs` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(255) NOT NULL,
-  `prenom` varchar(255) NOT NULL,
-  `cin` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `motDePasse` varchar(255) NOT NULL,
-  `role` varchar(40) NOT NULL,
-  `dateCreation` date NOT NULL,
-  `signature` varchar(500) NOT NULL,
-  `carte_pro` varchar(500) DEFAULT NULL,
-  `adresse` varchar(255) DEFAULT NULL,
-  `parcelles` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `agriculteurs`
---
-
-INSERT INTO `agriculteurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `carte_pro`, `adresse`, `parcelles`) VALUES
-(36, 'Sami', 'Maatoug', 2030501, 'sami@gmail.com', 'sami*11', 'AGRICULTEUR', '2026-02-10', 'uploads/signatures/1770850459714_TuNour.jpg', 'uploads/cartes_pro/1770981259197_بطاقة الفلاح.jpg', 'rasjebel', '');
 
 -- --------------------------------------------------------
 
@@ -114,9 +60,10 @@ CREATE TABLE `annonces` (
 --
 
 INSERT INTO `annonces` (`id`, `titre`, `description`, `type`, `statut`, `prix`, `unite_prix`, `categorie`, `marque`, `modele`, `annee_fabrication`, `localisation`, `latitude`, `longitude`, `proprietaire_id`, `date_debut_disponibilite`, `date_fin_disponibilite`, `date_creation`, `date_modification`, `avec_operateur`, `assurance_incluse`, `caution`, `conditions_location`, `quantite_disponible`, `unite_quantite`) VALUES
-(1, 'Tracteur John Deere 6120M', 'Tracteur puissant, entretien régulier', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', 'John Deere', '6120M', 2020, 'Sousse', NULL, NULL, 1, '2026-02-01', '2026-06-30', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 0, 1000.00, NULL, 0, 'kg'),
-(2, 'Moissonneuse New Holland CR9080', 'Moissonneuse dernière génération', 'LOCATION', 'DISPONIBLE', 800.00, 'jour', 'Moissonneuse', 'New Holland', 'CR9080', 2019, 'Sfax', NULL, NULL, 2, '2026-03-01', '2026-05-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 1, 0, 3000.00, NULL, 0, 'kg'),
-(3, 'Engrais NPK 20-20-20', '50 sacs de 50kg disponibles', 'VENTE', 'DISPONIBLE', 85.00, 'sac', 'Engrais', 'SIAPE', 'NPK 20-20-20', NULL, 'Tunis', NULL, NULL, 3, '2026-01-01', '2026-12-31', '2026-02-14 21:10:59', '2026-02-14 21:10:59', 0, 0, 0.00, NULL, 0, 'kg');
+(1, 'Tracteur John Deere 6120M', 'Tracteur puissant, entretien régulier', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', 'John Deere', '6120M', 2020, 'Sousse', NULL, NULL, 36, '2026-02-01', '2026-06-30', '2026-02-14 21:10:59', '2026-02-15 22:42:52', 1, 0, 1000.00, NULL, 0, 'kg'),
+(2, 'Moissonneuse New Holland CR9080', 'Moissonneuse dernière génération', 'LOCATION', 'DISPONIBLE', 800.00, 'jour', 'Moissonneuse', 'New Holland', 'CR9080', 2019, 'Sfax', NULL, NULL, 36, '2026-03-01', '2026-05-31', '2026-02-14 21:10:59', '2026-02-15 22:42:52', 1, 0, 3000.00, NULL, 0, 'kg'),
+(3, 'Engrais NPK 20-20-20', '50 sacs de 50kg disponibles', 'VENTE', 'DISPONIBLE', 85.00, 'sac', 'Engrais', 'SIAPE', 'NPK 20-20-20', NULL, 'Tunis', NULL, NULL, 36, '2026-01-01', '2026-12-31', '2026-02-14 21:10:59', '2026-02-15 22:42:52', 0, 0, 0.00, NULL, 0, 'kg'),
+(4, 'Drone', 'drone', 'VENTE', 'DISPONIBLE', 250.00, 'jour', 'Drones', NULL, NULL, 0, 'Tunisie', NULL, NULL, 39, NULL, NULL, '2026-02-15 22:07:25', '2026-02-15 22:07:25', 0, 0, 0.00, NULL, 0, 'kg');
 
 -- --------------------------------------------------------
 
@@ -138,7 +85,8 @@ CREATE TABLE `annonce_photos` (
 INSERT INTO `annonce_photos` (`id`, `annonce_id`, `url_photo`, `ordre`) VALUES
 (1, 1, 'https://images.unsplash.com/photo-1530267981375-f0de937f5f13?w=400&h=250&fit=crop', 0),
 (2, 2, 'https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=250&fit=crop', 0),
-(3, 3, 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', 0);
+(3, 3, 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=250&fit=crop', 0),
+(4, 4, 'https://m.media-amazon.com/images/I/61dKEc095AL._AC_SL1500_.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -149,20 +97,26 @@ INSERT INTO `annonce_photos` (`id`, `annonce_id`, `url_photo`, `ordre`) VALUES
 CREATE TABLE `collab_applications` (
   `id` bigint(20) NOT NULL,
   `request_id` bigint(20) NOT NULL,
-  `candidate_id` bigint(20) NOT NULL,
-  `message` varchar(255) DEFAULT NULL,
-  `status` enum('PENDING','APPROVED','REJECTED') DEFAULT 'PENDING',
-  `applied_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `candidate_id` bigint(20) NOT NULL DEFAULT 1,
+  `full_name` varchar(255) NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `years_of_experience` int(11) NOT NULL DEFAULT 0,
+  `motivation` text NOT NULL,
+  `expected_salary` decimal(10,2) DEFAULT 0.00,
+  `status` varchar(50) NOT NULL DEFAULT 'PENDING',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `collab_applications`
 --
 
-INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `message`, `status`, `applied_at`) VALUES
-(1, 1, 3, 'Expert en récolte, disponible ces dates', 'APPROVED', '2026-02-07 15:40:22'),
-(2, 1, 4, 'Je suis disponible et j\'ai de l\'expérience', 'PENDING', '2026-02-07 15:40:22'),
-(3, 2, 2, 'Intéressé par cette mission', 'PENDING', '2026-02-07 15:40:22');
+INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `full_name`, `phone`, `email`, `years_of_experience`, `motivation`, `expected_salary`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'Ahmed Ben Ali', '20123456', 'ahmed@example.com', 5, 'Je suis très motivé et j\'ai 5 ans d\'expérience dans la récolte d\'olives.', 45.00, 'PENDING', '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(2, 1, 2, 'Fatma Trabelsi', '25987654', 'fatma@example.com', 3, 'J\'ai travaillé dans plusieurs fermes à Bizerte. Je suis disponible immédiatement.', 40.00, 'APPROVED', '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(3, 2, 3, 'Mohamed Slimani', '98765432', 'mohamed@example.com', 2, 'Je cherche à apprendre et je suis très sérieux dans mon travail.', 35.00, 'PENDING', '2026-02-19 16:54:29', '2026-02-19 16:54:29');
 
 -- --------------------------------------------------------
 
@@ -172,13 +126,15 @@ INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `message`
 
 CREATE TABLE `collab_requests` (
   `id` bigint(20) NOT NULL,
-  `requester_id` bigint(20) NOT NULL,
-  `title` varchar(150) NOT NULL,
-  `description` text DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL,
-  `needed_people` int(11) DEFAULT 1,
-  `status` enum('PENDING','APPROVED','REJECTED','CLOSED') DEFAULT 'PENDING',
+  `title` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `location` varchar(100) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `needed_people` int(11) NOT NULL DEFAULT 1,
+  `salary_per_day` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `status` varchar(50) NOT NULL DEFAULT 'PENDING',
+  `requester_id` bigint(20) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -187,10 +143,11 @@ CREATE TABLE `collab_requests` (
 -- Dumping data for table `collab_requests`
 --
 
-INSERT INTO `collab_requests` (`id`, `requester_id`, `title`, `description`, `start_date`, `end_date`, `needed_people`, `status`, `created_at`, `updated_at`) VALUES
-(1, 2, 'Récolte olives - Nabeul', 'Besoin de 2 personnes pour récolte olives bio', '2026-02-10', '2026-02-15', 2, 'APPROVED', '2026-02-07 15:40:22', '2026-02-12 11:10:11'),
-(2, 3, 'Plantation tomates - Bizerte', 'Recherche 3 agriculteurs expérimentés pour plantation tomates', '2026-03-01', '2026-03-05', 3, 'REJECTED', '2026-02-07 15:40:22', '2026-02-14 18:46:55'),
-(3, 4, 'Irrigation orangers - Sousse', 'Besoin expertise irrigation goutte-à-goutte', '2026-02-20', '2026-02-22', 1, 'REJECTED', '2026-02-07 15:40:22', '2026-02-12 11:10:22');
+INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `start_date`, `end_date`, `needed_people`, `salary_per_day`, `status`, `requester_id`, `created_at`, `updated_at`) VALUES
+(1, 'Récolte d\'olives', 'Je cherche deux agriculteurs sérieux pour la récolte d\'olives. Travail en équipe, expérience souhaitée.', 'Bizerte', '2026-02-25', '2026-02-28', 5, 40.00, 'APPROVED', 1, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(2, 'Plantation de tomates', 'Aide nécessaire pour la plantation de tomates dans une grande serre. Débutants acceptés.', 'Tunis', '2026-03-01', '2026-03-05', 3, 35.00, 'APPROVED', 1, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(3, 'Taille de vignes', 'Recherche de personnes expérimentées pour la taille de vignes. Travail minutieux.', 'Nabeul', '2026-03-10', '2026-03-15', 4, 50.00, 'PENDING', 1, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(4, 'Irrigation et entretien', 'Besoin d\'aide pour l\'entretien des systèmes d\'irrigation. Formation fournie.', 'Sousse', '2026-03-20', '2026-03-25', 2, 30.00, 'APPROVED', 1, '2026-02-19 16:54:29', '2026-02-19 16:54:29');
 
 -- --------------------------------------------------------
 
@@ -225,33 +182,6 @@ CREATE TABLE `culture_vendue` (
   `date_publication` datetime NOT NULL DEFAULT current_timestamp(),
   `prix_vente` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `experts`
---
-
-CREATE TABLE `experts` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(255) NOT NULL,
-  `prenom` varchar(255) NOT NULL,
-  `cin` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `motDePasse` varchar(255) NOT NULL,
-  `role` varchar(40) NOT NULL,
-  `dateCreation` date NOT NULL,
-  `signature` varchar(500) NOT NULL,
-  `certification` varchar(500) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `experts`
---
-
-INSERT INTO `experts` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `certification`) VALUES
-(35, 'oussama', 'Fattoumi', 88554411, 'oussama@gmail.com', 'oussama1', 'EXPERT', '2026-02-10', 'uploadssignatures1770758047802_Logo_ESPRIT_Ariana.jpg', 'uploads/certifications/1770898294372_diplome expert(Oussama).png'),
-(37, 'Ayoub22', 'Maatoug22', 11429920, 'maatougayoub7@gmail.com', 'pwayoub', 'EXPERT', '2026-02-11', 'uploadssignatures1770843103211_user.png', 'uploadscertifications1770843118809_diplome expert(Oussama).png');
 
 -- --------------------------------------------------------
 
@@ -372,8 +302,8 @@ CREATE TABLE `reclamations` (
 --
 
 INSERT INTO `reclamations` (`id`, `utilisateur_id`, `categorie`, `titre`, `description`, `date_creation`, `statut`, `reponse`) VALUES
-(6, 36, 'AUTRE', 'reclamation Sami', 'Voici une réclamation pur le Sami', '2026-02-13 14:36:12', 'EN_ATTENTE', 'oussama Fattoumi (EXPERT) : la réponse est longue donc elle doit être affiché\nMaatoug Ayoub (ADMIN) : aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nMaatoug Ayoub (ADMIN) : jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj\nMaatoug Ayoub (ADMIN) : ppppppppppppppppppppppppppppppppppppppppppppppppppppppPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\nMaatoug Ayoub (ADMIN) : PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\nMaatoug Ayoub (ADMIN) : PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP\nMaatoug Ayoub (ADMIN) : PPPPPPPPPPPPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO'),
-(7, 38, 'SERVICE', 'service', 'bad services', '2026-02-13 15:22:45', 'EN_ATTENTE', 'sami maatoug (AGRICULTEUR) : courte réponse');
+(9, 44, 'ACCESS', 'access rec', 'relamationaaaaa', '2026-02-20 14:16:01', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : noooo\nmaatoug ayoub (ADMIN) : yes'),
+(10, 44, 'PAIMENT', 'aaaaaa', 'aaaaaaaaaa', '2026-02-20 14:16:35', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : yes');
 
 -- --------------------------------------------------------
 
@@ -405,6 +335,17 @@ CREATE TABLE `reservations` (
   `mode_paiement` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `reservations`
+--
+
+INSERT INTO `reservations` (`id`, `annonce_id`, `demandeur_id`, `proprietaire_id`, `date_debut`, `date_fin`, `quantite`, `prix_total`, `caution`, `statut`, `message_demande`, `reponse_proprietaire`, `date_demande`, `date_reponse`, `date_creation`, `contrat_url`, `contrat_signe`, `date_signature_contrat`, `paiement_effectue`, `date_paiement`, `mode_paiement`) VALUES
+(2, 4, 36, 39, '2026-02-15', '2026-02-16', 1, 275.00, 0.00, 'REFUSEE', 'hey', 'noob', '2026-02-15 22:52:58', '2026-02-15 23:04:37', '2026-02-15 22:52:58', NULL, 0, NULL, 0, NULL, NULL),
+(3, 1, 39, 36, '2026-02-15', '2026-02-16', 1, 550.00, 1000.00, 'EN_ATTENTE', 'salut', NULL, '2026-02-15 23:06:47', NULL, '2026-02-15 23:06:47', NULL, 0, NULL, 0, NULL, NULL),
+(4, 4, 41, 39, '2026-02-15', '2026-02-16', 1, 275.00, 0.00, 'EN_ATTENTE', 'interessé', NULL, '2026-02-15 23:15:01', NULL, '2026-02-15 23:15:01', NULL, 0, NULL, 0, NULL, NULL),
+(5, 1, 39, 36, '2026-02-16', '2026-02-17', 1, 550.00, 1000.00, 'EN_ATTENTE', 'salut', NULL, '2026-02-16 00:06:34', NULL, '2026-02-16 00:06:34', NULL, 0, NULL, 0, NULL, NULL),
+(6, 2, 39, 36, '2026-02-16', '2026-02-17', 1, 1760.00, 3000.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-16 00:11:01', NULL, '2026-02-16 00:11:01', NULL, 0, NULL, 0, NULL, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -420,34 +361,27 @@ CREATE TABLE `utilisateurs` (
   `motDePasse` varchar(255) NOT NULL,
   `role` varchar(40) NOT NULL,
   `dateCreation` date NOT NULL,
-  `signature` varchar(500) NOT NULL
+  `signature` varchar(500) NOT NULL,
+  `revenu` double DEFAULT NULL,
+  `carte_pro` varchar(500) DEFAULT NULL,
+  `adresse` varchar(255) DEFAULT NULL,
+  `parcelles` varchar(255) DEFAULT NULL,
+  `certification` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `utilisateurs`
 --
 
-INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`) VALUES
-(35, 'oussama', 'Fattoumi', 88554411, 'oussama@gmail.com', 'oussama1', 'EXPERT', '2026-02-10', 'uploadssignatures1770758047802_Logo_ESPRIT_Ariana.jpg'),
-(36, 'Sami', 'Maatoug', 2030501, 'sami@gmail.com', 'sami*11', 'AGRICULTEUR', '2026-02-10', 'uploads/signatures/1770850459714_TuNour.jpg'),
-(37, 'Ayoub22', 'Maatoug22', 11429920, 'maatougayoub7@gmail.com', 'pwayoub', 'EXPERT', '2026-02-11', 'uploadssignatures1770843103211_user.png'),
-(38, 'Maatoug', 'Ayoub', 585, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-13', 'uploads/signatures/1771084885464_Gemini_Generated_Image_mq403hmq403hmq40.png');
+INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`, `carte_pro`, `adresse`, `parcelles`, `certification`) VALUES
+(39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-16', '-', 100.5, NULL, NULL, NULL, NULL),
+(40, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-10', 'uploads/signatures/1771592524318_signature amen.jpg', NULL, 'uploads/cartes_pro/1771592541042_بطاقة الفلاح.jpg', 'Sousse', '', NULL),
+(43, 'Fattoumi', 'Oussama', 66554433, 'oussama@gmail.com', 'pwoussama', 'EXPERT', '2026-02-20', 'uploads/signatures/1771592334646_signature oussama.jpg', NULL, NULL, NULL, NULL, 'uploads/certifications/1771592347074_diplome expert(Oussama).png'),
+(44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'uploads/signatures/1771593245764_signature badis.jpg', NULL, 'uploads/cartes_pro/1771593267605_Logo_ESPRIT_Ariana.jpg', 'araiana', '', NULL);
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `admins`
---
-ALTER TABLE `admins`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `agriculteurs`
---
-ALTER TABLE `agriculteurs`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `annonces`
@@ -473,7 +407,7 @@ ALTER TABLE `annonce_photos`
 ALTER TABLE `collab_applications`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_application` (`request_id`,`candidate_id`),
-  ADD KEY `idx_request` (`request_id`),
+  ADD KEY `idx_status` (`status`),
   ADD KEY `idx_candidate` (`candidate_id`);
 
 --
@@ -481,15 +415,9 @@ ALTER TABLE `collab_applications`
 --
 ALTER TABLE `collab_requests`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `requester_id` (`requester_id`),
   ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_location` (`location`),
   ADD KEY `idx_dates` (`start_date`,`end_date`);
-
---
--- Indexes for table `experts`
---
-ALTER TABLE `experts`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `messages`
@@ -549,13 +477,13 @@ ALTER TABLE `utilisateurs`
 -- AUTO_INCREMENT for table `annonces`
 --
 ALTER TABLE `annonces`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `annonce_photos`
 --
 ALTER TABLE `annonce_photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `collab_applications`
@@ -591,72 +519,29 @@ ALTER TABLE `plans_irrigation_jour`
 -- AUTO_INCREMENT for table `reclamations`
 --
 ALTER TABLE `reclamations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- Constraints for dumped tables
 --
 
 --
--- Constraints for table `admins`
---
-ALTER TABLE `admins`
-  ADD CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `agriculteurs`
---
-ALTER TABLE `agriculteurs`
-  ADD CONSTRAINT `fk_agriculteurs_utilisateurs` FOREIGN KEY (`id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
 -- Constraints for table `collab_applications`
 --
 ALTER TABLE `collab_applications`
-  ADD CONSTRAINT `collab_applications_ibfk_1` FOREIGN KEY (`request_id`) REFERENCES `collab_requests` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `collab_applications_ibfk_2` FOREIGN KEY (`candidate_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `collab_requests`
---
-ALTER TABLE `collab_requests`
-  ADD CONSTRAINT `collab_requests_ibfk_1` FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `experts`
---
-ALTER TABLE `experts`
-  ADD CONSTRAINT `fk_experts_utilisateurs` FOREIGN KEY (`id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `plans_irrigation`
---
-ALTER TABLE `plans_irrigation`
-  ADD CONSTRAINT `plans_irrigation_ibfk_1` FOREIGN KEY (`id_culture`) REFERENCES `culture` (`id_culture`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `plans_irrigation_jour`
---
-ALTER TABLE `plans_irrigation_jour`
-  ADD CONSTRAINT `plans_irrigation_jour_ibfk_1` FOREIGN KEY (`plan_id`) REFERENCES `plans_irrigation` (`plan_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `reclamations`
---
-ALTER TABLE `reclamations`
-  ADD CONSTRAINT `fk_reclamations_utilisateur` FOREIGN KEY (`utilisateur_id`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_application_request` FOREIGN KEY (`request_id`) REFERENCES `collab_requests` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
