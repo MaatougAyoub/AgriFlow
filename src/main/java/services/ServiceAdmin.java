@@ -16,60 +16,41 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
 
     @Override
     public void ajouterAdmin (Admin admin) throws SQLException{
-        // 1️⃣ Insérer dans la table `utilisateurs
-        String reqUser = "INSERT INTO `utilisateurs`(`nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`)" +
-                "VALUES ('" + admin.getNom() + "','" + admin.getPrenom() + "','" + admin.getCin() + "','" + admin.getEmail() + "','" + admin.getMotDePasse() + "','" + Role.ADMIN + "','" + admin.getDateCreation() + "','" + admin.getSignature() + "')";
-        Statement st = connection.createStatement();
-        st.executeUpdate(reqUser, Statement.RETURN_GENERATED_KEYS);
-
-        // 2️⃣ Récupérer l'ID auto-généré
-        ResultSet generatedKeys = st.getGeneratedKeys();
-        int userId = 0;
-        if (generatedKeys.next()) {
-            userId = generatedKeys.getInt(1);
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, revenu) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, admin.getNom());
+            ps.setString(2, admin.getPrenom());
+            ps.setInt(3, admin.getCin());
+            ps.setString(4, admin.getEmail());
+            ps.setString(5, admin.getMotDePasse());
+            ps.setString(6, Role.ADMIN.toString());
+            ps.setObject(7, admin.getDateCreation());
+            ps.setString(8, admin.getSignature());
+            if (admin.getRevenus() == null) ps.setNull(9, Types.DOUBLE);
+            else ps.setDouble(9, admin.getRevenus());
+            ps.executeUpdate();
         }
-
-        // 3️⃣ Insérer dans la table `Admins` avec l'ID récupéré
-        String reqAdmin = "INSERT INTO `Admins`(`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`) " +
-                "VALUES ('" + userId + "','" + admin.getNom() + "','" + admin.getPrenom() + "','" + admin.getCin() + "','" + admin.getEmail() + "','" + admin.getMotDePasse() + "','" + Role.ADMIN + "','" + admin.getDateCreation() + "','" + admin.getSignature() + "','" + admin.getRevenus() + "')";
-
-        st.executeUpdate(reqAdmin);
-        st.close();
         System.out.println("Admin ajoute avec succés!!! ✅");
     }
 
     @Override
     public void modifierAdmin (Admin admin) throws SQLException{
-        // 1️⃣ Mettre à jour la table `utilisateurs`
-        String reqUser = "UPDATE utilisateurs SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=? WHERE id=?";
-        PreparedStatement psUser = connection.prepareStatement(reqUser);
-        psUser.setString(1, admin.getNom());
-        psUser.setString(2, admin.getPrenom());
-        psUser.setInt(3, admin.getCin());
-        psUser.setString(4, admin.getEmail());
-        psUser.setString(5, admin.getMotDePasse());
-        psUser.setString(6, Role.ADMIN.toString());
-        psUser.setObject(7, admin.getDateCreation());
-        psUser.setString(8, admin.getSignature());
-        psUser.setInt(9, admin.getId()); //  WHERE id=?
-        psUser.executeUpdate();
-        psUser.close();
-
-        // 2️⃣ Mettre à jour la table `Admins`
-        String reqAdmin = "UPDATE admins SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=?, revenu=? WHERE id=?";
-        PreparedStatement psAdmin = connection.prepareStatement(reqAdmin);
-        psAdmin.setString(1, admin.getNom());
-        psAdmin.setString(2, admin.getPrenom());
-        psAdmin.setInt(3, admin.getCin());
-        psAdmin.setString(4, admin.getEmail());
-        psAdmin.setString(5, admin.getMotDePasse());
-        psAdmin.setString(6, Role.ADMIN.toString());
-        psAdmin.setObject(7, admin.getDateCreation());
-        psAdmin.setString(8, admin.getSignature());
-        psAdmin.setDouble(9, admin.getRevenus());
-        psAdmin.setInt(10, admin.getId()); //  WHERE id=?
-        psAdmin.executeUpdate();
-        psAdmin.close();
+        String reqUser = "UPDATE utilisateurs SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=?, revenu=? WHERE id=?";
+        try (PreparedStatement psUser = connection.prepareStatement(reqUser)) {
+            psUser.setString(1, admin.getNom());
+            psUser.setString(2, admin.getPrenom());
+            psUser.setInt(3, admin.getCin());
+            psUser.setString(4, admin.getEmail());
+            psUser.setString(5, admin.getMotDePasse());
+            psUser.setString(6, Role.ADMIN.toString());
+            psUser.setObject(7, admin.getDateCreation());
+            psUser.setString(8, admin.getSignature());
+            if (admin.getRevenus() == null) psUser.setNull(9, Types.DOUBLE);
+            else psUser.setDouble(9, admin.getRevenus());
+            psUser.setInt(10, admin.getId());
+            psUser.executeUpdate();
+        }
 
         System.out.println("Admin modifié avec succès!!!✅");
     }
@@ -77,27 +58,30 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
     @Override
     public List<Admin> recupererAdmin() throws SQLException {
         List<Admin> adminsList = new ArrayList<>();
-        String req = "SELECT * FROM admins ";
-        Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery(req);
-        while (rs.next()) {
-            int idE = rs.getInt("id");
-            String nomE = rs.getString(2);
-            String prenomE = rs.getString(3);
-            int cinE = rs.getInt(4);
-            String emailE = rs.getString(5);
-            String motDePasseE = rs.getString(6);
-            String roleE = rs.getString(7);
-            //ic j'ai besoin de la variable dateCreation de type LocalDate(voir le constructeur dans la classe Admin)
-            java.sql.Date sqlDate = rs.getDate(8);
-            java.time.LocalDate dateCreationE = (sqlDate != null) ? sqlDate.toLocalDate() : null;
-            String signatureE = rs.getString(9);
-            Double revenusE = rs.getDouble(10);
-            Admin admin = new Admin(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE,revenusE);
-            adminsList.add(admin);
+        String req = "SELECT * FROM utilisateurs WHERE role = ?";
+        try (PreparedStatement ps = connection.prepareStatement(req)) {
+            ps.setString(1, Role.ADMIN.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int idE = rs.getInt("id");
+                    String nomE = rs.getString("nom");
+                    String prenomE = rs.getString("prenom");
+                    int cinE = rs.getInt("cin");
+                    String emailE = rs.getString("email");
+                    String motDePasseE = rs.getString("motDePasse");
+                    String roleE = rs.getString("role");
+                    java.sql.Date sqlDate = rs.getDate("dateCreation");
+                    java.time.LocalDate dateCreationE = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+                    String signatureE = rs.getString("signature");
+
+                    Object revObj = rs.getObject("revenu");
+                    Double revenusE = (revObj == null) ? null : rs.getDouble("revenu");
+
+                    Admin admin = new Admin(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE, revenusE);
+                    adminsList.add(admin);
+                }
+            }
         }
-        rs.close();
-        st.close();
         return adminsList;
     }
 
