@@ -398,25 +398,25 @@ public class MesReservationsController implements Initializable {
 
     private void onAccepterReservation(Reservation reservation) {
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog(
-                "Marhbé bik ! Demande ma9boula.");
-        dialog.setTitle("Acceptation");
+                "Demande acceptée. Bienvenue !");
+        dialog.setTitle("Accepter la réservation");
         dialog.setHeaderText("Accepter la demande de "
                 + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
-        dialog.setContentText("Message mta3ek (optionnel) :");
+        dialog.setContentText("Votre message (optionnel) :");
 
         dialog.showAndWait().ifPresent(reponse -> {
             try {
                 reservationService.accepterReservation(reservation.getId(), reponse.trim());
                 Alert ok = new Alert(Alert.AlertType.INFORMATION);
-                ok.setTitle("C bon");
+                ok.setTitle("Succès");
                 ok.setHeaderText(null);
-                ok.setContentText("Réservation t9eblet ✅");
+                ok.setContentText("Réservation acceptée ✅");
                 ok.showAndWait();
                 chargerReservations();
             } catch (SQLException e) {
                 Alert err = new Alert(Alert.AlertType.ERROR);
-                err.setTitle("Mochkla");
-                err.setContentText("Famma mochkla, ma tnajamch t'accepter : " + e.getMessage());
+                err.setTitle("Erreur");
+                err.setContentText("Impossible d'accepter : " + e.getMessage());
                 err.showAndWait();
             }
         });
@@ -424,16 +424,16 @@ public class MesReservationsController implements Initializable {
 
     private void onRefuserReservation(Reservation reservation) {
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
-        dialog.setTitle("Refus");
-        dialog.setHeaderText("Bech tarfedh demande mta3 "
+        dialog.setTitle("Refuser la réservation");
+        dialog.setHeaderText("Refuser la demande de "
                 + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
-        dialog.setContentText("A3tih rayek 3lech rfatht :");
+        dialog.setContentText("Raison du refus :");
 
         dialog.showAndWait().ifPresent(reponse -> {
             if (reponse.trim().isEmpty()) {
                 Alert warn = new Alert(Alert.AlertType.WARNING);
-                warn.setTitle("Rod balek");
-                warn.setContentText("A3mel mzouya a3tih sbab l'refus.");
+                warn.setTitle("Attention");
+                warn.setContentText("Veuillez fournir une raison pour le refus.");
                 warn.showAndWait();
                 return;
             }
@@ -560,11 +560,11 @@ public class MesReservationsController implements Initializable {
 
     private void supprimerReservation(Reservation reservation) {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Fasa5");
-        confirmation.setHeaderText("Met2aked t7eb tfasa5 hal réservation ?");
+        confirmation.setTitle("Confirmation");
+        confirmation.setHeaderText("Supprimer cette réservation ?");
         confirmation.setContentText("Annonce : "
                 + (reservation.getAnnonce() != null ? reservation.getAnnonce().getTitre() : "N/A")
-                + "\nRod balek, l'action hedhi irréversible.");
+                + "\nCette action est irréversible.");
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
