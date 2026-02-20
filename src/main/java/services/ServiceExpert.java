@@ -38,7 +38,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
 
         st.executeUpdate(reqExpert);
         st.close();
-        System.out.println("Expert ajoute avec succés!!! ✅");
+        System.out.println("Expert ajoute ave" +
+                "c succés!!! ✅");
     }
 
     public void modifierExpert(Expert expert) throws SQLException {
