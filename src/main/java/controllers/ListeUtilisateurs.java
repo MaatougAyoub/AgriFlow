@@ -395,7 +395,8 @@ public class ListeUtilisateurs {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();

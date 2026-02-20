@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import controllers.MainController;
+
+
 
 // Controleur mta3 el dialog (popup) bech na3mlou reservation
 // el user ykhayyer les dates, yekteb message, w ychouf el prix total
@@ -99,40 +102,40 @@ public class ReservationDialogController {
             reservationService.ajouter(reservation);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Succes");
-            alert.setContentText("Reservation envoyee!");
+            alert.setTitle("Mrigel");
+            alert.setContentText("Reservation tba3thet b nja7 !");
             alert.showAndWait();
 
             fermerFenetre();
         } catch (SQLException e) {
-            errorLabel.setText("Erreur: " + e.getMessage());
+            errorLabel.setText("Famma mochkla: " + e.getMessage());
             errorLabel.setVisible(true);
         }
     }
 
     private boolean validateForm() {
         if (annonce == null) {
-            errorLabel.setText("Annonce invalide");
+            errorLabel.setText("Annonce mech mawjouda");
             errorLabel.setVisible(true);
             return false;
         }
         if (!MainController.isUserLoggedIn()) {
-            errorLabel.setText("Utilisateur non connecte");
+            errorLabel.setText("Lazem ta3mel login sa3a");
             errorLabel.setVisible(true);
             return false;
         }
         if (dateDebutPicker.getValue() == null || dateFinPicker.getValue() == null) {
-            errorLabel.setText("Dates requises");
+            errorLabel.setText("Lazem t7ot les dates");
             errorLabel.setVisible(true);
             return false;
         }
         if (dateDebutPicker.getValue().isBefore(LocalDate.now())) {
-            errorLabel.setText("Date debut invalide");
+            errorLabel.setText("Date debut fel madhi ?");
             errorLabel.setVisible(true);
             return false;
         }
         if (dateDebutPicker.getValue().isAfter(dateFinPicker.getValue())) {
-            errorLabel.setText("Date debut doit etre avant date fin");
+            errorLabel.setText("Date debut lezm ykoun 9bal date fin");
             errorLabel.setVisible(true);
             return false;
         }

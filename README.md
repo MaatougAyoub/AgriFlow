@@ -1,13 +1,11 @@
-# 🌿 AGRIFLOW — Module Marketplace
+# 🌱 AgriFlow
+An integrated university project: an AgriTech web platform for smart agricultural management.
 
+The platform aims to digitize and optimize agricultural management through smart and accessible digital solutions.
 **Plateforme de Smart Farming pour la Tunisie**
 *Projet PIDEV 3A — TeamSpark*
-
 ---
 
-## 📋 Description
-
-Module **Marketplace P2P** — location et vente de matériel agricole entre agriculteurs.
 
 ### Fonctionnalités CRUD
 | Entité | Opérations |
@@ -23,6 +21,7 @@ Module **Marketplace P2P** — location et vente de matériel agricole entre agr
 
 ---
 
+## 👥 Target Users
 ## 🚀 Installation
 
 ### 1. Base de données MySQL
@@ -41,10 +40,18 @@ Module **Marketplace P2P** — location et vente de matériel agricole entre agr
 
 > L'utilisateur simulé est **Amenallah Jerbi** (id=39, AGRICULTEUR)
 
+- **Farmers**: manage their profiles, parcels, and agricultural activities
+- **Administrator**: manage users, validate data, and monitor the platform
+- **Experts**: 
 ---
 
-## 📁 Structure du Projet
+## ⚙️ Main Features
 
+- User authentication and role management (Admin / Farmer)
+- Farmer profile management
+- Agricultural data management (parcels, crops, etc.)
+- Secure data storage
+- Admin dashboard for monitoring and validation
 ```
 agriflow-marketplace/
 ├── src/main/java/
@@ -65,9 +72,7 @@ agriflow-marketplace/
 
 ---
 
-## 🔧 Technologies
-
-| Technologie | Usage |
+## 🛠️ Technologies Used
 |------------|-------|
 | Java 17 | Langage principal |
 | JavaFX 21 | Interface graphique |
@@ -80,5 +85,11 @@ agriflow-marketplace/
 
 ---
 
+## 🗂️ Project Structure
+
+
+
+
+
 **TeamSpark — AGRIFLOW**
-*Amenallah Jerbi — Marketplace*
+

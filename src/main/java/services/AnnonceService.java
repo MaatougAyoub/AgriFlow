@@ -185,7 +185,7 @@ public class AnnonceService implements IService<Annonce> {
 
     // ===== RECUPERER PAR ID = SELECT * FROM annonces WHERE id=? =====
     // njibou annonce wa7da precisa bel ID mta3ha
-    @Override
+
     public Annonce recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM annonces WHERE id=?";
         Annonce annonce = null;

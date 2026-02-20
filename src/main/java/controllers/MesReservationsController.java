@@ -69,9 +69,11 @@ public class MesReservationsController implements Initializable {
             if (!recues.isEmpty()) {
                 Label sectionRecues = new Label("📩 Demandes Reçues (" + recues.size() + ")");
                 sectionRecues.setStyle(
-                        "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1565C0; -fx-padding: 0 0 5 5;");
+                        "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1565C0; -fx-padding: 0 0 10 5;");
+                sectionRecues.setMaxWidth(Double.MAX_VALUE);
                 cardsContainer.getChildren().add(sectionRecues);
 
+                // n7ottou les cartes mta3 demandes reçues fi FlowPane wa7dou bech yjiw mna4min
                 FlowPane flowRecues = new FlowPane();
                 flowRecues.setHgap(18);
                 flowRecues.setVgap(18);
@@ -85,9 +87,9 @@ public class MesReservationsController implements Initializable {
                 // Séparateur
                 Region sep = new Region();
                 sep.setPrefHeight(2);
+                sep.setPrefWidth(Double.MAX_VALUE);
                 sep.setMaxWidth(Double.MAX_VALUE);
                 sep.setStyle("-fx-background-color: #E0E0E0; -fx-padding: 0;");
-                VBox.setMargin(sep, new Insets(10, 0, 10, 0));
                 cardsContainer.getChildren().add(sep);
             }
 
@@ -96,7 +98,8 @@ public class MesReservationsController implements Initializable {
 
             Label sectionEnvoyees = new Label("📤 Mes Demandes (" + envoyees.size() + ")");
             sectionEnvoyees.setStyle(
-                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E7D32; -fx-padding: 0 0 5 5;");
+                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E7D32; -fx-padding: 10 0 10 5;");
+            sectionEnvoyees.setMaxWidth(Double.MAX_VALUE);
             cardsContainer.getChildren().add(sectionEnvoyees);
 
             int total = recues.size() + envoyees.size();
@@ -116,10 +119,11 @@ public class MesReservationsController implements Initializable {
                 emptyBox.getChildren().addAll(emptyIcon, emptyLabel, emptyHint);
                 cardsContainer.getChildren().add(emptyBox);
             } else {
+                // w houni zeda FlowPane o5ra lel demandes envoyées bech yotl3ou mna4min b3ad 3la b3adh'hom
                 FlowPane flowEnvoyees = new FlowPane();
                 flowEnvoyees.setHgap(18);
                 flowEnvoyees.setVgap(18);
-
+                
                 for (Reservation reservation : envoyees) {
                     VBox card = creerCarteReservation(reservation);
                     flowEnvoyees.getChildren().add(card);
@@ -394,25 +398,25 @@ public class MesReservationsController implements Initializable {
 
     private void onAccepterReservation(Reservation reservation) {
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog(
-                "Demande acceptée. Bienvenue !");
-        dialog.setTitle("Accepter la réservation");
+                "Marhbé bik ! Demande ma9boula.");
+        dialog.setTitle("Acceptation");
         dialog.setHeaderText("Accepter la demande de "
                 + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
-        dialog.setContentText("Votre message (optionnel) :");
+        dialog.setContentText("Message mta3ek (optionnel) :");
 
         dialog.showAndWait().ifPresent(reponse -> {
             try {
                 reservationService.accepterReservation(reservation.getId(), reponse.trim());
                 Alert ok = new Alert(Alert.AlertType.INFORMATION);
-                ok.setTitle("Succès");
+                ok.setTitle("C bon");
                 ok.setHeaderText(null);
-                ok.setContentText("Réservation acceptée ✅");
+                ok.setContentText("Réservation t9eblet ✅");
                 ok.showAndWait();
                 chargerReservations();
             } catch (SQLException e) {
                 Alert err = new Alert(Alert.AlertType.ERROR);
-                err.setTitle("Erreur");
-                err.setContentText("Impossible d'accepter : " + e.getMessage());
+                err.setTitle("Mochkla");
+                err.setContentText("Famma mochkla, ma tnajamch t'accepter : " + e.getMessage());
                 err.showAndWait();
             }
         });
@@ -420,16 +424,16 @@ public class MesReservationsController implements Initializable {
 
     private void onRefuserReservation(Reservation reservation) {
         javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
-        dialog.setTitle("Refuser la réservation");
-        dialog.setHeaderText("Refuser la demande de "
+        dialog.setTitle("Refus");
+        dialog.setHeaderText("Bech tarfedh demande mta3 "
                 + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
-        dialog.setContentText("Raison du refus :");
+        dialog.setContentText("A3tih rayek 3lech rfatht :");
 
         dialog.showAndWait().ifPresent(reponse -> {
             if (reponse.trim().isEmpty()) {
                 Alert warn = new Alert(Alert.AlertType.WARNING);
-                warn.setTitle("Attention");
-                warn.setContentText("Veuillez fournir une raison pour le refus.");
+                warn.setTitle("Rod balek");
+                warn.setContentText("A3mel mzouya a3tih sbab l'refus.");
                 warn.showAndWait();
                 return;
             }
@@ -556,11 +560,11 @@ public class MesReservationsController implements Initializable {
 
     private void supprimerReservation(Reservation reservation) {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Confirmation");
-        confirmation.setHeaderText("Supprimer cette réservation ?");
+        confirmation.setTitle("Fasa5");
+        confirmation.setHeaderText("Met2aked t7eb tfasa5 hal réservation ?");
         confirmation.setContentText("Annonce : "
                 + (reservation.getAnnonce() != null ? reservation.getAnnonce().getTitre() : "N/A")
-                + "\nCette action est irréversible.");
+                + "\nRod balek, l'action hedhi irréversible.");
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {

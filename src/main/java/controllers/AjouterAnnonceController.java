@@ -113,7 +113,7 @@ public class AjouterAnnonceController implements Initializable {
         String categorie = categorieField.getText() != null ? categorieField.getText().trim() : "";
 
         if (description.isEmpty()) {
-            showError("Veuillez d'abord écrire une description à améliorer.");
+            showError("Akteb description sa3a bech l'IA tnajam t7assena.");
             return;
         }
 
@@ -137,14 +137,14 @@ public class AjouterAnnonceController implements Initializable {
             String resultat = task.getValue();
             descriptionArea.setText(resultat);
             btnAmeliorerDesc.setDisable(false);
-            btnAmeliorerDesc.setText("✨ Améliorer avec l'IA");
-            aiDescStatus.setText("✅ Description améliorée par Gemini IA");
+            btnAmeliorerDesc.setText("✨ T7assnet bel IA");
+            aiDescStatus.setText("✅ Description mrigla");
         }));
 
         task.setOnFailed(event -> Platform.runLater(() -> {
             btnAmeliorerDesc.setDisable(false);
-            btnAmeliorerDesc.setText("✨ Améliorer avec l'IA");
-            aiDescStatus.setText("❌ Erreur IA : " + task.getException().getMessage());
+            btnAmeliorerDesc.setText("✨ 7assen bel IA");
+            aiDescStatus.setText("❌ Famma mochkla fel IA : " + task.getException().getMessage());
             System.err.println("Erreur IA (description) : " + task.getException().getMessage());
         }));
 
@@ -162,7 +162,7 @@ public class AjouterAnnonceController implements Initializable {
         String type = typeCombo.getValue();
 
         if (titre.isEmpty()) {
-            showError("Veuillez d'abord remplir le titre pour que l'IA puisse suggérer un prix.");
+            showError("Akteb titre sa3a bech l'IA ta3tik soum.");
             return;
         }
 
@@ -184,14 +184,14 @@ public class AjouterAnnonceController implements Initializable {
             double prix = task.getValue();
             prixField.setText(String.format(java.util.Locale.US, "%.2f", prix));
             btnSuggererPrix.setDisable(false);
-            btnSuggererPrix.setText("💡 Suggérer un prix");
-            aiPrixStatus.setText("✅ Prix suggéré par Gemini IA : " + String.format(java.util.Locale.US, "%.2f", prix) + " DT");
+            btnSuggererPrix.setText("💡 Soum proposa");
+            aiPrixStatus.setText("✅ Soum mrigel : " + String.format(java.util.Locale.US, "%.2f", prix) + " DT");
         }));
 
         task.setOnFailed(event -> Platform.runLater(() -> {
             btnSuggererPrix.setDisable(false);
-            btnSuggererPrix.setText("💡 Suggérer un prix");
-            aiPrixStatus.setText("❌ Erreur IA : " + task.getException().getMessage());
+            btnSuggererPrix.setText("💡 A3tini soum");
+            aiPrixStatus.setText("❌ Famma mochkla fel IA : " + task.getException().getMessage());
             System.err.println("Erreur IA (prix) : " + task.getException().getMessage());
         }));
 
@@ -214,7 +214,7 @@ public class AjouterAnnonceController implements Initializable {
         String localisation = localisationField.getText() != null ? localisationField.getText().trim() : "";
 
         if (titre.isEmpty() || description.isEmpty() || prixText.isEmpty()) {
-            showError("Veuillez remplir tous les champs obligatoires (*).");
+            showError("A3mel mzouya 3ammer les champs lkol (*).");
             return;
         }
 
@@ -222,7 +222,7 @@ public class AjouterAnnonceController implements Initializable {
         try {
             prix = Double.parseDouble(prixText);
         } catch (NumberFormatException e) {
-            showError("Le prix doit être un nombre valide.");
+            showError("El soum lezmu ykoun ra9m s7i7.");
             return;
         }
 
@@ -263,8 +263,8 @@ public class AjouterAnnonceController implements Initializable {
         String motifRejet = FraudControlService.getMotifRejet(annonce);
         if (motifRejet != null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("🛡️ Smart Guard — Fraude Détectée");
-            alert.setHeaderText("Action refusée");
+            alert.setTitle("🛡️ Smart Guard — Fraude");
+            alert.setHeaderText("Action ma rfedha");
             alert.setContentText(motifRejet);
             alert.showAndWait();
             return;
@@ -318,19 +318,19 @@ public class AjouterAnnonceController implements Initializable {
                 if (!imageUrl.isEmpty()) {
                     sauvegarderPhoto(annonce.getId(), imageUrl);
                 }
-                showSuccess("✅ Annonce modifiée avec succès !");
+                showSuccess("✅ Annonce mbadla b nja7 !");
             } else {
                 annonceService.ajouter(annonce);
                 if (!imageUrl.isEmpty() && annonce.getId() > 0) {
                     sauvegarderPhoto(annonce.getId(), imageUrl);
                 }
-                showSuccess("✅ Annonce publiée avec succès !");
+                showSuccess("✅ Annonce mhabta b nja7 !");
             }
             retourMarketplace();
         } catch (SQLException e) {
-            showError("Erreur lors de l'enregistrement : " + e.getMessage());
+            showError("Famma mochkla fel sauvegarde : " + e.getMessage());
             btnPublier.setDisable(false);
-            btnPublier.setText("✅ Publier l'annonce");
+            btnPublier.setText("✅ Habet l'annonce");
         }
     }
 

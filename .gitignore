@@ -1,18 +1,67 @@
+<<<<<<< HEAD
 # Build
 target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.kotlin
 *.class
 *.jar
 *.war
 
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
 # IDE
 .idea/
 *.iml
+*.ipr
+=======
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.kotlin
+>>>>>>> badis
+
+### Eclipse ###
+.apt_generated
 .vscode/
 .settings/
 .classpath
+.factorypath
 .project
+.settings
+.springBeans
+.sts4-cache
+<<<<<<< HEAD
+=======
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+>>>>>>> badis
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+<<<<<<< HEAD
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+=======
+>>>>>>> badis
 .factorypath
 
+### VS Code ###
+.vscode/
+
+### Mac OS ###
 # OS
 .DS_Store
 Thumbs.db

@@ -5,7 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MyDatabase {
-    private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
+    //private static final String URL = "jdbc:mysql://localhost:3306/db-gusers";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow";
+    //amen
+    //private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
 
     private static final String USER = "root";
     private static final String PASSWORD = "";
@@ -16,8 +19,9 @@ public class MyDatabase {
     private MyDatabase() {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("C bon, connectina m3a l base jawna behy !");
+            System.out.println("Connection established");
         } catch (SQLException e) {
+            // mieux pour debug:
             e.printStackTrace();
         }
     }
@@ -31,24 +35,6 @@ public class MyDatabase {
     }
 
     public Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                System.out.println("Reconnexion m3a l base...");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return connection;
-    }
-
-    public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }

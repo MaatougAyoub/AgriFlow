@@ -26,7 +26,7 @@ public class ServiceReservation implements IService<Reservation> {
 
     private final Connection cnx;
     private final AnnonceService annonceService; // bech njibou l annonce
-    private final UserService userService;       // bech njibou el users
+    private final UserService userService; // bech njibou el users
 
     public ServiceReservation() {
         this.cnx = MyDatabase.getInstance().getConnection();
@@ -192,7 +192,7 @@ public class ServiceReservation implements IService<Reservation> {
     }
 
     // ===== RECUPERER PAR ID =====
-    @Override
+
     public Reservation recupererParId(int id) throws SQLException {
         if (id <= 0) {
             throw new SQLException("ID reservation invalide.");
@@ -228,85 +228,11 @@ public class ServiceReservation implements IService<Reservation> {
         return reservations;
     }
 
-    // ===== RECUPERER PAR PROPRIETAIRE (demandes recues sur mon materiel) =====
-    // njibou el reservations win ana proprietaire el annonce
-    public List<Reservation> recupererParProprietaire(int proprietaireId) throws SQLException {
-        List<Reservation> reservations = new ArrayList<>();
-        if (proprietaireId <= 0) return reservations;
-        String query = "SELECT * FROM reservations WHERE proprietaire_id=? ORDER BY date_creation DESC";
-        try (PreparedStatement pst = cnx.prepareStatement(query)) {
-            pst.setInt(1, proprietaireId);
-            try (ResultSet rs = pst.executeQuery()) {
-                while (rs.next()) {
-                    reservations.add(mapResultSet(rs));
-                }
-            }
-        }
-        return reservations;
-    }
-
-    // ===== RECUPERER PAR DEMANDEUR (mes demandes envoyées) =====
-    // njibou el reservations elli ana ba3athom (demandeur)
-    public List<Reservation> recupererParDemandeur(int demandeurId) throws SQLException {
-        List<Reservation> reservations = new ArrayList<>();
-        if (demandeurId <= 0) return reservations;
-        String query = "SELECT * FROM reservations WHERE demandeur_id=? ORDER BY date_creation DESC";
-        try (PreparedStatement pst = cnx.prepareStatement(query)) {
-            pst.setInt(1, demandeurId);
-            try (ResultSet rs = pst.executeQuery()) {
-                while (rs.next()) {
-                    reservations.add(mapResultSet(rs));
-                }
-            }
-        }
-        return reservations;
-    }
-
-    // ===== ACCEPTER RESERVATION =====
-    // 9bal ma n acceptiw, nchoufou ken famma conflit m3a reservation okhra deja ACCEPTEE
-    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE
-    public void accepterReservation(int reservationId, String reponse) throws SQLException {
-        Reservation reservation = recupererParId(reservationId);
-        if (reservation == null) {
-            throw new SQLException("Réservation introuvable.");
-        }
-
-        // verification disponibilite 9bal ma n acceptiw
-        boolean disponible = verifierDisponibilite(
-                reservation.getAnnonce().getId(),
-                reservation.getDateDebut(),
-                reservation.getDateFin(),
-                reservation.getId() // on exclut la reservation actuelle
-        );
-        if (!disponible) {
-            throw new SQLException("Impossible d'accepter : un contrat existe déjà pour ces dates sur cet équipement.");
-        }
-
-        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=NOW() WHERE id=?";
-        try (PreparedStatement pst = cnx.prepareStatement(query)) {
-            pst.setString(1, StatutReservation.ACCEPTEE.name());
-            pst.setString(2, reponse);
-            pst.setInt(3, reservationId);
-            pst.executeUpdate();
-        }
-    }
-
-    // ===== REFUSER RESERVATION =====
-    // nbadlou el statut l REFUSEE w n7ottou raison el refus
-    public void refuserReservation(int reservationId, String reponse) throws SQLException {
-        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=NOW() WHERE id=?";
-        try (PreparedStatement pst = cnx.prepareStatement(query)) {
-            pst.setString(1, StatutReservation.REFUSEE.name());
-            pst.setString(2, reponse);
-            pst.setInt(3, reservationId);
-            pst.executeUpdate();
-        }
-    }
-
     /**
      * Alias pour recuperer() — conforme aux consignes du cours.
      */
-    // Alias (meme methode, esm mokhtalef - bech nmatchiw les consignes mta3 el cours)
+    // Alias (meme methode, esm mokhtalef - bech nmatchiw les consignes mta3 el
+    // cours)
     public List<Reservation> afficherTout() throws SQLException {
         return recuperer();
     }
@@ -429,5 +355,81 @@ public class ServiceReservation implements IService<Reservation> {
         }
 
         return reservation;
+    }
+
+    // ===== Réservations envoyées par un demandeur =====
+    public List<Reservation> recupererParDemandeur(int userId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (userId <= 0)
+            return reservations;
+        String query = "SELECT * FROM reservations WHERE demandeur_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, userId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== Réservations reçues par un propriétaire =====
+    public List<Reservation> recupererParProprietaire(int userId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (userId <= 0)
+            return reservations;
+        String query = "SELECT * FROM reservations WHERE proprietaire_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, userId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== ACCEPTER RESERVATION =====
+    // 9bal ma n acceptiw, nchoufou ken famma conflit m3a reservation okhra deja ACCEPTEE
+    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE
+    public void accepterReservation(int reservationId, String reponse) throws SQLException {
+        Reservation reservation = recupererParId(reservationId);
+        if (reservation == null) {
+            throw new SQLException("Réservation introuvable.");
+        }
+
+        // verification disponibilite 9bal ma n acceptiw
+        boolean disponible = verifierDisponibilite(
+                reservation.getAnnonce().getId(),
+                reservation.getDateDebut(),
+                reservation.getDateFin(),
+                reservationId // on exclut la reservation actuelle
+        );
+        if (!disponible) {
+            throw new SQLException("Impossible d'accepter : un contrat existe déjà pour ces dates sur cet équipement.");
+        }
+
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.ACCEPTEE.name());
+            pst.setString(2, reponse);
+            pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
+    }
+
+    // ===== Refuser une réservation =====
+    public void refuserReservation(int reservationId, String reponse) throws SQLException {
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.REFUSEE.name());
+            pst.setString(2, reponse);
+            pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
     }
 }

@@ -113,7 +113,8 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -141,7 +142,8 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Inscription");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -161,7 +163,8 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Mot de passe oublié");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

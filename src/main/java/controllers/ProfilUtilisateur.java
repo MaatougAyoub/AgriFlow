@@ -215,8 +215,9 @@ public class ProfilUtilisateur {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Réclamations");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
-            stage.setMaximized(true);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -242,7 +243,8 @@ public class ProfilUtilisateur {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Modifier Profil");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

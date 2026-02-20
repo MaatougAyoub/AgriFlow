@@ -70,9 +70,9 @@ public class MarketplaceController implements Initializable {
             displayAnnonces(toutesLesAnnonces);
             resultCountLabel.setText(toutesLesAnnonces.size() + " annonce(s) trouvée(s)");
         } catch (SQLException e) {
-            resultCountLabel.setText("Erreur de chargement");
+            resultCountLabel.setText("Mochkla fel chargement");
             showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible de charger les annonces : " + e.getMessage());
+                    "Famma mochkla, ma tnajamnech njibou l'annonces : " + e.getMessage());
         }
     }
 
@@ -177,10 +177,10 @@ public class MarketplaceController implements Initializable {
      */
     private void onDeleteAnnonce(Annonce annonce) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Suppression");
-        alert.setHeaderText("Supprimer l'annonce ?");
+        alert.setTitle("Fasa5");
+        alert.setHeaderText("Fasa5 l'annonce ?");
         alert.setContentText(
-                "Voulez-vous vraiment supprimer \"" + annonce.getTitre() + "\" ?\nCette action est irréversible.");
+                "Met2aked t7eb tfasa5 \"" + annonce.getTitre() + "\" ?\nRod balek, l'action hedhi irréversible.");
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
@@ -188,7 +188,7 @@ public class MarketplaceController implements Initializable {
                     annonceService.supprimer(annonce);
                     loadAnnonces(); // Rafraîchir la grille
                 } catch (SQLException e) {
-                    showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de supprimer : " + e.getMessage());
+                    showAlert(Alert.AlertType.ERROR, "Mochkla", "Famma mochkla, ma tfasa5tech : " + e.getMessage());
                 }
             }
         });
@@ -209,14 +209,15 @@ public class MarketplaceController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Réserver - " + annonce.getTitre());
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
             // Recharger après fermeture du dialog
             loadAnnonces();
         } catch (IOException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur",
-                    "Impossible d'ouvrir le dialogue : " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Mochkla",
+                    "Famma mochkla fel ta7il l'dialogue : " + e.getMessage());
         }
     }
 
