@@ -59,9 +59,9 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
     @Override
     public List<Agriculteur> recupererAgriculteurs() throws SQLException {
         List<Agriculteur> agriculteursList = new ArrayList<>();
-        String req = "SELECT * FROM utilisateurs WHERE role = ?";
+        String req = "SELECT * FROM utilisateurs WHERE UPPER(TRIM(role)) = ?";
         try (PreparedStatement ps = connection.prepareStatement(req)) {
-            ps.setString(1, Role.AGRICULTEUR.toString());
+            ps.setString(1, Role.AGRICULTEUR.toString().toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int idA = rs.getInt("id");

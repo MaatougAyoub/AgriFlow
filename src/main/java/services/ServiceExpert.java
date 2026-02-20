@@ -70,9 +70,9 @@ public class ServiceExpert implements IServiceExpert <Expert> {
     @Override
     public List<Expert> recupererExpert() throws SQLException {
         List<Expert> expertsList = new ArrayList<>();
-        String req = "SELECT * FROM utilisateurs WHERE role = ?";
+        String req = "SELECT * FROM utilisateurs WHERE UPPER(TRIM(role)) = ?";
         try (PreparedStatement ps = connection.prepareStatement(req)) {
-            ps.setString(1, Role.EXPERT.toString());
+            ps.setString(1, Role.EXPERT.toString().toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int idE = rs.getInt("id");

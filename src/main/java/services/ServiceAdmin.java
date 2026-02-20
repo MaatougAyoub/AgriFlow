@@ -58,9 +58,9 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
     @Override
     public List<Admin> recupererAdmin() throws SQLException {
         List<Admin> adminsList = new ArrayList<>();
-        String req = "SELECT * FROM utilisateurs WHERE role = ?";
+        String req = "SELECT * FROM utilisateurs WHERE UPPER(TRIM(role)) = ?";
         try (PreparedStatement ps = connection.prepareStatement(req)) {
-            ps.setString(1, Role.ADMIN.toString());
+            ps.setString(1, Role.ADMIN.toString().toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     int idE = rs.getInt("id");
