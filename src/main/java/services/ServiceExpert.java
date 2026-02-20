@@ -19,77 +19,44 @@ public class ServiceExpert implements IServiceExpert <Expert> {
 
     @Override
     public void ajouterExpert(Expert expert) throws SQLException {
-        // 1️⃣ Insérer dans la table `utilisateurs
-        String reqUser = "INSERT INTO `utilisateurs`(`nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`)" +
-                "VALUES ('" + expert.getNom() + "','" + expert.getPrenom() + "','" + expert.getCin() + "','" + expert.getEmail() + "','" + expert.getMotDePasse() + "','" + Role.EXPERT + "','" + expert.getDateCreation() + "','" + expert.getSignature() + "')";
-        Statement st = connection.createStatement();
-        st.executeUpdate(reqUser, Statement.RETURN_GENERATED_KEYS);
-
-        // 2️⃣ Récupérer l'ID auto-généré
-        ResultSet generatedKeys = st.getGeneratedKeys();
-        int userId = 0;
-        if (generatedKeys.next()) {
-            userId = generatedKeys.getInt(1);
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, certification) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, expert.getNom());
+            ps.setString(2, expert.getPrenom());
+            ps.setInt(3, expert.getCin());
+            ps.setString(4, expert.getEmail());
+            ps.setString(5, expert.getMotDePasse());
+            ps.setString(6, Role.EXPERT.toString());
+            ps.setObject(7, expert.getDateCreation());
+            ps.setString(8, expert.getSignature());
+            ps.setString(9, expert.getCertification());
+            ps.executeUpdate();
         }
-
-        // 3️⃣ Insérer dans la table `experts` avec l'ID récupéré
-        String reqExpert = "INSERT INTO `experts`(`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `certification`) " +
-                "VALUES ('" + userId + "','" + expert.getNom() + "','" + expert.getPrenom() + "','" + expert.getCin() + "','" + expert.getEmail() + "','" + expert.getMotDePasse() + "','" + Role.EXPERT + "','" + expert.getDateCreation() + "','" + expert.getSignature() + "','" + expert.getCertification() + "')";
-
-        st.executeUpdate(reqExpert);
-        st.close();
         System.out.println("Expert ajoute avec succés!!! ✅");
     }
 
     public void modifierExpert(Expert expert) throws SQLException {
-        // 1️⃣ Mettre à jour la table `utilisateurs`
-        String reqUser = "UPDATE utilisateurs SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=? WHERE id=?";
-        PreparedStatement psUser = connection.prepareStatement(reqUser);
-        psUser.setString(1, expert.getNom());
-        psUser.setString(2, expert.getPrenom());
-        psUser.setInt(3, expert.getCin());
-        psUser.setString(4, expert.getEmail());
-        psUser.setString(5, expert.getMotDePasse());
-        psUser.setString(6, Role.EXPERT.toString());
-        psUser.setObject(7, expert.getDateCreation());
-        psUser.setString(8, expert.getSignature());
-        psUser.setInt(9, expert.getId()); // ✅ WHERE id=?
-        psUser.executeUpdate();
-        psUser.close();
-
-        // 2️⃣ Mettre à jour la table `experts`
-        String reqExpert = "UPDATE experts SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=?, certification=? WHERE id=?";
-        PreparedStatement psExpert = connection.prepareStatement(reqExpert);
-        psExpert.setString(1, expert.getNom());
-        psExpert.setString(2, expert.getPrenom());
-        psExpert.setInt(3, expert.getCin());
-        psExpert.setString(4, expert.getEmail());
-        psExpert.setString(5, expert.getMotDePasse());
-        psExpert.setString(6, Role.EXPERT.toString());
-        psExpert.setObject(7, expert.getDateCreation());
-        psExpert.setString(8, expert.getSignature());
-        psExpert.setString(9, expert.getCertification()); // ✅ Certification
-        psExpert.setInt(10, expert.getId()); //  WHERE id=?
-        psExpert.executeUpdate();
-        psExpert.close();
+        String reqUser = "UPDATE utilisateurs SET nom=?, prenom=?, cin=?, email=?, motDePasse=?, role=?, dateCreation=?, signature=?, certification=? WHERE id=?";
+        try (PreparedStatement psUser = connection.prepareStatement(reqUser)) {
+            psUser.setString(1, expert.getNom());
+            psUser.setString(2, expert.getPrenom());
+            psUser.setInt(3, expert.getCin());
+            psUser.setString(4, expert.getEmail());
+            psUser.setString(5, expert.getMotDePasse());
+            psUser.setString(6, Role.EXPERT.toString());
+            psUser.setObject(7, expert.getDateCreation());
+            psUser.setString(8, expert.getSignature());
+            psUser.setString(9, expert.getCertification());
+            psUser.setInt(10, expert.getId());
+            psUser.executeUpdate();
+        }
 
         System.out.println("Expert modifié avec succès!!✅");
     }
     @Override
     public void supprimerExpert (Expert expert) throws SQLException
     {
-        /* // 1️⃣ Supprimer de la table `experts` en premier (clé étrangère)
-        String reqExpert = "DELETE FROM `experts` WHERE `id` = ?";
-        PreparedStatement psExpert = connection.prepareStatement(reqExpert);
-        psExpert.setInt(1, expert.getId());
-        psExpert.executeUpdate();
-        psExpert.close();*/
-        /*⛔⛔Remarque importante: j'ai pas besoin d'une requete de suppression pour la table "experts" car c'est automatique grace à
-        CONSTRAINT fk_experts_utilisateurs
-        FOREIGN KEY (id) REFERENCES utilisateurs(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-         */
         // 1️⃣ Supprimer de la table `utilisateurs`
         String reqUser = "DELETE FROM `utilisateurs` WHERE `id` = ?";
         PreparedStatement psUser = connection.prepareStatement(reqUser);
@@ -103,27 +70,27 @@ public class ServiceExpert implements IServiceExpert <Expert> {
     @Override
     public List<Expert> recupererExpert() throws SQLException {
         List<Expert> expertsList = new ArrayList<>();
-        String req = "SELECT * FROM experts ";
-        Statement st = connection.createStatement();
-        ResultSet rs = st.executeQuery(req);
-        while (rs.next()) {
-            int idE = rs.getInt("id");
-            String nomE = rs.getString(2);
-            String prenomE = rs.getString(3);
-            int cinE = rs.getInt(4);
-            String emailE = rs.getString(5);
-            String motDePasseE = rs.getString(6);
-            String roleE = rs.getString(7);
-            //ic j'ai besoin de la variable dateCreation de type LocalDate(voir le constructeur dans la classe Expert)
-            java.sql.Date sqlDate = rs.getDate(8);
-            java.time.LocalDate dateCreationE = (sqlDate != null) ? sqlDate.toLocalDate() : null;
-            String signatureE = rs.getString(9);
-            String certificationE = rs.getString(10);
-            Expert expert = new Expert(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE,certificationE);
-            expertsList.add(expert);
+        String req = "SELECT * FROM utilisateurs WHERE UPPER(TRIM(role)) = ?";
+        try (PreparedStatement ps = connection.prepareStatement(req)) {
+            ps.setString(1, Role.EXPERT.toString().toUpperCase());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int idE = rs.getInt("id");
+                    String nomE = rs.getString("nom");
+                    String prenomE = rs.getString("prenom");
+                    int cinE = rs.getInt("cin");
+                    String emailE = rs.getString("email");
+                    String motDePasseE = rs.getString("motDePasse");
+                    String roleE = rs.getString("role");
+                    java.sql.Date sqlDate = rs.getDate("dateCreation");
+                    java.time.LocalDate dateCreationE = (sqlDate != null) ? sqlDate.toLocalDate() : null;
+                    String signatureE = rs.getString("signature");
+                    String certificationE = rs.getString("certification");
+                    Expert expert = new Expert(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE, certificationE);
+                    expertsList.add(expert);
+                }
+            }
         }
-        rs.close();
-        st.close();
         return expertsList;
     }
     public boolean emailExiste(String email) throws SQLException {
@@ -140,20 +107,9 @@ public class ServiceExpert implements IServiceExpert <Expert> {
     }
 
     public void modifierMotDePasseParEmail(String email, String nouveauMotDePasse) throws SQLException {
-        Connection cnx = MyDatabase.getInstance().getConnection(); // ✅ récupérer une connexion active
-
         // 1) utilisateurs
         String sqlUser = "UPDATE utilisateurs SET motDePasse = ? WHERE email = ? AND role = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
-            ps.setString(1, nouveauMotDePasse);
-            ps.setString(2, email);
-            ps.setString(3, Role.EXPERT.toString());
-            ps.executeUpdate();
-        }
-
-        // 2) experts
-        String sqlExpert = "UPDATE experts SET motDePasse = ? WHERE email = ? AND role = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sqlExpert)) {
             ps.setString(1, nouveauMotDePasse);
             ps.setString(2, email);
             ps.setString(3, Role.EXPERT.toString());

@@ -293,7 +293,7 @@ public class MainController implements Initializable {
                 // profilCtrl.setUserData(...);
             }
             if (controller instanceof ListeUtilisateurs usersCtrl) {
-                // usersCtrl.setUserData(...);
+                usersCtrl.setUserData(userData);
             }
 
             contentArea.getChildren().setAll(view);

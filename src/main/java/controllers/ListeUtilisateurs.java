@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Agriculteur;
+import entities.Admin;
 import entities.Expert;
 import entities.Utilisateur;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
+import services.ServiceAdmin;
 import services.ServiceExpert;
 
 import java.io.File;
@@ -71,6 +73,7 @@ public class ListeUtilisateurs {
 
     private final ServiceAgriculteur serviceAgriculteur = new ServiceAgriculteur();
     private final ServiceExpert serviceExpert = new ServiceExpert();
+    private final ServiceAdmin serviceAdmin = new ServiceAdmin();
 
     private final ObservableList<Utilisateur> master = FXCollections.observableArrayList();
 
@@ -303,11 +306,17 @@ public class ListeUtilisateurs {
         try {
             List<Utilisateur> all = new ArrayList<>();
 
-            // ✅ Agriculteurs + Experts (tous champs sauf id/mdp affichés)
+            // ✅ charger tous les rôles existants dans la table
             all.addAll(serviceAgriculteur.recupererAgriculteurs());
             all.addAll(serviceExpert.recupererExpert());
+            all.addAll(serviceAdmin.recupererAdmin());
 
-            master.setAll(all);
+            // ✅ éviter doublons si des rôles sont inconsistants en DB
+            Map<Integer, Utilisateur> byId = all.stream()
+                    .filter(u -> u != null)
+                    .collect(Collectors.toMap(Utilisateur::getId, u -> u, (a, b) -> a));
+
+            master.setAll(byId.values());
             table.setItems(master);
             countLabel.setText(master.size() + " utilisateur(s)");
 
@@ -363,11 +372,12 @@ public class ListeUtilisateurs {
                 serviceAgriculteur.supprimerAgriculteur(a);
             } else if (u instanceof Expert e) {
                 serviceExpert.supprimerExpert(e);
+            } else if (u instanceof Admin a) {
+                serviceAdmin.supprimerAdmin(a);
             } else {
-                // Si tu décides plus tard d’afficher les Admin, il faudra un ServiceAdmin
                 Alert info = new Alert(Alert.AlertType.INFORMATION);
                 info.setHeaderText("Suppression non supportée");
-                info.setContentText("Suppression des ADMIN non implémentée (ServiceAdmin manquant).");
+                info.setContentText("Suppression non implémentée pour ce type d'utilisateur.");
                 info.showAndWait();
             }
 
@@ -393,7 +403,7 @@ public class ListeUtilisateurs {
             mainController.setUserDataAndGoToProfil(userData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Marketplace");
+            stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
             //stage.setMaximized(true);
             stage.setFullScreen(true);
