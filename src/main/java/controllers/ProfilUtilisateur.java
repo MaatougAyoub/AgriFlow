@@ -78,7 +78,10 @@ public class ProfilUtilisateur {
 
     @FXML
     public void initialize() {
-        // Rien à initialiser — le profil est maintenant un contenu embarqué
+        // Ne jamais afficher les chemins des images (signature/carte pro/certification)
+        hidePathLabel(signaturePathValue);
+        hidePathLabel(carteProPathValue);
+        hidePathLabel(certificationPathValue);
     }
 
     public void setUserData(Map<String, Object> userData) {
@@ -105,7 +108,6 @@ public class ProfilUtilisateur {
         dateCreationValue.setText(safeString(userData.get("dateCreation")));
 
         String signaturePath = safeString(userData.get("signature"));
-        signaturePathValue.setText(signaturePath.isBlank() ? "-" : signaturePath);
         loadImageInto(signatureImage, signaturePath);
 
         // hide all specifics
@@ -134,14 +136,12 @@ public class ProfilUtilisateur {
                 parcellesValue.setText(safeString(userData.get("parcelles")));
 
                 String carteProPath = safeString(userData.get("carte_pro"));
-                carteProPathValue.setText(carteProPath.isBlank() ? "-" : carteProPath);
                 loadImageInto(carteProImage, carteProPath);
 
             } else if (role == Role.EXPERT) {
                 setSectionVisible(expertBox, true);
 
                 String certPath = safeString(userData.get("certification"));
-                certificationPathValue.setText(certPath.isBlank() ? "-" : certPath);
                 loadImageInto(certificationImage, certPath);
 
             } else if (role == Role.ADMIN) {
@@ -165,6 +165,14 @@ public class ProfilUtilisateur {
     private void setSectionVisible(VBox box, boolean visible) {
         box.setVisible(visible);
         box.setManaged(visible);
+    }
+
+    private void hidePathLabel(Label label) {
+        if (label == null)
+            return;
+        label.setText("");
+        label.setVisible(false);
+        label.setManaged(false);
     }
 
     private void loadImageInto(ImageView view, String path) {

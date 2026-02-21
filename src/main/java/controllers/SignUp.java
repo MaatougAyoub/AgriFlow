@@ -16,11 +16,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
+import utils.XamppUploads;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
@@ -44,6 +43,11 @@ public class SignUp implements Initializable {
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
 
+    // Steps (form -> code)
+    @FXML private VBox stepFormBox;
+    @FXML private VBox stepCodeBox;
+    @FXML private TextField codeField;
+
     // Champs Agriculteur
     @FXML private VBox agriculteurFieldsBox;
     @FXML private TextField adresseField;
@@ -58,6 +62,10 @@ public class SignUp implements Initializable {
     private String signaturePath = null;
     private String carteProPath = null;
     private String certificationPath = null;
+
+    // Inscription OTP (simulation)
+    private String generatedCode = null;
+    private String pendingUserType = null;
 
     private ServiceAgriculteur serviceAgriculteur;
     private ServiceExpert serviceExpert;
@@ -81,6 +89,8 @@ public class SignUp implements Initializable {
 
         hideMessages();
         hideSpecificBoxes();
+
+        showStepForm();
     }
 
     @FXML
@@ -102,8 +112,13 @@ public class SignUp implements Initializable {
     private void uploadSignature(ActionEvent event) {
         File file = chooseFile("Sélectionner la signature");
         if (file != null) {
-            signaturePath = saveFileAndReturnDbPath(file, "signatures");
-            signaturePathField.setText(file.getName());
+            try {
+                signaturePath = XamppUploads.save(file, XamppUploads.Category.SIGNATURES);
+                signaturePathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload signature: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,8 +126,13 @@ public class SignUp implements Initializable {
     private void uploadCartePro(ActionEvent event) {
         File file = chooseFile("Sélectionner la carte professionnelle");
         if (file != null) {
-            carteProPath = saveFileAndReturnDbPath(file, "cartes_pro");
-            carteProPathField.setText(file.getName());
+            try {
+                carteProPath = XamppUploads.save(file, XamppUploads.Category.CARTES);
+                carteProPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload carte professionnelle: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -120,8 +140,13 @@ public class SignUp implements Initializable {
     private void uploadCertification(ActionEvent event) {
         File file = chooseFile("Sélectionner la certification");
         if (file != null) {
-            certificationPath = saveFileAndReturnDbPath(file, "certifications");
-            certificationPathField.setText(file.getName());
+            try {
+                certificationPath = XamppUploads.save(file, XamppUploads.Category.CERTIFICATIONS);
+                certificationPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload certification: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -129,35 +154,9 @@ public class SignUp implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
         );
         return fileChooser.showOpenDialog(nomField.getScene().getWindow());
-    }
-
-    /**
-     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin DB relatif:
-     * ex: uploads/signatures/1700_file.png
-     */
-    private String saveFileAndReturnDbPath(File file, String folderName) {
-        try {
-            Path uploadDir = Paths.get("uploads", folderName);
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
-
-            String fileName = System.currentTimeMillis() + "_" + file.getName();
-            Path targetPath = uploadDir.resolve(fileName);
-
-            Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            return "uploads/" + folderName + "/" + fileName;
-
-        } catch (IOException e) {
-            showError("Erreur lors de l'upload du fichier: " + e.getMessage());
-            return null;
-        }
     }
 
     // ===== Inscription =====
@@ -168,20 +167,72 @@ public class SignUp implements Initializable {
 
         try {
             if (!validateFields()) return;
+            if (!validateSpecificSignupFields()) return;
 
-            String type = typeUtilisateurCombo.getValue();
-            if ("Agriculteur".equals(type)) {
-                inscrireAgriculteur();
-            } else if ("Expert".equals(type)) {
-                inscrireExpert();
-            } else {
-                showError("Type d'utilisateur invalide.");
-            }
+            pendingUserType = typeUtilisateurCombo.getValue();
+
+            generatedCode = generateSimpleCode();
+            System.out.println("Code inscription (debug) = " + generatedCode);
+
+            showSuccess("Code généré (simulation). Collez le code pour finaliser l'inscription.");
+            showStepCode();
 
         } catch (Exception e) {
             showError("Erreur lors de l'inscription: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void confirmerInscription(ActionEvent event) {
+        hideMessages();
+
+        String code = codeField.getText() == null ? "" : codeField.getText().trim();
+        if (generatedCode == null || pendingUserType == null) {
+            showError("Veuillez d'abord lancer l'inscription pour générer un code.");
+            showStepForm();
+            return;
+        }
+        if (code.isEmpty()) {
+            showError("Veuillez saisir le code.");
+            return;
+        }
+        if (!generatedCode.equals(code)) {
+            showError("Code incorrect.");
+            return;
+        }
+
+        try {
+            // invalider le code pour éviter double soumission
+            generatedCode = null;
+
+            if ("Agriculteur".equals(pendingUserType)) {
+                inscrireAgriculteur();
+            } else if ("Expert".equals(pendingUserType)) {
+                inscrireExpert();
+            } else {
+                showError("Type d'utilisateur invalide.");
+                showStepForm();
+                return;
+            }
+
+            pendingUserType = null;
+            showStepForm();
+
+        } catch (Exception e) {
+            showError("Erreur lors de la confirmation: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void retourFormulaire(ActionEvent event) {
+        hideMessages();
+        // Les champs peuvent changer => on force une nouvelle génération de code
+        generatedCode = null;
+        pendingUserType = null;
+        codeField.clear();
+        showStepForm();
     }
 
     private void inscrireAgriculteur() throws SQLException {
@@ -214,8 +265,8 @@ public class SignUp implements Initializable {
 
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
 
-        showSuccess("Agriculteur inscrit avec succès ✅");
         clearFields();
+        showSuccess("Agriculteur inscrit avec succès ✅");
     }
 
     private void inscrireExpert() throws SQLException {
@@ -242,8 +293,41 @@ public class SignUp implements Initializable {
 
         serviceExpert.ajouterExpert(expert);
 
-        showSuccess("Expert inscrit avec succès ✅");
         clearFields();
+        showSuccess("Expert inscrit avec succès ✅");
+    }
+
+    private boolean validateSpecificSignupFields() {
+        String type = typeUtilisateurCombo.getValue();
+
+        if ("Agriculteur".equals(type)) {
+            if (adresseField.getText() == null || adresseField.getText().trim().isEmpty()) {
+                showError("L'adresse est obligatoire pour un agriculteur.");
+                return false;
+            }
+            if (carteProPath == null || carteProPath.isBlank()) {
+                showError("La carte professionnelle est obligatoire.");
+                return false;
+            }
+            if (signaturePath == null || signaturePath.isBlank()) {
+                showError("La signature est obligatoire.");
+                return false;
+            }
+        } else if ("Expert".equals(type)) {
+            if (certificationPath == null || certificationPath.isBlank()) {
+                showError("La certification est obligatoire.");
+                return false;
+            }
+            if (signaturePath == null || signaturePath.isBlank()) {
+                showError("La signature est obligatoire.");
+                return false;
+            }
+        } else {
+            showError("Veuillez sélectionner un type d'utilisateur.");
+            return false;
+        }
+
+        return true;
     }
 
     private boolean validateFields() {
@@ -371,5 +455,38 @@ public class SignUp implements Initializable {
 
         hideSpecificBoxes();
         hideMessages();
+    }
+
+    private void showStepForm() {
+        if (stepFormBox != null) {
+            stepFormBox.setVisible(true);
+            stepFormBox.setManaged(true);
+        }
+        if (stepCodeBox != null) {
+            stepCodeBox.setVisible(false);
+            stepCodeBox.setManaged(false);
+        }
+        if (codeField != null) {
+            codeField.clear();
+        }
+    }
+
+    private void showStepCode() {
+        if (stepCodeBox != null) {
+            stepCodeBox.setVisible(true);
+            stepCodeBox.setManaged(true);
+        }
+        if (stepFormBox != null) {
+            stepFormBox.setVisible(false);
+            stepFormBox.setManaged(false);
+        }
+        if (codeField != null) {
+            codeField.clear();
+        }
+    }
+
+    private String generateSimpleCode() {
+        int code = (int) (Math.random() * 900000) + 100000;
+        return String.valueOf(code);
     }
 }
