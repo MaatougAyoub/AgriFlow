@@ -56,6 +56,11 @@ public class CulturesEnVente {
     @FXML
     public void initialize() {
         User u = MainController.getCurrentUser();
+        if (MainController.getCurrentUser() == null) {User uu=
+                new User(36, "Taaat", "ddd", "emaaail@test.com");uu.setRole("AGRICULTEUR");
+            MainController.setCurrentUser(uu);
+
+        }
         boolean admin = isAdmin(u);
 
         setVisibleManaged(adminPane, admin);
