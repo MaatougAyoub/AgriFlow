@@ -3,6 +3,7 @@ package controllers;
 import entities.Agriculteur;
 import entities.Expert;
 import entities.Role;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
+import services.VerificationCodeEmailService;
 import utils.XamppUploads;
 
 import java.io.File;
@@ -172,15 +174,33 @@ public class SignUp implements Initializable {
             pendingUserType = typeUtilisateurCombo.getValue();
 
             generatedCode = generateSimpleCode();
-            System.out.println("Code inscription (debug) = " + generatedCode);
 
-            showSuccess("Code généré (simulation). Collez le code pour finaliser l'inscription.");
+            showSuccess("Envoi du code par email...");
             showStepCode();
+            sendSignupCodeByEmailAsync(emailField.getText().trim(), generatedCode);
 
         } catch (Exception e) {
             showError("Erreur lors de l'inscription: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void sendSignupCodeByEmailAsync(String email, String code) {
+        Thread t = new Thread(() -> {
+            try {
+                new VerificationCodeEmailService().sendSignupCode(email, code);
+                Platform.runLater(() -> showSuccess("Code envoyé par email. Vérifiez votre boîte de réception."));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    generatedCode = null;
+                    pendingUserType = null;
+                    showError("Impossible d'envoyer le code par email: " + e.getMessage());
+                    showStepForm();
+                });
+            }
+        }, "mailersend-signup-code");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML

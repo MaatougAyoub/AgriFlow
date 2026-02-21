@@ -64,6 +64,16 @@
             <artifactId>json</artifactId>
             <version>20240303</version>
         </dependency>
+
+        <!-- MailerSend Java SDK -->
+        <!--
+        <dependency>
+            <groupId>com.mailersend</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        -->
+        <!-- Brevo SDK removed: using HttpClient + org.json directly -->
     </dependencies>
 
     <build>

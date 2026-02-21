@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Role;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceAuth;
 import services.ServiceProfil;
+import services.VerificationCodeEmailService;
 import utils.XamppUploads;
 
 import java.io.File;
@@ -196,10 +198,30 @@ public class ModifierProfil {
         pendingData = collectFormData();
 
         generatedCode = generateSimpleCode();
-        System.out.println("Code modification profil (debug) = " + generatedCode);
 
-        showSuccess("Code généré (simulation). Veuillez le saisir pour confirmer.");
+        showSuccess("Envoi du code par email...");
         showStepCode();
+
+        String email = String.valueOf(pendingData.get("email"));
+        sendProfileUpdateCodeByEmailAsync(email, generatedCode);
+    }
+
+    private void sendProfileUpdateCodeByEmailAsync(String email, String code) {
+        Thread t = new Thread(() -> {
+            try {
+                new VerificationCodeEmailService().sendProfileUpdateCode(email, code);
+                Platform.runLater(() -> showSuccess("Code envoyé par email. Vérifiez votre boîte de réception."));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    generatedCode = null;
+                    pendingData = null;
+                    showError("Impossible d'envoyer le code par email: " + e.getMessage());
+                    showStepEdit();
+                });
+            }
+        }, "mailersend-profile-code");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
