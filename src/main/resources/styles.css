@@ -145,6 +145,22 @@
 }
 
 /* ============================================================
+   PROFIL UTILISATEUR (bigger content)
+   ============================================================ */
+.profile-page-large {
+    -fx-font-size: 28px;
+}
+
+/* Ensure common controls actually pick up the larger sizing */
+.profile-page-large .label {
+    -fx-font-size: 28px;
+}
+
+.profile-page-large .button {
+    -fx-font-size: 22px;
+}
+
+/* ============================================================
    GENERIC BUTTONS
    ============================================================ */
 

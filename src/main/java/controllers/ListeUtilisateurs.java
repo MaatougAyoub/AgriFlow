@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Agriculteur;
+import entities.Admin;
 import entities.Expert;
 import entities.Utilisateur;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,6 +19,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
+import services.ServiceAdmin;
 import services.ServiceExpert;
 
 import java.io.File;
@@ -30,32 +32,48 @@ import java.util.stream.Collectors;
 
 public class ListeUtilisateurs {
 
-    @FXML private TextField searchField;
+    @FXML
+    private TextField searchField;
 
-    @FXML private TableView<Utilisateur> table;
+    @FXML
+    private TableView<Utilisateur> table;
 
-    @FXML private TableColumn<Utilisateur, String> colNom;
-    @FXML private TableColumn<Utilisateur, String> colPrenom;
-    @FXML private TableColumn<Utilisateur, Integer> colCin;
-    @FXML private TableColumn<Utilisateur, String> colEmail;
-    @FXML private TableColumn<Utilisateur, String> colRole;
-    @FXML private TableColumn<Utilisateur, String> colDateCreation;
+    @FXML
+    private TableColumn<Utilisateur, String> colNom;
+    @FXML
+    private TableColumn<Utilisateur, String> colPrenom;
+    @FXML
+    private TableColumn<Utilisateur, Integer> colCin;
+    @FXML
+    private TableColumn<Utilisateur, String> colEmail;
+    @FXML
+    private TableColumn<Utilisateur, String> colRole;
+    @FXML
+    private TableColumn<Utilisateur, String> colDateCreation;
 
     // ✅ images
-    @FXML private TableColumn<Utilisateur, Void> colSignatureImg;
-    @FXML private TableColumn<Utilisateur, Void> colCarteProImg;
-    @FXML private TableColumn<Utilisateur, Void> colCertificationImg;
+    @FXML
+    private TableColumn<Utilisateur, Void> colSignatureImg;
+    @FXML
+    private TableColumn<Utilisateur, Void> colCarteProImg;
+    @FXML
+    private TableColumn<Utilisateur, Void> colCertificationImg;
 
     // ✅ champs spécifiques (affichés seulement si le type correspond)
-    @FXML private TableColumn<Utilisateur, String> colAdresse;
-    @FXML private TableColumn<Utilisateur, String> colParcelles;
+    @FXML
+    private TableColumn<Utilisateur, String> colAdresse;
+    @FXML
+    private TableColumn<Utilisateur, String> colParcelles;
 
-    @FXML private TableColumn<Utilisateur, Void> colActions;
+    @FXML
+    private TableColumn<Utilisateur, Void> colActions;
 
-    @FXML private Label countLabel;
+    @FXML
+    private Label countLabel;
 
     private final ServiceAgriculteur serviceAgriculteur = new ServiceAgriculteur();
     private final ServiceExpert serviceExpert = new ServiceExpert();
+    private final ServiceAdmin serviceAdmin = new ServiceAdmin();
 
     private final ObservableList<Utilisateur> master = FXCollections.observableArrayList();
 
@@ -99,13 +117,15 @@ public class ListeUtilisateurs {
         // spécifiques
         colAdresse.setCellValueFactory(cell -> {
             Utilisateur u = cell.getValue();
-            if (u instanceof Agriculteur a) return new SimpleStringProperty(n(a.getAdresse()));
+            if (u instanceof Agriculteur a)
+                return new SimpleStringProperty(n(a.getAdresse()));
             return new SimpleStringProperty("");
         });
 
         colParcelles.setCellValueFactory(cell -> {
             Utilisateur u = cell.getValue();
-            if (u instanceof Agriculteur a) return new SimpleStringProperty(n(a.getParcelles()));
+            if (u instanceof Agriculteur a)
+                return new SimpleStringProperty(n(a.getParcelles()));
             return new SimpleStringProperty("");
         });
 
@@ -121,10 +141,12 @@ public class ListeUtilisateurs {
                 lbl.setWrapText(true);
                 lbl.prefWidthProperty().bind(widthProperty().subtract(10));
             }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) setGraphic(null);
+                if (empty || item == null)
+                    setGraphic(null);
                 else {
                     lbl.setText(item);
                     setGraphic(lbl);
@@ -136,7 +158,9 @@ public class ListeUtilisateurs {
     private void setupImageColumns() {
         colSignatureImg.setCellFactory(col -> new TableCell<>() {
             private final ImageView view = makeThumb();
-            @Override protected void updateItem(Void item, boolean empty) {
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || getIndex() < 0 || getIndex() >= table.getItems().size()) {
                     setGraphic(null);
@@ -150,7 +174,9 @@ public class ListeUtilisateurs {
 
         colCarteProImg.setCellFactory(col -> new TableCell<>() {
             private final ImageView view = makeThumb();
-            @Override protected void updateItem(Void item, boolean empty) {
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || getIndex() < 0 || getIndex() >= table.getItems().size()) {
                     setGraphic(null);
@@ -168,7 +194,9 @@ public class ListeUtilisateurs {
 
         colCertificationImg.setCellFactory(col -> new TableCell<>() {
             private final ImageView view = makeThumb();
-            @Override protected void updateItem(Void item, boolean empty) {
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || getIndex() < 0 || getIndex() >= table.getItems().size()) {
                     setGraphic(null);
@@ -196,7 +224,8 @@ public class ListeUtilisateurs {
 
     private Image loadImageFromDbPath(String path) {
         try {
-            if (path == null || path.isBlank() || "null".equalsIgnoreCase(path)) return null;
+            if (path == null || path.isBlank() || "null".equalsIgnoreCase(path))
+                return null;
 
             String normalized = path.trim()
                     .replace("uploadssignatures", "uploads/signatures/")
@@ -208,8 +237,10 @@ public class ListeUtilisateurs {
             }
 
             File file = new File(System.getProperty("user.dir"), normalized);
-            if (!file.exists()) file = new File(normalized);
-            if (!file.exists()) return null;
+            if (!file.exists())
+                file = new File(normalized);
+            if (!file.exists())
+                return null;
 
             return new Image(file.toURI().toString(), true);
         } catch (Exception e) {
@@ -275,11 +306,17 @@ public class ListeUtilisateurs {
         try {
             List<Utilisateur> all = new ArrayList<>();
 
-            // ✅ Agriculteurs + Experts (tous champs sauf id/mdp affichés)
+            // ✅ charger tous les rôles existants dans la table
             all.addAll(serviceAgriculteur.recupererAgriculteurs());
             all.addAll(serviceExpert.recupererExpert());
+            all.addAll(serviceAdmin.recupererAdmin());
 
-            master.setAll(all);
+            // ✅ éviter doublons si des rôles sont inconsistants en DB
+            Map<Integer, Utilisateur> byId = all.stream()
+                    .filter(u -> u != null)
+                    .collect(Collectors.toMap(Utilisateur::getId, u -> u, (a, b) -> a));
+
+            master.setAll(byId.values());
             table.setItems(master);
             countLabel.setText(master.size() + " utilisateur(s)");
 
@@ -298,22 +335,26 @@ public class ListeUtilisateurs {
             return;
         }
 
-        List<Utilisateur> filtered = master.stream().filter(u ->
-                s(u.getNom()).contains(q) ||
-                        s(u.getPrenom()).contains(q) ||
-                        s(u.getEmail()).contains(q) ||
-                        s(u.getRole()).contains(q)
-        ).collect(Collectors.toList());
+        List<Utilisateur> filtered = master.stream().filter(u -> s(u.getNom()).contains(q) ||
+                s(u.getPrenom()).contains(q) ||
+                s(u.getEmail()).contains(q) ||
+                s(u.getRole()).contains(q)).collect(Collectors.toList());
 
         table.setItems(FXCollections.observableArrayList(filtered));
         countLabel.setText(filtered.size() + " utilisateur(s)");
     }
 
-    private String s(String v) { return v == null ? "" : v.toLowerCase(); }
-    private String n(String v) { return v == null ? "" : v; }
+    private String s(String v) {
+        return v == null ? "" : v.toLowerCase();
+    }
+
+    private String n(String v) {
+        return v == null ? "" : v;
+    }
 
     private void onDeleteClicked(int index) {
-        if (index < 0 || index >= table.getItems().size()) return;
+        if (index < 0 || index >= table.getItems().size())
+            return;
 
         Utilisateur u = table.getItems().get(index);
 
@@ -322,7 +363,8 @@ public class ListeUtilisateurs {
         confirm.setHeaderText("Supprimer utilisateur");
         confirm.setContentText("Supprimer " + u.getNom() + " " + u.getPrenom() + " ?");
         var res = confirm.showAndWait();
-        if (res.isEmpty() || res.get() != ButtonType.OK) return;
+        if (res.isEmpty() || res.get() != ButtonType.OK)
+            return;
 
         try {
             // ✅ suppression via services spécifiques
@@ -330,11 +372,12 @@ public class ListeUtilisateurs {
                 serviceAgriculteur.supprimerAgriculteur(a);
             } else if (u instanceof Expert e) {
                 serviceExpert.supprimerExpert(e);
+            } else if (u instanceof Admin a) {
+                serviceAdmin.supprimerAdmin(a);
             } else {
-                // Si tu décides plus tard d’afficher les Admin, il faudra un ServiceAdmin
                 Alert info = new Alert(Alert.AlertType.INFORMATION);
                 info.setHeaderText("Suppression non supportée");
-                info.setContentText("Suppression des ADMIN non implémentée (ServiceAdmin manquant).");
+                info.setContentText("Suppression non implémentée pour ce type d'utilisateur.");
                 info.showAndWait();
             }
 
@@ -353,18 +396,18 @@ public class ListeUtilisateurs {
     @FXML
     private void retourProfil(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
             Parent root = loader.load();
 
-            ProfilUtilisateur profil = loader.getController();
-            profil.setUserData(userData);
+            MainController mainController = loader.getController();
+            mainController.setUserDataAndGoToProfil(userData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
-            stage.setMaximized(true);
-            stage.show();
+            //stage.setMaximized(true);
             stage.setFullScreen(true);
+            stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }

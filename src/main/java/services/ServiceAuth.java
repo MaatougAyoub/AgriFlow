@@ -1,9 +1,9 @@
 /*C’est le service qui :
 
-        vérifie email + motDePasse dans utilisateurs
-        récupère le rôle
-        récupère les infos spécifiques dans la table correspondante (agriculteurs / experts / admins)
-        renvoie tout dans une Map (simple à afficher)*/
+    vérifie email + motDePasse dans utilisateurs
+    récupère le rôle
+    récupère les infos spécifiques (colonnes NULLABLE dans utilisateurs)
+    renvoie tout dans une Map (simple à afficher)*/
 package services;
 
 import entities.Role;
@@ -43,54 +43,15 @@ public class ServiceAuth {
                 data.put("dateCreation", rs.getDate("dateCreation"));
                 data.put("signature", rs.getString("signature"));
 
-                // 2) infos spécifiques selon rôle
-                Role role = Role.valueOf(roleStr);
-                if (role == Role.AGRICULTEUR) {
-                    fillAgriculteur(cnx, id, data);
-                } else if (role == Role.EXPERT) {
-                    fillExpert(cnx, id, data);
-                } else if (role == Role.ADMIN) {
-                    fillAdmin(cnx, id, data);
-                }
+                // champs spécifiques (peuvent être NULL)
+                data.put("adresse", rs.getString("adresse"));
+                data.put("carte_pro", rs.getString("carte_pro"));
+                data.put("parcelles", rs.getString("parcelles"));
+                data.put("certification", rs.getString("certification"));
+
+                Object revObj = rs.getObject("revenu");
+                data.put("revenu", revObj == null ? null : rs.getDouble("revenu"));
                 return data;
-            }
-        }
-    }
-
-    private void fillAgriculteur(Connection cnx, int id, Map<String, Object> data) throws Exception {
-        String sql = "SELECT adresse, carte_pro, parcelles FROM agriculteurs WHERE id = ?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    data.put("adresse", rs.getString("adresse"));
-                    data.put("carte_pro", rs.getString("carte_pro"));
-                    data.put("parcelles", rs.getString("parcelles"));
-                }
-            }
-        }
-    }
-
-    private void fillExpert(Connection cnx, int id, Map<String, Object> data) throws Exception {
-        String sql = "SELECT certification FROM experts WHERE id = ?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    data.put("certification", rs.getString("certification"));
-                }
-            }
-        }
-    }
-
-    private void fillAdmin(Connection cnx, int id, Map<String, Object> data) throws Exception {
-        String sql = "SELECT revenu FROM admins WHERE id = ?";
-        try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    data.put("revenu", rs.getDouble("revenu"));
-                }
             }
         }
     }

@@ -25,16 +25,24 @@ import java.util.ResourceBundle;
 
 public class MotDePasseOublie implements Initializable {
 
-    @FXML private TextField emailField;
-    @FXML private VBox stepEmailBox;
-    @FXML private VBox stepResetBox;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private VBox stepEmailBox;
+    @FXML
+    private VBox stepResetBox;
 
-    @FXML private TextField codeField;
-    @FXML private PasswordField newPasswordField;
-    @FXML private PasswordField confirmPasswordField;
+    @FXML
+    private TextField codeField;
+    @FXML
+    private PasswordField newPasswordField;
+    @FXML
+    private PasswordField confirmPasswordField;
 
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
 
     private String generatedCode = null;
     private String emailCible = null;
@@ -165,6 +173,8 @@ public class MotDePasseOublie implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Connexion");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -181,7 +191,8 @@ public class MotDePasseOublie implements Initializable {
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) return null;
+                if (!rs.next())
+                    return null;
                 return Role.valueOf(rs.getString("role"));
             }
         }

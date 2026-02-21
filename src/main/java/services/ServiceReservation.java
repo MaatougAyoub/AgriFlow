@@ -25,7 +25,7 @@ public class ServiceReservation implements IService<Reservation> {
 
     private final Connection cnx;
     private final AnnonceService annonceService; // bech njibou l annonce
-    private final UserService userService;       // bech njibou el users
+    private final UserService userService; // bech njibou el users
 
     public ServiceReservation() {
         this.cnx = MyDatabase.getInstance().getConnection();
@@ -155,7 +155,7 @@ public class ServiceReservation implements IService<Reservation> {
     }
 
     // ===== RECUPERER PAR ID =====
-    @Override
+
     public Reservation recupererParId(int id) throws SQLException {
         if (id <= 0) {
             throw new SQLException("ID reservation invalide.");
@@ -194,7 +194,8 @@ public class ServiceReservation implements IService<Reservation> {
     /**
      * Alias pour recuperer() — conforme aux consignes du cours.
      */
-    // Alias (meme methode, esm mokhtalef - bech nmatchiw les consignes mta3 el cours)
+    // Alias (meme methode, esm mokhtalef - bech nmatchiw les consignes mta3 el
+    // cours)
     public List<Reservation> afficherTout() throws SQLException {
         return recuperer();
     }
@@ -317,5 +318,63 @@ public class ServiceReservation implements IService<Reservation> {
         }
 
         return reservation;
+    }
+
+    // ===== Réservations envoyées par un demandeur =====
+    public List<Reservation> recupererParDemandeur(int userId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (userId <= 0)
+            return reservations;
+        String query = "SELECT * FROM reservations WHERE demandeur_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, userId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== Réservations reçues par un propriétaire =====
+    public List<Reservation> recupererParProprietaire(int userId) throws SQLException {
+        List<Reservation> reservations = new ArrayList<>();
+        if (userId <= 0)
+            return reservations;
+        String query = "SELECT * FROM reservations WHERE proprietaire_id=? ORDER BY date_creation DESC";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, userId);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    reservations.add(mapResultSet(rs));
+                }
+            }
+        }
+        return reservations;
+    }
+
+    // ===== Accepter une réservation =====
+    public void accepterReservation(int reservationId, String reponse) throws SQLException {
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.ACCEPTEE.name());
+            pst.setString(2, reponse);
+            pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
+    }
+
+    // ===== Refuser une réservation =====
+    public void refuserReservation(int reservationId, String reponse) throws SQLException {
+        String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setString(1, StatutReservation.REFUSEE.name());
+            pst.setString(2, reponse);
+            pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
     }
 }

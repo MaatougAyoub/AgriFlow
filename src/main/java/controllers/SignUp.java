@@ -37,7 +37,7 @@ public class SignUp implements Initializable {
     @FXML private PasswordField motDePasseField;
     @FXML private PasswordField confirmMotDePasseField;
 
-    // Signature upload (champ non editable + bouton parcourir dans FXML)
+    // Uploads (champ non editable + bouton parcourir dans FXML)
     @FXML private TextField signaturePathField;
 
     // Labels feedback
@@ -70,6 +70,14 @@ public class SignUp implements Initializable {
         serviceExpert = new ServiceExpert();
 
         typeUtilisateurCombo.setItems(FXCollections.observableArrayList("Agriculteur", "Expert"));
+
+        // ✅ CONTRÔLE CIN À LA SAISIE : uniquement chiffres + max 8
+        cinField.setTextFormatter(new TextFormatter<String>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.isEmpty()) return change;          // autoriser vide pendant saisie
+            if (!newText.matches("\\d{0,8}")) return null; // 0..8 chiffres max
+            return change;
+        }));
 
         hideMessages();
         hideSpecificBoxes();
@@ -129,10 +137,8 @@ public class SignUp implements Initializable {
     }
 
     /**
-     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin relatif (court) à stocker en DB :
+     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin DB relatif:
      * ex: uploads/signatures/1700_file.png
-     *
-     * ⚠️ Important : ne jamais stocker un chemin absolu Windows dans la DB.
      */
     private String saveFileAndReturnDbPath(File file, String folderName) {
         try {
@@ -146,7 +152,6 @@ public class SignUp implements Initializable {
 
             Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            // ✅ chemin DB relatif et normalisé avec '/'
             return "uploads/" + folderName + "/" + fileName;
 
         } catch (IOException e) {
@@ -204,7 +209,7 @@ public class SignUp implements Initializable {
                 signaturePath,
                 carteProPath,
                 adresseField.getText().trim(),
-                parcellesField.getText().trim()
+                parcellesField != null ? parcellesField.getText().trim() : ""
         );
 
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
@@ -254,16 +259,18 @@ public class SignUp implements Initializable {
             showError("Le prénom est obligatoire.");
             return false;
         }
-        if (cinField.getText().trim().isEmpty()) {
+
+        // ✅ CIN: exactement 8 chiffres
+        String cinText = cinField.getText() == null ? "" : cinField.getText().trim();
+        if (cinText.isEmpty()) {
             showError("Le CIN est obligatoire.");
             return false;
         }
-        try {
-            Integer.parseInt(cinField.getText().trim());
-        } catch (NumberFormatException e) {
-            showError("Le CIN doit être un nombre valide.");
+        if (!cinText.matches("\\d{8}")) {
+            showError("Le CIN doit contenir exactement 8 chiffres.");
             return false;
         }
+
         if (emailField.getText().trim().isEmpty()) {
             showError("L'email est obligatoire.");
             return false;
@@ -298,12 +305,14 @@ public class SignUp implements Initializable {
     @FXML
     private void allerVersConnexion(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml")); // adapte si /fxml/
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Connexion");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -352,7 +361,7 @@ public class SignUp implements Initializable {
 
         signaturePathField.clear();
         adresseField.clear();
-        parcellesField.clear();
+        if (parcellesField != null) parcellesField.clear();
         carteProPathField.clear();
         certificationPathField.clear();
 

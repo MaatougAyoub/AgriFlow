@@ -95,7 +95,7 @@ public class PhotoService implements IService<PhotoAnnonce> {
         return photos;
     }
 
-    @Override
+
     public PhotoAnnonce recupererParId(int id) throws SQLException {
         String query = "SELECT * FROM annonce_photos WHERE id = ?";
         PhotoAnnonce photo = null;

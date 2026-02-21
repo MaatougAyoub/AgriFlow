@@ -1,5 +1,6 @@
 package controllers;
 
+import entities.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,12 +21,17 @@ import java.util.prefs.Preferences;
 
 public class SignIn implements Initializable {
 
-    @FXML private TextField emailField;
-    @FXML private PasswordField motDePasseField;
-    @FXML private CheckBox rememberMeCheck;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField motDePasseField;
+    @FXML
+    private CheckBox rememberMeCheck;
 
-    @FXML private Label errorLabel;
-    @FXML private Label successLabel;
+    @FXML
+    private Label errorLabel;
+    @FXML
+    private Label successLabel;
 
     private Preferences prefs;
 
@@ -81,22 +87,35 @@ public class SignIn implements Initializable {
                 return;
             }
 
-            // Charger la page profil
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml")); // adapte si /fxml/
+            // Construire l'objet User et le mettre dans MainController
+            User user = new User();
+            user.setId((int) userData.get("id"));
+            user.setNom((String) userData.get("nom"));
+            user.setPrenom((String) userData.get("prenom"));
+            user.setCin((int) userData.get("cin"));
+            user.setEmail((String) userData.get("email"));
+            user.setMotDePasse((String) userData.get("motDePasse"));
+            user.setRole((String) userData.get("role"));
+            if (userData.get("signature") != null) {
+                user.setSignature((String) userData.get("signature"));
+            }
+            MainController.setCurrentUser(user);
+
+            // Charger la page principale (sidebar + marketplace)
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Main.fxml"));
             Parent root = loader.load();
 
-            // Passer les données au controller ProfilUtilisateur
-            ProfilUtilisateur profilController = loader.getController();
-            profilController.setUserData(userData);
+            // Passer les données au MainController (pour le profil)
+            MainController mainController = loader.getController();
+            mainController.setUserData(userData);
 
             // Afficher dans le même Stage
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Profil");
+            stage.setTitle("AgriFlow - Marketplace");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
             stage.setFullScreen(true);
             stage.show();
-            //ouvrir la page en plein écran
-            stage.setMaximized(true);
 
         } catch (Exception e) {
             showError("Erreur lors de la connexion: " + e.getMessage());
@@ -123,6 +142,8 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Inscription");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {
@@ -142,6 +163,8 @@ public class SignIn implements Initializable {
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("AgriFlow - Mot de passe oublié");
             stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
             stage.show();
 
         } catch (Exception e) {

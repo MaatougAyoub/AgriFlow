@@ -209,6 +209,7 @@ public class MarketplaceController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Réserver - " + annonce.getTitre());
             stage.setScene(new Scene(root));
+            stage.setMaximized(true);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 

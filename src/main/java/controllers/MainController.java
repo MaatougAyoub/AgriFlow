@@ -1,7 +1,6 @@
 package controllers;
 
 import entities.User;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -24,31 +23,66 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    @FXML private BorderPane mainContainer;
-    @FXML private StackPane contentArea;
+    @FXML
+    private BorderPane mainContainer;
+    @FXML
+    private StackPane contentArea;
 
     // Drawer
-    @FXML private ImageView logoImage;
-    @FXML private Label connectedAsLabel;
+    @FXML
+    private ImageView logoImage;
+    @FXML
+    private Label connectedAsLabel;
+    @FXML
+    private Label connectedEmailLabel;
+    @FXML
+    private Label connectedRoleLabel;
+    @FXML
+    private Button btnDeconnexion;
 
-    @FXML private Button menuProfil;
-    @FXML private Button menuListeUtilisateurs;
-    @FXML private Button menuMarketplace;
-    @FXML private Button menuParcellesCultures;
-    @FXML private Button menuCollaborations;
-    @FXML private Button menuPlanIrrigation;
+    @FXML
+    private Button menuProfil;
+    @FXML
+    private Button menuListeUtilisateurs;
+    @FXML
+    private Button menuMarketplace;
+    @FXML
+    private Button menuParcellesCultures;
+    @FXML
+    private Button menuCollaborations;
+    @FXML
+    private Button menuPlanIrrigation;
 
     // Boutons à conserver
-    @FXML private Button btnAjout;
-    @FXML private Button btnReservations;
-    @FXML private Button btnAdmin;
+    @FXML
+    private Button btnAjout;
+    @FXML
+    private Button btnReservations;
+    @FXML
+    private Button btnAdmin;
 
     private Map<String, Object> userData;
+    private boolean navigateToProfile = false;
 
     public void setUserData(Map<String, Object> userData) {
         this.userData = userData;
+        // Rafraîchir le drawer avec le nom de l'utilisateur connecté
+        refreshDrawerUserInfo();
+        // Si on doit naviguer vers le profil après init
+        if (navigateToProfile) {
+            navigateToProfile = false;
+            goProfil();
+        }
     }
 
+    /**
+     * Utilisé par retourProfil dans d'autres controllers pour revenir au Main +
+     * afficher le profil
+     */
+    public void setUserDataAndGoToProfil(Map<String, Object> userData) {
+        this.navigateToProfile = true;
+        setUserData(userData);
+    }
 
     private Button activeButton;
     private static User currentUser;
@@ -63,7 +97,8 @@ public class MainController implements Initializable {
 
     private void loadImageInto(ImageView view, String path) {
         try {
-            if (view == null) return;
+            if (view == null)
+                return;
             if (path == null || path.isBlank() || "null".equalsIgnoreCase(path)) {
                 view.setImage(null);
                 return;
@@ -79,7 +114,8 @@ public class MainController implements Initializable {
             }
 
             File file = new File(System.getProperty("user.dir"), normalized);
-            if (!file.exists()) file = new File(normalized);
+            if (!file.exists())
+                file = new File(normalized);
 
             if (!file.exists()) {
                 System.out.println("[Profil] Image introuvable: " + normalized);
@@ -93,44 +129,72 @@ public class MainController implements Initializable {
         }
     }
 
-
-
     private void refreshDrawerUserInfo() {
+        boolean admin = isAdmin();
+
+        // Nom complet
         if (connectedAsLabel != null) {
             connectedAsLabel.setText(currentUser != null ? currentUser.getNomComplet() : "-");
         }
 
-        // Masquer "Liste des utilisateurs" si pas ADMIN (si ton User expose getRole())
-        if (menuListeUtilisateurs != null) {
-            boolean isAdmin = currentUser != null
-                    && currentUser.getRole() != null
-                    && "ADMIN".equalsIgnoreCase(currentUser.getRole());
+        // Email
+        if (connectedEmailLabel != null) {
+            connectedEmailLabel
+                    .setText(currentUser != null && currentUser.getEmail() != null ? currentUser.getEmail() : "");
+        }
 
-            menuListeUtilisateurs.setVisible(isAdmin);
-            menuListeUtilisateurs.setManaged(isAdmin);
+        // Role (avec emoji)
+        if (connectedRoleLabel != null) {
+            if (currentUser != null && currentUser.getRole() != null) {
+                String role = currentUser.getRole();
+                switch (role.toUpperCase()) {
+                    case "ADMIN":
+                        connectedRoleLabel.setText("\uD83D\uDC51 Administrateur");
+                        connectedRoleLabel
+                                .setStyle("-fx-text-fill: #FFD54F; -fx-font-weight: bold; -fx-font-size: 11px;");
+                        break;
+                    case "EXPERT":
+                        connectedRoleLabel.setText("\uD83C\uDF93 Expert");
+                        connectedRoleLabel
+                                .setStyle("-fx-text-fill: #90CAF9; -fx-font-weight: bold; -fx-font-size: 11px;");
+                        break;
+                    default:
+                        connectedRoleLabel.setText("\uD83C\uDF3E Agriculteur");
+                        connectedRoleLabel
+                                .setStyle("-fx-text-fill: #A5D6A7; -fx-font-weight: bold; -fx-font-size: 11px;");
+                        break;
+                }
+            } else {
+                connectedRoleLabel.setText("");
+            }
+        }
+
+        // Masquer "Liste des utilisateurs" et "Espace Admin" si pas ADMIN
+        if (menuListeUtilisateurs != null) {
+            menuListeUtilisateurs.setVisible(admin);
+            menuListeUtilisateurs.setManaged(admin);
+        }
+        if (btnAdmin != null) {
+            btnAdmin.setVisible(admin);
+            btnAdmin.setManaged(admin);
         }
     }
-
 
     // ===== Navigation Drawer =====
 
     @FXML
-    private void goProfil(Event event) {
-        //loadView("/ProfilUtilisateur.fxml");
-        //setActiveButton(menuProfil);
+    private void goProfil() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
-            Parent root = loader.load();
+            Parent view = loader.load();
 
             ProfilUtilisateur profil = loader.getController();
             profil.setUserData(userData);
 
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Profil");
-            stage.setScene(new Scene(root));
-            stage.show();
-            stage.setFullScreen(true);
+            contentArea.getChildren().setAll(view);
+            setActiveButton(menuProfil);
         } catch (Exception e) {
+            System.err.println("Erreur chargement profil : " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -185,11 +249,31 @@ public class MainController implements Initializable {
 
     @FXML
     public void afficherAdmin() {
-        // si tu veux restreindre aux admins:
-        // if (!isAdmin()) return;
-
+        if (!isAdmin()) {
+            System.out.println("Accès refusé: ADMIN uniquement");
+            return;
+        }
         loadView("/AdminDashboard.fxml");
         setActiveButton(btnAdmin);
+    }
+
+    @FXML
+    private void deconnecter() {
+        currentUser = null;
+        userData = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/SignIn.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) mainContainer.getScene().getWindow();
+            stage.setTitle("AgriFlow - Connexion");
+            stage.setScene(new Scene(root));
+            //stage.setMaximized(true);
+            stage.setFullScreen(true);
+            stage.show();
+        } catch (IOException e) {
+            System.err.println("Erreur déconnexion : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // ===== Helpers =====
@@ -207,7 +291,7 @@ public class MainController implements Initializable {
                 // profilCtrl.setUserData(...);
             }
             if (controller instanceof ListeUtilisateurs usersCtrl) {
-                // usersCtrl.setUserData(...);
+                usersCtrl.setUserData(userData);
             }
 
             contentArea.getChildren().setAll(view);
@@ -217,18 +301,24 @@ public class MainController implements Initializable {
         }
     }
 
-
-
     private void setActiveButton(Button button) {
+        final String common =
+            "-fx-font-size: 20;" +
+                "-fx-text-fill: white;" +
+                "-fx-padding: 10 12;" +
+                "-fx-background-insets: 0;" +
+                "-fx-border-insets: 0;" +
+                "-fx-border-radius: 10;" +
+                "-fx-background-radius: 10;";
+
         if (activeButton != null) {
             // style non-actif (uniforme)
             activeButton.setStyle(
+                common +
+                    "-fx-font-weight: normal;" +
                     "-fx-background-color: transparent;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-padding: 10 12;" +
-                            "-fx-border-color: rgba(255,255,255,0.35);" +
-                            "-fx-border-radius: 10;"
-            );
+                    "-fx-border-color: rgba(255,255,255,0.35);" +
+                    "-fx-border-width: 1;");
         }
 
         activeButton = button;
@@ -236,12 +326,11 @@ public class MainController implements Initializable {
         if (activeButton != null) {
             // style actif
             activeButton.setStyle(
+                common +
+                    "-fx-font-weight: bold;" +
                     "-fx-background-color: #1B5E20;" +
-                            "-fx-text-fill: white;" +
-                            "-fx-font-weight: bold;" +
-                            "-fx-padding: 10 12;" +
-                            "-fx-background-radius: 10;"
-            );
+                    "-fx-border-color: transparent;" +
+                    "-fx-border-width: 1;");
         }
     }
 

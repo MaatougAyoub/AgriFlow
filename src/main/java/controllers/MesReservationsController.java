@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Reservation;
+import entities.StatutReservation;
 import entities.User;
 import services.PDFService;
 import services.ServiceReservation;
@@ -37,9 +38,12 @@ public class MesReservationsController implements Initializable {
     private static final String SVG_PDF = "M8 16h8v2H8zm0-4h8v2H8zm6-10H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z";
     private static final String SVG_PACKAGE = "M20 2H4c-1 0-2 .9-2 2v3.01c0 .72.43 1.34 1 1.69V20c0 1.1 1.1 2 2 2h14c.9 0 2-.9 2-2V8.7c.57-.35 1-.97 1-1.69V4c0-1.1-1-2-2-2zm-5 12H9v-2h6v2zm5-7H4V4h16v3z";
 
-    @FXML private FlowPane cardsContainer;
-    @FXML private Label infoLabel;
-    @FXML private ScrollPane scrollPane;
+    @FXML
+    private FlowPane cardsContainer;
+    @FXML
+    private Label infoLabel;
+    @FXML
+    private ScrollPane scrollPane;
 
     private final ServiceReservation reservationService = new ServiceReservation();
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -59,28 +63,60 @@ public class MesReservationsController implements Initializable {
         }
 
         try {
-            List<Reservation> reservations = reservationService.recupererParUtilisateur(currentUser.getId());
-            infoLabel.setText(reservations.size() + " réservation(s) trouvée(s)");
+            // ===== SECTION 1: Demandes Reçues (sur MON matériel) =====
+            List<Reservation> recues = reservationService.recupererParProprietaire(currentUser.getId());
 
-            if (reservations.isEmpty()) {
+            if (!recues.isEmpty()) {
+                Label sectionRecues = new Label("📩 Demandes Reçues (" + recues.size() + ")");
+                sectionRecues.setStyle(
+                        "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1565C0; -fx-padding: 0 0 10 5;");
+                sectionRecues.setMaxWidth(Double.MAX_VALUE);
+                cardsContainer.getChildren().add(sectionRecues);
+
+                for (Reservation reservation : recues) {
+                    VBox card = creerCarteDemandeRecue(reservation);
+                    cardsContainer.getChildren().add(card);
+                }
+
+                // Séparateur
+                Region sep = new Region();
+                sep.setPrefHeight(2);
+                sep.setPrefWidth(Double.MAX_VALUE);
+                sep.setMaxWidth(Double.MAX_VALUE);
+                sep.setStyle("-fx-background-color: #E0E0E0; -fx-padding: 0;");
+                cardsContainer.getChildren().add(sep);
+            }
+
+            // ===== SECTION 2: Mes Demandes (envoyées) =====
+            List<Reservation> envoyees = reservationService.recupererParDemandeur(currentUser.getId());
+
+            Label sectionEnvoyees = new Label("📤 Mes Demandes (" + envoyees.size() + ")");
+            sectionEnvoyees.setStyle(
+                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E7D32; -fx-padding: 10 0 10 5;");
+            sectionEnvoyees.setMaxWidth(Double.MAX_VALUE);
+            cardsContainer.getChildren().add(sectionEnvoyees);
+
+            int total = recues.size() + envoyees.size();
+            infoLabel.setText(total + " réservation(s) trouvée(s)");
+
+            if (envoyees.isEmpty()) {
                 VBox emptyBox = new VBox(10);
                 emptyBox.setAlignment(Pos.CENTER);
                 emptyBox.setPadding(new Insets(40));
 
                 SVGPath emptyIcon = createSVGIcon(SVG_PACKAGE, "#BDBDBD", 2.0);
-                Label emptyLabel = new Label("Aucune réservation pour le moment.");
+                Label emptyLabel = new Label("Aucune demande envoyée pour le moment.");
                 emptyLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #9E9E9E;");
                 Label emptyHint = new Label("Rendez-vous sur le Marketplace pour réserver un équipement.");
                 emptyHint.setStyle("-fx-font-size: 13px; -fx-text-fill: #BDBDBD;");
 
                 emptyBox.getChildren().addAll(emptyIcon, emptyLabel, emptyHint);
                 cardsContainer.getChildren().add(emptyBox);
-                return;
-            }
-
-            for (Reservation reservation : reservations) {
-                VBox card = creerCarteReservation(reservation);
-                cardsContainer.getChildren().add(card);
+            } else {
+                for (Reservation reservation : envoyees) {
+                    VBox card = creerCarteReservation(reservation);
+                    cardsContainer.getChildren().add(card);
+                }
             }
         } catch (SQLException e) {
             infoLabel.setText("Erreur de chargement : " + e.getMessage());
@@ -137,7 +173,8 @@ public class MesReservationsController implements Initializable {
         String titre = "N/A";
         if (reservation.getAnnonce() != null && reservation.getAnnonce().getTitre() != null) {
             titre = reservation.getAnnonce().getTitre();
-            if (titre.length() > 28) titre = titre.substring(0, 25) + "...";
+            if (titre.length() > 28)
+                titre = titre.substring(0, 25) + "...";
         }
         Label titreLabel = new Label(titre);
         titreLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;");
@@ -168,7 +205,8 @@ public class MesReservationsController implements Initializable {
         String prix = String.format("%.2f DT", reservation.getPrixTotal());
         HBox lignePrix = creerLigneInfo(SVG_MONEY, "#2D5A27", prix, "#2D5A27");
         if (lignePrix.getChildren().size() > 1) {
-            lignePrix.getChildren().get(1).setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
+            lignePrix.getChildren().get(1)
+                    .setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
         }
 
         body.getChildren().addAll(ligneDates, ligneDuree, lignePrix);
@@ -177,6 +215,19 @@ public class MesReservationsController implements Initializable {
             HBox ligneCaution = creerLigneInfo(SVG_TAG, "#7B1FA2",
                     String.format("Caution: %.2f DT", reservation.getCaution()), "#7B1FA2");
             body.getChildren().add(ligneCaution);
+        }
+
+        // Afficher la réponse du propriétaire (si disponible)
+        if (reservation.getReponseProprietaire() != null && !reservation.getReponseProprietaire().isBlank()) {
+            String statutEmoji = reservation.getStatut() == StatutReservation.ACCEPTEE ? "✅" : "❌";
+            Label reponseLabel = new Label(
+                    statutEmoji + " Réponse du propriétaire : " + reservation.getReponseProprietaire());
+            reponseLabel.setWrapText(true);
+            String bgColor = reservation.getStatut() == StatutReservation.ACCEPTEE ? "#E8F5E9" : "#FFEBEE";
+            String txtColor = reservation.getStatut() == StatutReservation.ACCEPTEE ? "#2E7D32" : "#C62828";
+            reponseLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: " + txtColor
+                    + "; -fx-padding: 6 8; -fx-background-color: " + bgColor + "; -fx-background-radius: 6;");
+            body.getChildren().add(reponseLabel);
         }
 
         Region separator = new Region();
@@ -205,6 +256,190 @@ public class MesReservationsController implements Initializable {
 
         footer.getChildren().addAll(btnSupprimer, btnContrat);
         return footer;
+    }
+
+    // ===== Carte pour les demandes reçues (propriétaire) =====
+
+    private VBox creerCarteDemandeRecue(Reservation reservation) {
+        VBox card = new VBox();
+        card.setSpacing(0);
+        card.setPrefWidth(340);
+        card.setMaxWidth(340);
+        card.setStyle(cardStyle(false));
+
+        HBox header = creerHeader(reservation);
+        VBox body = creerBodyDemandeRecue(reservation);
+        HBox footer = creerFooterDemandeRecue(reservation);
+
+        card.getChildren().addAll(header, body, footer);
+
+        card.setOnMouseEntered(e -> card.setStyle(cardStyle(true)));
+        card.setOnMouseExited(e -> card.setStyle(cardStyle(false)));
+
+        return card;
+    }
+
+    private VBox creerBodyDemandeRecue(Reservation reservation) {
+        VBox body = new VBox();
+        body.setSpacing(10);
+        body.setPadding(new Insets(16, 16, 12, 16));
+
+        // Qui demande ?
+        String demandeurNom = "Inconnu";
+        if (reservation.getDemandeur() != null) {
+            demandeurNom = reservation.getDemandeur().getNomComplet();
+        }
+        HBox ligneDemandeur = creerLigneInfo(SVG_PACKAGE, "#6A1B9A", "De : " + demandeurNom, "#6A1B9A");
+        if (ligneDemandeur.getChildren().size() > 1) {
+            ligneDemandeur.getChildren().get(1)
+                    .setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6A1B9A;");
+        }
+
+        // Dates
+        String dateDebut = reservation.getDateDebut() != null ? reservation.getDateDebut().format(DATE_FMT) : "N/A";
+        String dateFin = reservation.getDateFin() != null ? reservation.getDateFin().format(DATE_FMT) : "N/A";
+        HBox ligneDates = creerLigneInfo(SVG_CALENDAR, "#1E88E5", dateDebut + "  →  " + dateFin, "#555");
+
+        long jours = 0;
+        if (reservation.getDateDebut() != null && reservation.getDateFin() != null) {
+            jours = ChronoUnit.DAYS.between(reservation.getDateDebut(), reservation.getDateFin()) + 1;
+        }
+        HBox ligneDuree = creerLigneInfo(SVG_CLOCK, "#1E88E5", jours + " jour(s)", "#555");
+
+        // Prix
+        String prix = String.format("%.2f DT", reservation.getPrixTotal());
+        HBox lignePrix = creerLigneInfo(SVG_MONEY, "#2D5A27", prix, "#2D5A27");
+        if (lignePrix.getChildren().size() > 1) {
+            lignePrix.getChildren().get(1)
+                    .setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
+        }
+
+        body.getChildren().addAll(ligneDemandeur, ligneDates, ligneDuree, lignePrix);
+
+        // Message du demandeur
+        if (reservation.getMessageDemande() != null && !reservation.getMessageDemande().isBlank()) {
+            Label msgLabel = new Label("💬 " + reservation.getMessageDemande());
+            msgLabel.setWrapText(true);
+            msgLabel.setStyle(
+                    "-fx-font-size: 12px; -fx-text-fill: #616161; -fx-font-style: italic; -fx-padding: 6 8; -fx-background-color: #F5F5F5; -fx-background-radius: 6;");
+            body.getChildren().add(msgLabel);
+        }
+
+        // Réponse du propriétaire (si déjà répondu)
+        if (reservation.getReponseProprietaire() != null && !reservation.getReponseProprietaire().isBlank()) {
+            Label reponseLabel = new Label("✉ Votre réponse : " + reservation.getReponseProprietaire());
+            reponseLabel.setWrapText(true);
+            reponseLabel.setStyle(
+                    "-fx-font-size: 12px; -fx-text-fill: #2E7D32; -fx-padding: 6 8; -fx-background-color: #E8F5E9; -fx-background-radius: 6;");
+            body.getChildren().add(reponseLabel);
+        }
+
+        Region separator = new Region();
+        separator.setPrefHeight(1);
+        separator.setStyle("-fx-background-color: #EEEEEE;");
+        body.getChildren().add(separator);
+
+        return body;
+    }
+
+    private HBox creerFooterDemandeRecue(Reservation reservation) {
+        HBox footer = new HBox();
+        footer.setAlignment(Pos.CENTER);
+        footer.setSpacing(12);
+        footer.setPadding(new Insets(8, 16, 14, 16));
+
+        if (reservation.getStatut() == StatutReservation.EN_ATTENTE) {
+            // Bouton Accepter
+            Button btnAccepter = new Button("✅ Accepter");
+            btnAccepter.setStyle("-fx-background-color: #43A047; -fx-text-fill: white; -fx-font-weight: bold; "
+                    + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;");
+            btnAccepter.setOnMouseEntered(e -> btnAccepter
+                    .setStyle("-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px; -fx-scale-x: 1.05; -fx-scale-y: 1.05;"));
+            btnAccepter.setOnMouseExited(e -> btnAccepter
+                    .setStyle("-fx-background-color: #43A047; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;"));
+            btnAccepter.setOnAction(e -> onAccepterReservation(reservation));
+
+            // Bouton Refuser
+            Button btnRefuser = new Button("❌ Refuser");
+            btnRefuser.setStyle("-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-weight: bold; "
+                    + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;");
+            btnRefuser.setOnMouseEntered(e -> btnRefuser
+                    .setStyle("-fx-background-color: #C62828; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px; -fx-scale-x: 1.05; -fx-scale-y: 1.05;"));
+            btnRefuser.setOnMouseExited(e -> btnRefuser
+                    .setStyle("-fx-background-color: #E53935; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;"));
+            btnRefuser.setOnAction(e -> onRefuserReservation(reservation));
+
+            footer.getChildren().addAll(btnAccepter, btnRefuser);
+        } else {
+            // Déjà traité — afficher le statut
+            Label statutLabel = new Label(reservation.getStatut() != null ? reservation.getStatut().getLabel() : "N/A");
+            statutLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #757575;");
+            footer.getChildren().add(statutLabel);
+        }
+
+        return footer;
+    }
+
+    private void onAccepterReservation(Reservation reservation) {
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog(
+                "Demande acceptée. Bienvenue !");
+        dialog.setTitle("Accepter la réservation");
+        dialog.setHeaderText("Accepter la demande de "
+                + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
+        dialog.setContentText("Votre message (optionnel) :");
+
+        dialog.showAndWait().ifPresent(reponse -> {
+            try {
+                reservationService.accepterReservation(reservation.getId(), reponse.trim());
+                Alert ok = new Alert(Alert.AlertType.INFORMATION);
+                ok.setTitle("Succès");
+                ok.setHeaderText(null);
+                ok.setContentText("Réservation acceptée ✅");
+                ok.showAndWait();
+                chargerReservations();
+            } catch (SQLException e) {
+                Alert err = new Alert(Alert.AlertType.ERROR);
+                err.setTitle("Erreur");
+                err.setContentText("Impossible d'accepter : " + e.getMessage());
+                err.showAndWait();
+            }
+        });
+    }
+
+    private void onRefuserReservation(Reservation reservation) {
+        javafx.scene.control.TextInputDialog dialog = new javafx.scene.control.TextInputDialog();
+        dialog.setTitle("Refuser la réservation");
+        dialog.setHeaderText("Refuser la demande de "
+                + (reservation.getDemandeur() != null ? reservation.getDemandeur().getNomComplet() : "?"));
+        dialog.setContentText("Raison du refus :");
+
+        dialog.showAndWait().ifPresent(reponse -> {
+            if (reponse.trim().isEmpty()) {
+                Alert warn = new Alert(Alert.AlertType.WARNING);
+                warn.setTitle("Attention");
+                warn.setContentText("Veuillez fournir une raison pour le refus.");
+                warn.showAndWait();
+                return;
+            }
+            try {
+                reservationService.refuserReservation(reservation.getId(), reponse.trim());
+                Alert ok = new Alert(Alert.AlertType.INFORMATION);
+                ok.setTitle("Succès");
+                ok.setHeaderText(null);
+                ok.setContentText("Réservation refusée.");
+                ok.showAndWait();
+                chargerReservations();
+            } catch (SQLException e) {
+                Alert err = new Alert(Alert.AlertType.ERROR);
+                err.setTitle("Erreur");
+                err.setContentText("Impossible de refuser : " + e.getMessage());
+                err.showAndWait();
+            }
+        });
     }
 
     // SVG Helpers
@@ -290,7 +525,8 @@ public class MesReservationsController implements Initializable {
      * Couleurs des headers par statut — BLEU pour EN_ATTENTE au lieu d'orange.
      */
     private String getStatutHeaderColor(Reservation r) {
-        if (r.getStatut() == null) return "linear-gradient(to right, #1E88E5, #1565C0)";
+        if (r.getStatut() == null)
+            return "linear-gradient(to right, #1E88E5, #1565C0)";
         switch (r.getStatut()) {
             case ACCEPTEE:
                 return "linear-gradient(to right, #43A047, #2E7D32)";
