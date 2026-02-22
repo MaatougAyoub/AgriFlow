@@ -1,82 +1,9 @@
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceCulture.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContPlanIrrigation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IServiceB.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\MotDePasseOublie.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Reclamation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceGenerateurPlan.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeCultures.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Admin.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContCultureDetails.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Annonce.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\MainController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceReservation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ContDashboard.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Message.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IServiceExpert.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AdminDashboardController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\FraudControlService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeReclamations.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\ReclamationRow.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IServiceAdmin.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Reservation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeUtilisateurs.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\utils\MyConnection.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\MainPlanIrrigation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\PhotoService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\utils\MyDatabase.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServicePlanIrrigation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\GeminiAIService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceProfil.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ProfilUtilisateur.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\SignUp.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ContentValidator.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceAdmin.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceParcelle.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\SignIn.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\AppLauncher.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\StatutAnnonce.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ListeParcelles.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceAuth.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServicePlanIrrigationJour.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AjouterAnnonceController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Utilisateur.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Expert.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\User.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ModifierProfil.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\UserService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Culture.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Agriculteur.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceExpert.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\MesReservationsController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\CultureVendue.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\StatutReservation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\PlanIrrigation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\AnnonceService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\PDFService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Role.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IServiceAgriculteur.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\IServiceReclamation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceAnnonce.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\AnnonceCardController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\CulturesEnVente.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Parcelle.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\MarketplaceController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\TypeAnnonce.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\Main.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceAgriculteur.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\controllers\ReservationDialogController.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Categorie.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceReclamation.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\Statut.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\entities\PhotoAnnonce.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\mains\MainFX.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\MessageService.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceCultureVendue.java
-c:\Users\Crash\Desktop\AgriFlow-amen-ayoub\src\main\java\services\ServiceUtilisateur.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\AdminDashboardController.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\AjouterAnnonceController.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\AnnonceCardController.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ContCultureDetails.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ContDashboard.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ContPlanIrrigation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\CulturesEnVente.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ListeCultures.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ListeParcelles.java
@@ -102,6 +29,7 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Message.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Parcelle.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\PhotoAnnonce.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\PlanIrrigation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Reclamation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\ReclamationRow.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Reservation.java
@@ -115,6 +43,7 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\mains\AppLauncher.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\mains\Main.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\mains\MainFX.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\mains\MainPlanIrrigation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\AnnonceService.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ContentValidator.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\FraudControlService.java
@@ -135,10 +64,14 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceCulture.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceCultureVendue.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceExpert.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceGenerateurPlan.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceParcelle.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServicePlanIrrigation.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServicePlanIrrigationJour.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceProfil.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceReclamation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceReservation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceUtilisateur.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\UserService.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\utils\MyConnection.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\utils\MyDatabase.java

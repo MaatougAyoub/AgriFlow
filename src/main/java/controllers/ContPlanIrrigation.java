@@ -53,7 +53,7 @@ public class ContPlanIrrigation {
 
     private void chargerListeCultures() {
         try {
-            List<Culture> cultures = serviceCulture.recupererCultures();
+            List<Culture> cultures = serviceCulture.recuperer();
             plansContainer.getChildren().clear();
 
             for (Culture c : cultures) {
@@ -78,10 +78,10 @@ public class ContPlanIrrigation {
         bar.setStyle("-fx-background-color: #2ba3c4; -fx-background-radius: 10;");
 
         VBox left = new VBox(6);
-        Label nomCulture = new Label(c.getNomCulture());
+        Label nomCulture = new Label(c.getNom());
         nomCulture.setStyle("-fx-font-size: 13; -fx-font-weight: bold;");
 
-        Label parcelle = new Label("Parcelle: " + c.getIdParcelle());
+        Label parcelle = new Label("Parcelle: " + c.getParcelleId());
         parcelle.setStyle("-fx-font-size: 11; -fx-text-fill: #6B7280;");
         left.getChildren().addAll(nomCulture, parcelle);
 
@@ -103,7 +103,7 @@ public class ContPlanIrrigation {
             ContCultureDetails controller = loader.getController();
             controller.setCulture(culture);
 
-            int idCulture = culture.getIdCulture();
+            int idCulture = culture.getId();
             int planId = servicePlan.getLastPlanIdByCulture(idCulture);
 
             if (planId == 0) {

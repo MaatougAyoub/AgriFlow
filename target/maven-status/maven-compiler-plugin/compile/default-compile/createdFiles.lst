@@ -2,6 +2,7 @@ services\PDFService.class
 controllers\ModifierProfil.class
 entities\Annonce.class
 services\ContentValidator.class
+entities\Culture$TypeCulture.class
 controllers\ListeUtilisateurs$5.class
 services\ServiceParcelle.class
 entities\StatutReservation.class
@@ -11,6 +12,7 @@ entities\Utilisateur.class
 services\ServiceExpert.class
 entities\Parcelle.class
 controllers\AjouterAnnonceController$1.class
+entities\Culture$1.class
 mains\AppLauncher.class
 entities\Admin.class
 entities\Culture.class
@@ -21,6 +23,7 @@ controllers\SignUp.class
 controllers\ListeUtilisateurs$3.class
 utils\MyDatabase.class
 controllers\AnnonceCardController.class
+entities\Culture$Etat.class
 entities\CultureVendue.class
 services\FraudControlService.class
 services\ServicePlanIrrigation.class
@@ -37,8 +40,8 @@ entities\PhotoAnnonce.class
 controllers\ListeUtilisateurs$2.class
 controllers\AjouterAnnonceController$3.class
 controllers\SignIn.class
-utils\MyConnection.class
 controllers\ListeCultures$2.class
+utils\MyConnection.class
 entities\StatutAnnonce.class
 controllers\AdminDashboardController.class
 controllers\MesReservationsController.class

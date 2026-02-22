@@ -84,6 +84,24 @@ public class Culture {
     public Timestamp getDateCreation() { return dateCreation; }
     public void setDateCreation(Timestamp dateCreation) { this.dateCreation = dateCreation; }
 
+    public float getQuantiteEau() {
+        if (typeCulture == null ) return 0;
+
+        float f= switch (typeCulture) {
+            case BLE -> 2;
+            case ORGE -> 2;
+            case MAIS -> 4;
+            case POMME_DE_TERRE -> 3;
+            case TOMATE -> 4;
+            case OLIVIER -> 1;
+            case AGRUMES -> 3;
+            case VIGNE -> 1;
+            case FRAISE -> 2;
+            case LEGUMES -> 3;
+            case AUTRE -> 2;
+        };return (float) (f* superficie);
+    }
+
     @Override
     public String toString() {
         return "Culture{" +
