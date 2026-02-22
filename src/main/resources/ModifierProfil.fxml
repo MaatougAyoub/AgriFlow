@@ -58,7 +58,7 @@
                 <TextField fx:id="emailField" style="-fx-font-size: 18px" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                 <!-- ✅ Signature upload -->
-                <Label text="Signature" style="-fx-font-size: 21px" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <Label text="Signature *" style="-fx-font-size: 21px" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                 <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="3" GridPane.columnIndex="1">
                     <TextField fx:id="signaturePathField"
                                style="-fx-font-size: 18px"
@@ -91,7 +91,7 @@
                     <TextField fx:id="parcellesField" style="-fx-font-size: 18px" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                     <!-- ✅ Carte pro upload -->
-                    <Label text="Carte pro" style="-fx-font-size: 21px" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label text="Carte pro *" style="-fx-font-size: 21px" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                     <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="1">
                         <TextField fx:id="carteProPathField"
                                    style="-fx-font-size: 18px"
@@ -117,7 +117,7 @@
                     </columnConstraints>
 
                     <!-- ✅ Certification upload -->
-                    <Label text="Certification" style="-fx-font-size: 21px" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label text="Certification *" style="-fx-font-size: 21px" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                     <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="0" GridPane.columnIndex="1">
                         <TextField fx:id="certificationPathField"
                                    style="-fx-font-size: 18px"

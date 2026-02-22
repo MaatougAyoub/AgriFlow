@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import utils.MyDatabase;
+import utils.DbMigrations;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -13,6 +16,9 @@ public class MainFX extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // Ensure required DB columns exist (verification workflow)
+        DbMigrations.ensureUserVerificationColumns(MyDatabase.getInstance().getConnection());
+
         Parent root = FXMLLoader.load(getClass().getResource("/SignIn.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("AgriFlow - Connexion");
@@ -22,6 +28,7 @@ public class MainFX extends Application {
         //stage.setMaximized(true);
         stage.setFullScreen(true);
         stage.show();
+
         /*
          * public void start(Stage primaryStage) {
          * try {
@@ -89,6 +96,8 @@ public class MainFX extends Application {
     }
 
     public static void main(String[] args) {
+        System.out.println(System.getenv("MAILERSEND_API_KEY"));
+        System.out.println(System.getenv("MAILERSEND_FROM_EMAIL"));
         launch(args);
     }
 }

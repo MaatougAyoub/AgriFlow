@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Role;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
+import services.VerificationCodeEmailService;
 import utils.MyDatabase;
 
 import java.net.URL;
@@ -91,17 +93,38 @@ public class MotDePasseOublie implements Initializable {
             this.emailCible = email;
             this.roleCible = role;
 
-            // 3) générer code (simulation)
+            // 3) générer code
             generatedCode = generateSimpleCode();
-            System.out.println("Code reset (debug) = " + generatedCode);
 
-            showSuccess("Code envoyé (simulation). Vérifiez votre email.");
-            showStepReset();
+            showSuccess("Envoi du code par email...");
+            sendResetCodeByEmailAsync(emailCible, generatedCode);
 
         } catch (SQLException e) {
             showError("Erreur DB: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void sendResetCodeByEmailAsync(String email, String code) {
+        Thread t = new Thread(() -> {
+            try {
+                new VerificationCodeEmailService().sendPasswordResetCode(email, code);
+                Platform.runLater(() -> {
+                    showSuccess("Code envoyé par email. Vérifiez votre boîte de réception.");
+                    showStepReset();
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    generatedCode = null;
+                    emailCible = null;
+                    roleCible = null;
+                    showError("Impossible d'envoyer le code par email: " + e.getMessage());
+                    showStepEmail();
+                });
+            }
+        }, "mailersend-reset-code");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML

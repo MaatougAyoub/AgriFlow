@@ -21,7 +21,7 @@ public class ServiceAuth {
         Connection cnx = MyDatabase.getInstance().getConnection();
 
         // 1) vérifier utilisateurs
-        String sql = "SELECT * FROM utilisateurs WHERE email = ? AND motDePasse = ?";
+        String sql = "SELECT * FROM utilisateurs WHERE email = ? AND motDePasse = ? AND (UPPER(TRIM(role)) = 'ADMIN' OR UPPER(TRIM(verification_status)) = 'APPROVED')";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setString(1, email);
             ps.setString(2, motDePasse);
@@ -42,6 +42,10 @@ public class ServiceAuth {
                 data.put("role", roleStr);
                 data.put("dateCreation", rs.getDate("dateCreation"));
                 data.put("signature", rs.getString("signature"));
+                data.put("verification_status", rs.getString("verification_status"));
+                data.put("verification_reason", rs.getString("verification_reason"));
+                Object scoreObj = rs.getObject("verification_score");
+                data.put("verification_score", scoreObj == null ? null : rs.getDouble("verification_score"));
 
                 // champs spécifiques (peuvent être NULL)
                 data.put("adresse", rs.getString("adresse"));

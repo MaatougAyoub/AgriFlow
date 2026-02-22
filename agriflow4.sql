@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 20, 2026 at 02:20 PM
+-- Generation Time: Feb 22, 2026 at 03:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -303,7 +303,8 @@ CREATE TABLE `reclamations` (
 
 INSERT INTO `reclamations` (`id`, `utilisateur_id`, `categorie`, `titre`, `description`, `date_creation`, `statut`, `reponse`) VALUES
 (9, 44, 'ACCESS', 'access rec', 'relamationaaaaa', '2026-02-20 14:16:01', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : noooo\nmaatoug ayoub (ADMIN) : yes'),
-(10, 44, 'PAIMENT', 'aaaaaa', 'aaaaaaaaaa', '2026-02-20 14:16:35', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : yes');
+(10, 44, 'PAIMENT', 'aaaaaa', 'aaaaaaaaaa', '2026-02-20 14:16:35', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : yes'),
+(12, 49, 'AUTRE', 'rrr', 'rrrrr', '2026-02-21 00:45:17', 'EN_ATTENTE', NULL);
 
 -- --------------------------------------------------------
 
@@ -366,18 +367,27 @@ CREATE TABLE `utilisateurs` (
   `carte_pro` varchar(500) DEFAULT NULL,
   `adresse` varchar(255) DEFAULT NULL,
   `parcelles` varchar(255) DEFAULT NULL,
-  `certification` varchar(500) DEFAULT NULL
+  `certification` varchar(500) DEFAULT NULL,
+  `verification_status` varchar(20) NOT NULL DEFAULT 'APPROVED',
+  `verification_reason` varchar(500) DEFAULT NULL,
+  `verification_score` double DEFAULT NULL,
+  `nom_ar` varchar(255) DEFAULT NULL,
+  `prenom_ar` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `utilisateurs`
 --
 
-INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`, `carte_pro`, `adresse`, `parcelles`, `certification`) VALUES
-(39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-16', '-', 100.5, NULL, NULL, NULL, NULL),
-(40, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-10', 'uploads/signatures/1771592524318_signature amen.jpg', NULL, 'uploads/cartes_pro/1771592541042_بطاقة الفلاح.jpg', 'Sousse', '', NULL),
-(43, 'Fattoumi', 'Oussama', 66554433, 'oussama@gmail.com', 'pwoussama', 'EXPERT', '2026-02-20', 'uploads/signatures/1771592334646_signature oussama.jpg', NULL, NULL, NULL, NULL, 'uploads/certifications/1771592347074_diplome expert(Oussama).png'),
-(44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'uploads/signatures/1771593245764_signature badis.jpg', NULL, 'uploads/cartes_pro/1771593267605_Logo_ESPRIT_Ariana.jpg', 'araiana', '', NULL);
+INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`, `carte_pro`, `adresse`, `parcelles`, `certification`, `verification_status`, `verification_reason`, `verification_score`, `nom_ar`, `prenom_ar`) VALUES
+(39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-16', 'C:\\xampp\\htdocs\\signatures\\1771633850595_signature_ayoub.jpg', 100.5, NULL, NULL, NULL, NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(40, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-10', 'C:\\xampp\\htdocs\\signatures\\1771634439728_signature_amen.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634452580__amen_____________.jpg', 'Sousse', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(43, 'Fattoumi', 'Oussama', 66554433, 'oussama@gmail.com', 'pwoussama', 'EXPERT', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634526954_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771634537416_diplome_expert_Oussama_.png', 'APPROVED', NULL, NULL, NULL, NULL),
+(44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634629497_signature_badis.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634642357_____________.jpg', 'araiana', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(49, 'sahli', 'yakine', 12345666, 'yakine@gmail.com', 'pwyakine', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771634702295_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634716151_logo.png', 'bizerte', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(50, 'Expert', 'Expert', 99999999, 'expert@gmail.com', 'pwexpert', 'EXPERT', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771632506007_signature_expert.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771632513711_certification_expert.jpg', 'APPROVED', NULL, NULL, NULL, NULL),
+(55, 'Maatoug', 'Sami', 1010101, 'maatougsami25@gmail.com', 'pwsami', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771681072033_signature_sami.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771681090450_____________.jpg', 'rasjebel', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(56, 'Maatoug2', 'Ayoub2', 78451200, 'maatougayoub7@gmail.com', 'pwayoub2', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771693117443_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771693147960_____________ayoub.JPG', 'Ras Jebel - Rue Ali Douagi', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -519,7 +529,7 @@ ALTER TABLE `plans_irrigation_jour`
 -- AUTO_INCREMENT for table `reclamations`
 --
 ALTER TABLE `reclamations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `reservations`
@@ -531,7 +541,7 @@ ALTER TABLE `reservations`
 -- AUTO_INCREMENT for table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- Constraints for dumped tables

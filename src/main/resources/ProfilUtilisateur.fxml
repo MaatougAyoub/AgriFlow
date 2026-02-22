@@ -53,7 +53,7 @@
 
                 <Label style="-fx-font-size: 24px" text="Signature" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
                 <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <Label fx:id="signaturePathValue" style="-fx-text-fill: #616161;" text="-" wrapText="true"/>
+                    <Label fx:id="signaturePathValue" managed="false" style="-fx-text-fill: #616161;" text="-" visible="false" wrapText="true"/>
                     <ImageView fx:id="signatureImage" fitHeight="210" fitWidth="340" preserveRatio="true" smooth="true"/>
                 </VBox>
             </GridPane>
@@ -79,7 +79,7 @@
 
                     <Label style="-fx-font-size: 24px" text="Carte pro" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
                     <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                        <Label fx:id="carteProPathValue" style="-fx-font-size: 24px; -fx-text-fill: #616161;" text="-" wrapText="true"/>
+                        <Label fx:id="carteProPathValue" managed="false" style="-fx-font-size: 24px; -fx-text-fill: #616161;" text="-" visible="false" wrapText="true"/>
                         <ImageView fx:id="carteProImage" fitHeight="210" fitWidth="340" preserveRatio="true" smooth="true"/>
                     </VBox>
                 </GridPane>
@@ -98,7 +98,7 @@
 
                     <Label style="-fx-font-size: 24px" text="Certification" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                     <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                        <Label fx:id="certificationPathValue" style="-fx-text-fill: #616161;" text="-" wrapText="true"/>
+                        <Label fx:id="certificationPathValue" managed="false" style="-fx-text-fill: #616161;" text="-" visible="false" wrapText="true"/>
                         <ImageView fx:id="certificationImage" fitHeight="210" fitWidth="340" preserveRatio="true" smooth="true"/>
                     </VBox>
                 </GridPane>
