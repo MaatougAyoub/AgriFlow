@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #F0F2F5;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ContCultureDetails">
+
+    <left>
+        <VBox prefWidth="250.0" style="-fx-background-color: #2D5A27; -fx-padding: 30 0 0 0;">
+            <children>
+                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 50 0;">
+                    <ImageView fitHeight="50.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@images/content.png" /></image>
+                    </ImageView>
+                </VBox>
+                <VBox spacing="5">
+                    <Button prefHeight="50.0" prefWidth="250.0"
+                            style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30; -fx-font-weight: bold;"
+                            text="💧  Plan d'Irrigation" />
+
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="25" style="-fx-padding: 30;">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox>
+                            <Label fx:id="infoLabel" style="-fx-font-size: 14;" text="Chargement des informations..." textFill="#7f8c8d" />
+                            <Label fx:id="titreLabel" style="-fx-font-size: 28; -fx-font-weight: 800;" text="Détails Culture" textFill="#2D5A27" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <HBox alignment="CENTER" spacing="15" style="-fx-background-color: white; -fx-padding: 10 20; -fx-background-radius: 20;">
+                            <effect><DropShadow color="#0000001a" radius="10" offsetY="3" /></effect>
+                            <Button onAction="#semainePrecedente" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 16;" text="◀" textFill="#7f8c8d" />
+                            <Label fx:id="labelSemaine" style="-fx-font-weight: bold; -fx-font-size: 16;" text="Semaine" textFill="#2D5A27" />
+                            <Button onAction="#semaineSuivante" style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 16;" text="▶" textFill="#7f8c8d" />
+                        </HBox>
+                    </children>
+                </HBox>
+
+                <VBox spacing="20" style="-fx-background-color: white; -fx-background-radius: 20; -fx-padding: 25;" VBox.vgrow="ALWAYS">
+                    <effect><DropShadow color="#0000001a" radius="15" offsetY="5" /></effect>
+                    <children>
+
+                        <HBox spacing="20">
+                            <VBox spacing="5" style="-fx-background-color: #F8F9FA; -fx-padding: 20; -fx-background-radius: 15;" HBox.hgrow="ALWAYS">
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" text="Consommation Théorique" />
+                                <Label fx:id="consoStandardLabel" style="-fx-font-size: 28; -fx-font-weight: 900;" text="0.0 mm" textFill="#333" />
+                                <Label style="-fx-font-size: 12; -fx-text-fill: #999;" text="Besoin fixe (sans IA)" />
+                            </VBox>
+
+                            <VBox spacing="5" style="-fx-background-color: #E3F2FD; -fx-padding: 20; -fx-background-radius: 15;" HBox.hgrow="ALWAYS">
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: #1976D2;" text="Consommation Optimisée (IA)" />
+                                <HBox alignment="BASELINE_LEFT" spacing="15">
+                                    <Label fx:id="consoSmartLabel" style="-fx-font-size: 28; -fx-font-weight: 900;" text="0.0 mm" textFill="#1976D2" />
+                                    <Label fx:id="economieLabel" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-background-color: #E8F5E9; -fx-padding: 5 10; -fx-background-radius: 8;" text="Économie : 0%" textFill="#2D5A27" />
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 18;" text="📅 Planning Hebdomadaire" textFill="#2D5A27" />
+
+                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: #F0F2F5; -fx-border-width: 2; -fx-border-radius: 15;" VBox.vgrow="ALWAYS">
+                            <content>
+                                <GridPane fx:id="planningGrid" hgap="15" style="-fx-padding: 20;" vgap="15">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="100.0" prefWidth="120.0" />
+                                    </columnConstraints>
+                                </GridPane>
+                            </content>
+                        </ScrollPane>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="15" style="-fx-padding: 10 0 0 0;">
+                            <Button fx:id="btnRetour" onAction="#retour" style="-fx-background-color: #F0F2F5; -fx-text-fill: #333; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 12 25; -fx-cursor: hand;" text="⬅ Retour" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button onAction="#genererPlanAutomatique" style="-fx-background-color: #1976D2; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 12 25; -fx-cursor: hand;" text="⚡ Optimiser avec l'IA" />
+                            <Button onAction="#enregistrerPlanning" style="-fx-background-color: #2D5A27; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 12 25; -fx-cursor: hand;" text="💾 Enregistrer le planning" />
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
