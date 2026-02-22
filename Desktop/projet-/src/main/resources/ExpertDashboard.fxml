@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #F8F9FA;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ExpertController">
+
+    <left>
+        <VBox prefWidth="250.0" style="-fx-background-color: #2D5A27; -fx-padding: 30 0 0 0;">
+            <children>
+                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 50 0;">
+                    <ImageView fitHeight="50.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                        <image><Image url="@images/content.png" /></image>
+                    </ImageView>
+                </VBox>
+                <VBox spacing="5">
+                    <Button onAction="#goToHome" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="🏠  Dashboard" />
+                    <Button onAction="#goToIrrigationPlan" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="💧  Plan d'Irrigation" />
+                    <Button onAction="#goToDashboard" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="📊  Analytique" />
+                    <Button onAction="#ouvrirListeProduits" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="💊  Produits" />
+                    <Button prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30; -fx-font-weight: bold;" text="📝  Réclamations" />
+                </VBox>
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="25" style="-fx-padding: 30;">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox>
+                            <Label style="-fx-font-size: 14;" text="Support et assistance technique" textFill="#7f8c8d" />
+                            <Label style="-fx-font-size: 28; -fx-font-weight: 800;" text="Réclamations à traiter" textFill="#2D5A27" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleSupprimer" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12 25; -fx-cursor: hand;" text="🗑 Supprimer la sélection">
+                            <effect><DropShadow color="#0000002a" radius="8" offsetY="3" /></effect>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <VBox spacing="10" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox spacing="15" style="-fx-padding: 0 20;">
+                            <children>
+                                <Label prefWidth="70.0" style="-fx-font-weight: bold; -fx-text-fill: #95a5a6; -fx-font-size: 12;" text="PHOTO" />
+                                <Label prefWidth="180.0" style="-fx-font-weight: bold; -fx-text-fill: #95a5a6; -fx-font-size: 12;" text="CULTURE" />
+                                <Label prefWidth="380.0" style="-fx-font-weight: bold; -fx-text-fill: #95a5a6; -fx-font-size: 12;" text="DESCRIPTION" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label alignment="CENTER_RIGHT" prefWidth="150.0" style="-fx-font-weight: bold; -fx-text-fill: #95a5a6; -fx-font-size: 12;" text="DATE REÇUE" />
+                            </children>
+                        </HBox>
+
+                        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                            <content>
+                                <VBox fx:id="listContainer" spacing="12" style="-fx-background-color: transparent; -fx-padding: 5;" />
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 12; -fx-border-color: #2D5A27; -fx-border-width: 0 0 0 5;">
+                    <children>
+                        <Label style="-fx-text-fill: #2D5A27; -fx-font-weight: bold; -fx-font-size: 14;" text="💡 Conseil :" />
+                        <Label style="-fx-text-fill: #2D5A27;" text="Cliquez sur une carte pour la sélectionner, double-cliquez pour ouvrir les détails." />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
