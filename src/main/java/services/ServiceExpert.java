@@ -19,8 +19,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
 
     @Override
     public void ajouterExpert(Expert expert) throws SQLException {
-        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, certification) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, certification, verification_status, verification_reason, verification_score) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, expert.getNom());
             ps.setString(2, expert.getPrenom());
@@ -31,6 +31,10 @@ public class ServiceExpert implements IServiceExpert <Expert> {
             ps.setObject(7, expert.getDateCreation());
             ps.setString(8, expert.getSignature());
             ps.setString(9, expert.getCertification());
+            ps.setString(10, expert.getVerificationStatus() == null ? "APPROVED" : expert.getVerificationStatus());
+            ps.setString(11, expert.getVerificationReason());
+            if (expert.getVerificationScore() == null) ps.setNull(12, Types.DOUBLE);
+            else ps.setDouble(12, expert.getVerificationScore());
             ps.executeUpdate();
         }
         System.out.println("Expert ajoute avec succés!!! ✅");
@@ -87,6 +91,10 @@ public class ServiceExpert implements IServiceExpert <Expert> {
                     String signatureE = rs.getString("signature");
                     String certificationE = rs.getString("certification");
                     Expert expert = new Expert(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE, certificationE);
+                    expert.setVerificationStatus(rs.getString("verification_status"));
+                    expert.setVerificationReason(rs.getString("verification_reason"));
+                    Object scoreObj = rs.getObject("verification_score");
+                    expert.setVerificationScore(scoreObj == null ? null : rs.getDouble("verification_score"));
                     expertsList.add(expert);
                 }
             }

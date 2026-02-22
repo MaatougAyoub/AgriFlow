@@ -93,17 +93,25 @@
                     <ColumnConstraints hgrow="ALWAYS"/>
                 </columnConstraints>
 
+                <!-- Nom (arabe) -->
+                <Label text="Nom (arabe) *" style="-fx-font-size: 21px" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="nomArField" style="-fx-font-size: 18px" promptText="مثال: أيوب" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <!-- Prénom (arabe) -->
+                <Label text="Prénom (arabe) *" style="-fx-font-size: 21px" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="prenomArField" style="-fx-font-size: 18px" promptText="مثال: معتوق" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
                 <!-- Adresse -->
-                <Label text="Adresse *" style="-fx-font-size: 21px" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="adresseField" style="-fx-font-size: 18px" promptText="Votre adresse complète" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Adresse *" style="-fx-font-size: 21px" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="adresseField" style="-fx-font-size: 18px" promptText="Votre adresse complète" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                 <!-- Parcelles -->
-                <Label text="Parcelles" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="parcellesField" promptText="Informations sur vos parcelles" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Parcelles" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="parcellesField" promptText="Informations sur vos parcelles" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
                 <!-- Upload Carte Professionnelle -->
-                <Label text="Carte professionnelle *" style="-fx-font-size: 21px" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                <Label text="Carte professionnelle *" style="-fx-font-size: 21px" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <HBox spacing="10" alignment="CENTER_LEFT" GridPane.rowIndex="4" GridPane.columnIndex="1">
                     <TextField fx:id="carteProPathField" style="-fx-font-size: 18px" promptText="Aucun fichier sélectionné" editable="false" HBox.hgrow="ALWAYS"/>
                     <Button text="Parcourir..." style="-fx-background-color: #4CAF50; -fx-font-size: 18px; -fx-text-fill: white; -fx-padding: 8 15;" onAction="#uploadCartePro"/>
                 </HBox>

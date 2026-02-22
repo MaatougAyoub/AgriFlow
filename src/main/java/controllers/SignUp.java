@@ -18,6 +18,10 @@ import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
 import services.VerificationCodeEmailService;
+import services.ocr.TesseractOcrService;
+import services.verification.ExpertCertificationVerificationService;
+import services.verification.FarmerCardVerificationService;
+import services.verification.VerificationResult;
 import utils.XamppUploads;
 
 import java.io.File;
@@ -52,6 +56,8 @@ public class SignUp implements Initializable {
 
     // Champs Agriculteur
     @FXML private VBox agriculteurFieldsBox;
+    @FXML private TextField nomArField;
+    @FXML private TextField prenomArField;
     @FXML private TextField adresseField;
     @FXML private TextField parcellesField;
     @FXML private TextField carteProPathField;
@@ -222,27 +228,40 @@ public class SignUp implements Initializable {
             return;
         }
 
-        try {
-            // invalider le code pour éviter double soumission
-            generatedCode = null;
+        // invalider le code pour éviter double soumission
+        generatedCode = null;
 
-            if ("Agriculteur".equals(pendingUserType)) {
-                inscrireAgriculteur();
-            } else if ("Expert".equals(pendingUserType)) {
-                inscrireExpert();
-            } else {
-                showError("Type d'utilisateur invalide.");
-                showStepForm();
-                return;
+        showSuccess("Vérification OCR en cours...");
+
+        Thread t = new Thread(() -> {
+            try {
+                if ("Agriculteur".equals(pendingUserType)) {
+                    inscrireAgriculteurAvecVerification();
+                } else if ("Expert".equals(pendingUserType)) {
+                    inscrireExpertAvecVerification();
+                } else {
+                    Platform.runLater(() -> {
+                        showError("Type d'utilisateur invalide.");
+                        showStepForm();
+                    });
+                    return;
+                }
+
+                pendingUserType = null;
+                Platform.runLater(() -> {
+                    showStepForm();
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    showError("Erreur lors de la confirmation: " + e.getMessage());
+                    showStepForm();
+                });
+                e.printStackTrace();
             }
-
-            pendingUserType = null;
-            showStepForm();
-
-        } catch (Exception e) {
-            showError("Erreur lors de la confirmation: " + e.getMessage());
-            e.printStackTrace();
-        }
+        }, "signup-ocr-verification");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
@@ -255,17 +274,50 @@ public class SignUp implements Initializable {
         showStepForm();
     }
 
-    private void inscrireAgriculteur() throws SQLException {
+    private void inscrireAgriculteurAvecVerification() throws SQLException {
         if (adresseField.getText().trim().isEmpty()) {
-            showError("L'adresse est obligatoire pour un agriculteur.");
+            Platform.runLater(() -> showError("L'adresse est obligatoire pour un agriculteur."));
             return;
         }
         if (carteProPath == null || carteProPath.isBlank()) {
-            showError("La carte professionnelle est obligatoire.");
+            Platform.runLater(() -> showError("La carte professionnelle est obligatoire."));
             return;
         }
         if (signaturePath == null || signaturePath.isBlank()) {
-            showError("La signature est obligatoire.");
+            Platform.runLater(() -> showError("La signature est obligatoire."));
+            return;
+        }
+
+        VerificationResult verification;
+        try {
+            FarmerCardVerificationService verifier = new FarmerCardVerificationService(new TesseractOcrService());
+            verification = verifier.verify(
+                    java.nio.file.Path.of(carteProPath),
+                    cinField.getText().trim(),
+                    nomArField.getText().trim(),
+                    prenomArField.getText().trim()
+            );
+        } catch (Exception ocrError) {
+            // OCR indisponible -> on bloque l'inscription (impossible de vérifier la carte)
+            System.err.println("[AgriFlow][OCR][ERREUR] " + ocrError.getMessage());
+            Platform.runLater(() -> showError(
+                    "Vérification impossible. Impossible de lire la carte professionnelle.\n" +
+                    "Veuillez réessayer avec une image plus nette et bien éclairée."
+            ));
+            return;
+        }
+
+        System.out.println(
+            "[AgriFlow][VERIFY][FARMER] expectedCin=" + (cinField.getText() == null ? "" : cinField.getText().trim())
+                + " extractedCin=" + (verification.extractedCin() == null ? "" : verification.extractedCin())
+                + " status=" + verification.status()
+                + " score=" + verification.score()
+                + " reason=" + (verification.reason() == null ? "" : verification.reason())
+        );
+
+        if (verification.status() == entities.VerificationStatus.REJECTED) {
+            final String reason = verification.reason();
+            Platform.runLater(() -> showError("Inscription refusée: " + reason));
             return;
         }
 
@@ -283,19 +335,53 @@ public class SignUp implements Initializable {
                 parcellesField != null ? parcellesField.getText().trim() : ""
         );
 
+        // Arabic name (for OCR matching)
+        agriculteur.setNomAr(nomArField.getText().trim());
+        agriculteur.setPrenomAr(prenomArField.getText().trim());
+
+        // Verification fields
+        agriculteur.setVerificationStatus(verification.status().name());
+        agriculteur.setVerificationReason(verification.reason());
+        agriculteur.setVerificationScore(verification.score());
+
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
 
-        clearFields();
-        showSuccess("Agriculteur inscrit avec succès ✅");
+        Platform.runLater(() -> {
+            clearFields();
+            if ("APPROVED".equalsIgnoreCase(agriculteur.getVerificationStatus())) {
+                showSuccess("Compte vérifié et créé ✅ Vous pouvez vous connecter.");
+            } else {
+                showSuccess("Compte créé mais en attente de validation admin (revue) ⏳");
+            }
+        });
     }
 
-    private void inscrireExpert() throws SQLException {
+    private void inscrireExpertAvecVerification() throws SQLException {
         if (certificationPath == null || certificationPath.isBlank()) {
-            showError("La certification est obligatoire.");
+            Platform.runLater(() -> showError("La certification est obligatoire."));
             return;
         }
         if (signaturePath == null || signaturePath.isBlank()) {
-            showError("La signature est obligatoire.");
+            Platform.runLater(() -> showError("La signature est obligatoire."));
+            return;
+        }
+
+        VerificationResult verification;
+        try {
+            ExpertCertificationVerificationService verifier = new ExpertCertificationVerificationService(new TesseractOcrService());
+            verification = verifier.verify(
+                    java.nio.file.Path.of(certificationPath),
+                    nomField.getText().trim(),
+                    prenomField.getText().trim()
+            );
+        } catch (Exception ocrError) {
+            verification = new VerificationResult(entities.VerificationStatus.NEEDS_REVIEW, 0.0, null, false,
+                    "OCR indisponible: " + ocrError.getMessage());
+        }
+
+        if (verification.status() == entities.VerificationStatus.REJECTED) {
+            final String reason = verification.reason();
+            Platform.runLater(() -> showError("Inscription refusée: " + reason));
             return;
         }
 
@@ -311,16 +397,34 @@ public class SignUp implements Initializable {
                 certificationPath
         );
 
+        expert.setVerificationStatus(verification.status().name());
+        expert.setVerificationReason(verification.reason());
+        expert.setVerificationScore(verification.score());
+
         serviceExpert.ajouterExpert(expert);
 
-        clearFields();
-        showSuccess("Expert inscrit avec succès ✅");
+        Platform.runLater(() -> {
+            clearFields();
+            if ("APPROVED".equalsIgnoreCase(expert.getVerificationStatus())) {
+                showSuccess("Compte vérifié et créé ✅ Vous pouvez vous connecter.");
+            } else {
+                showSuccess("Compte créé mais en attente de validation admin (revue) ⏳");
+            }
+        });
     }
 
     private boolean validateSpecificSignupFields() {
         String type = typeUtilisateurCombo.getValue();
 
         if ("Agriculteur".equals(type)) {
+            if (nomArField.getText() == null || nomArField.getText().trim().isEmpty()) {
+                showError("Le nom (arabe) est obligatoire pour vérification.");
+                return false;
+            }
+            if (prenomArField.getText() == null || prenomArField.getText().trim().isEmpty()) {
+                showError("Le prénom (arabe) est obligatoire pour vérification.");
+                return false;
+            }
             if (adresseField.getText() == null || adresseField.getText().trim().isEmpty()) {
                 showError("L'adresse est obligatoire pour un agriculteur.");
                 return false;
@@ -464,6 +568,8 @@ public class SignUp implements Initializable {
         confirmMotDePasseField.clear();
 
         signaturePathField.clear();
+        if (nomArField != null) nomArField.clear();
+        if (prenomArField != null) prenomArField.clear();
         adresseField.clear();
         if (parcellesField != null) parcellesField.clear();
         carteProPathField.clear();

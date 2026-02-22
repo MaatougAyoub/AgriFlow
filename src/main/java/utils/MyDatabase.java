@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class MyDatabase {
 
     //private static final String URL = "jdbc:mysql://localhost:3306/db-gusers";
-    private static final String URL = "jdbc:mysql://localhost:3306/agriflow4";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow5";
     //amen
     //private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
 
@@ -22,6 +22,9 @@ public class MyDatabase {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connection established");
+
+            // Ensure DB has required columns even when services/tests run without MainFX
+            DbMigrations.ensureUserVerificationColumns(connection);
         } catch (SQLException e) {
             // mieux pour debug:
             e.printStackTrace();

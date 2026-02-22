@@ -15,20 +15,27 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
     }
 
     public void ajouterAgriculteur (Agriculteur agriculteur) throws SQLException {
-        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, carte_pro, adresse, parcelles) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO utilisateurs (nom, prenom, nom_ar, prenom_ar, cin, email, motDePasse, role, dateCreation, signature, carte_pro, adresse, parcelles, verification_status, verification_reason, verification_score) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, agriculteur.getNom());
             ps.setString(2, agriculteur.getPrenom());
-            ps.setInt(3, agriculteur.getCin());
-            ps.setString(4, agriculteur.getEmail());
-            ps.setString(5, agriculteur.getMotDePasse());
-            ps.setString(6, Role.AGRICULTEUR.toString());
-            ps.setObject(7, agriculteur.getDateCreation());
-            ps.setString(8, agriculteur.getSignature());
-            ps.setString(9, agriculteur.getCarte_pro());
-            ps.setString(10, agriculteur.getAdresse());
-            ps.setString(11, agriculteur.getParcelles());
+            ps.setString(3, agriculteur.getNomAr());
+            ps.setString(4, agriculteur.getPrenomAr());
+            ps.setInt(5, agriculteur.getCin());
+            ps.setString(6, agriculteur.getEmail());
+            ps.setString(7, agriculteur.getMotDePasse());
+            ps.setString(8, Role.AGRICULTEUR.toString());
+            ps.setObject(9, agriculteur.getDateCreation());
+            ps.setString(10, agriculteur.getSignature());
+            ps.setString(11, agriculteur.getCarte_pro());
+            ps.setString(12, agriculteur.getAdresse());
+            ps.setString(13, agriculteur.getParcelles());
+
+            ps.setString(14, agriculteur.getVerificationStatus() == null ? "APPROVED" : agriculteur.getVerificationStatus());
+            ps.setString(15, agriculteur.getVerificationReason());
+            if (agriculteur.getVerificationScore() == null) ps.setNull(16, Types.DOUBLE);
+            else ps.setDouble(16, agriculteur.getVerificationScore());
             ps.executeUpdate();
         }
         System.out.println("Agriculteur ajouté avec succés !!! ✅");
@@ -79,6 +86,12 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
                     String parcellesA = rs.getString("parcelles");
 
                     Agriculteur agriculteur = new Agriculteur(idA, nomA, prenomA, cinA, emailA, motDePasseA, roleA, dateCreationA, signatureA, carte_proA, adresseA, parcellesA);
+                    agriculteur.setNomAr(rs.getString("nom_ar"));
+                    agriculteur.setPrenomAr(rs.getString("prenom_ar"));
+                    agriculteur.setVerificationStatus(rs.getString("verification_status"));
+                    agriculteur.setVerificationReason(rs.getString("verification_reason"));
+                    Object scoreObj = rs.getObject("verification_score");
+                    agriculteur.setVerificationScore(scoreObj == null ? null : rs.getDouble("verification_score"));
                     agriculteursList.add(agriculteur);
                 }
             }

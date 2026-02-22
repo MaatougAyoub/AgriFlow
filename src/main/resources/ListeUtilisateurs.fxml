@@ -48,6 +48,8 @@
                     <TableColumn fx:id="colRole" text="Rôle"/>
                     <TableColumn fx:id="colDateCreation" text="Date création"/>
 
+                    <TableColumn fx:id="colVerification" text="Vérification"/>
+
                     <!-- ✅ images -->
                     <TableColumn fx:id="colSignatureImg" text="Signature"/>
                     <TableColumn fx:id="colCarteProImg" text="Carte pro"/>

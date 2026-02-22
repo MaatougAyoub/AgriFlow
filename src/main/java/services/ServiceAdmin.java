@@ -16,8 +16,8 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
 
     @Override
     public void ajouterAdmin (Admin admin) throws SQLException{
-        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, revenu) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, revenu, verification_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, admin.getNom());
             ps.setString(2, admin.getPrenom());
@@ -29,6 +29,7 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
             ps.setString(8, admin.getSignature());
             if (admin.getRevenus() == null) ps.setNull(9, Types.DOUBLE);
             else ps.setDouble(9, admin.getRevenus());
+            ps.setString(10, "APPROVED");
             ps.executeUpdate();
         }
         System.out.println("Admin ajoute avec succés!!! ✅");
@@ -78,6 +79,10 @@ public class ServiceAdmin implements IServiceAdmin<Admin>{
                     Double revenusE = (revObj == null) ? null : rs.getDouble("revenu");
 
                     Admin admin = new Admin(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE, revenusE);
+                    admin.setVerificationStatus(rs.getString("verification_status"));
+                    admin.setVerificationReason(rs.getString("verification_reason"));
+                    Object scoreObj = rs.getObject("verification_score");
+                    admin.setVerificationScore(scoreObj == null ? null : rs.getDouble("verification_score"));
                     adminsList.add(admin);
                 }
             }
