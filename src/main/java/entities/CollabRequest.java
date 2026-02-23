@@ -14,7 +14,7 @@ public class CollabRequest {
     private String location;        // ✅ AJOUTÉ
     private double salary;          // ✅ AJOUTÉ
     private String publisher;       // ✅ AJOUTÉ
-
+    private double salaryPerDay;
     // Constructeur vide
     public CollabRequest() {}
 
@@ -139,5 +139,12 @@ public class CollabRequest {
     public String toString() {
         return String.format("ID=%d | %s | %s | %s→%s | %d pers. | %.0f DT/jour | %s",
                 id, title, location, startDate, endDate, neededPeople, salary, status);
+    }
+    public double getSalaryPerDay() {
+        return salaryPerDay;
+    }
+
+    public void setSalaryPerDay(double salaryPerDay) {
+        this.salaryPerDay = salaryPerDay;
     }
 }

@@ -35,6 +35,8 @@ public class CollabRequestDetailsController {
      * Définir les données de la demande à afficher
      */
     public void setRequestData(CollabRequest request) {
+        System.out.println("setRequestData CALLED, request=" + request);
+
         this.currentRequest = request;
         displayRequestDetails();
     }
@@ -67,18 +69,24 @@ public class CollabRequestDetailsController {
      */
     @FXML
     private void handleApply() {
+        // Vérification critique AVANT tout !
+        if (currentRequest == null) {
+            showError("Erreur", "Aucune donnée de la demande sélectionnée ! Impossible d’ouvrir le formulaire de candidature.");
+            System.err.println("handleApply appelé mais currentRequest est null !");
+            return;
+        }
         try {
-            // Charger le fichier FXML du modal
+            // Chargement de la fenêtre FXML du modal de candidature
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ApplyCollaboration.fxml"));
             Parent root = loader.load();
 
             // Récupérer le controller du modal
             ApplyCollaborationController controller = loader.getController();
 
-            // Passer les données de la demande au controller
+            // Passer les infos nécessaires au controller du modal
             controller.setRequestData(currentRequest.getId(), currentRequest.getTitle());
 
-            // Créer une nouvelle fenêtre modale
+            // Création et configuration de la fenêtre modale
             Stage modalStage = new Stage();
             modalStage.setTitle("Postuler à l'offre");
             modalStage.initModality(Modality.APPLICATION_MODAL);
@@ -86,7 +94,7 @@ public class CollabRequestDetailsController {
             modalStage.setScene(new Scene(root));
             modalStage.setResizable(false);
 
-            // Afficher le modal
+            // Afficher le modal et bloquer la fenêtre parente
             modalStage.showAndWait();
 
         } catch (IOException e) {
@@ -95,12 +103,24 @@ public class CollabRequestDetailsController {
         }
     }
 
+
     /**
      * Gérer le clic sur le bouton "Retour"
      */
     @FXML
+    private Button backButton;
+
+    @FXML
     private void handleBack() {
-        MainFX.showExploreCollaborations();
+        Stage stage = (Stage) backButton.getScene().getWindow();
+        // Si c'est le Stage principal, navigue. Sinon, ferme la fenêtre.
+        if (stage.getOwner() == null) {
+            // Fenêtre principale, on fait une navigation :
+            MainFX.showExploreCollaborations();
+        } else {
+            // Fenêtre modale, on peut fermer :
+            stage.close();
+        }
     }
 
     /**

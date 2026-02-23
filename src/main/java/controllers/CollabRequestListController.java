@@ -6,7 +6,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import java.util.List;
 
 /**
@@ -22,7 +25,15 @@ public class CollabRequestListController {
     
     private CollabRequestService service;
     private ObservableList<CollabRequest> requestsList;
-    
+    private static Long selectedRequestId;
+
+    public static Long getSelectedRequestId() {
+        return selectedRequestId;
+    }
+
+    public static void setSelectedRequestId(Long requestId) {
+        selectedRequestId = requestId;
+    }
     @FXML
     public void initialize() {
         service = new CollabRequestService();
@@ -39,7 +50,7 @@ public class CollabRequestListController {
         
         System.out.println("✅ CollabRequestListController initialisé");
     }
-    
+
     /**
      * Charge toutes les demandes depuis la base
      */
@@ -54,7 +65,29 @@ public class CollabRequestListController {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les demandes: " + e.getMessage());
         }
     }
-    
+    @FXML
+    private void handleViewDetails() {
+        CollabRequest selected = requestsTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert(Alert.AlertType.WARNING, "Aucune sélection", "Veuillez sélectionner une demande.");
+            return;
+        }
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CollabRequestDetails.fxml"));
+            Parent root = loader.load();
+
+            // CRUCIAL !
+            CollabRequestDetailsController controller = loader.getController();
+            controller.setRequestData(selected);
+
+            Stage stage = new Stage();
+            stage.setTitle("Détails de la demande");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d’ouvrir les détails : " + e.getMessage());
+        }
+    }
     /**
      * Recherche avec filtres
      */

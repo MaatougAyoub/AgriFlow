@@ -1,5 +1,8 @@
 package controllers;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -139,10 +142,21 @@ public class ExploreCollaborationsController {
         detailsBtn.setMaxWidth(Double.MAX_VALUE);
         detailsBtn.setUserData(request.getId());
         detailsBtn.setOnAction(event -> {
-            Long requestId = (Long) detailsBtn.getUserData();
-            if (requestId != null) {
-                System.out.println("🔍 Affichage des détails de la demande #" + requestId);
-                MainFX.showCollabRequestDetails(requestId);
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CollabRequestDetails.fxml"));
+                Parent root = loader.load();
+
+                // Passe directement l'objet complet
+                CollabRequestDetailsController controller = loader.getController();
+                controller.setRequestData(request);
+
+                Stage stage = new Stage();
+                stage.setTitle("Détails de la demande");
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (Exception e) {
+                showError("Erreur", "Impossible d’ouvrir les détails : " + e.getMessage());
+                e.printStackTrace();
             }
         });
 

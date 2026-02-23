@@ -8,8 +8,10 @@
     <groupId>tn.esprit.agriflow</groupId>
     <artifactId>module5-collaborations</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>Module 5 - Collaborations</name>
     <description>Gestion des demandes de collaboration entre agriculteurs</description>
+
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
