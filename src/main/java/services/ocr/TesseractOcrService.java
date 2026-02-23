@@ -25,7 +25,8 @@ public class TesseractOcrService implements OcrService {
         Path preprocessed = preprocessToTempPng(imagePath);
         try {
             Tesseract tesseract = new Tesseract();
-            tesseract.setDatapath(resolveTessDataParentDir().toString());
+            // Ensure datapath points to the actual tessdata folder (tess4j expects the folder that contains the .traineddata files)
+            tesseract.setDatapath(resolveTessDataDir().toString());
             if (language != null && !language.isBlank()) {
                 tesseract.setLanguage(language);
             }
@@ -41,33 +42,36 @@ public class TesseractOcrService implements OcrService {
         }
     }
 
-    private Path resolveTessDataParentDir() {
-        // Tesseract expects datapath = parent directory that contains /tessdata
+    private Path resolveTessDataDir() {
+        // We need to return the actual tessdata directory that contains the .traineddata files.
         String env = System.getenv("TESSDATA_PREFIX");
         if (env != null && !env.isBlank()) {
             Path p = Path.of(env);
-            // if user set directly to tessdata, use its parent
+            // If env points directly to tessdata, use it
             if (p.getFileName() != null && p.getFileName().toString().equalsIgnoreCase("tessdata")) {
-                p = p.getParent();
+                if (Files.exists(p)) return p;
+                // else fallthrough
             }
-            if (p != null && Files.exists(p.resolve("tessdata"))) {
-                return p;
+            // If env points to the parent, check parent/tessdata
+            if (Files.exists(p.resolve("tessdata"))) {
+                return p.resolve("tessdata");
             }
         }
 
         List<Path> candidates = new ArrayList<>();
-        candidates.add(Path.of("C:\\Program Files\\Tesseract-OCR"));
-        candidates.add(Path.of("C:\\Program Files (x86)\\Tesseract-OCR"));
-        candidates.add(Path.of("C:\\tesseract"));
+        candidates.add(Path.of("C:\\Program Files\\Tesseract-OCR\\tessdata"));
+        candidates.add(Path.of("C:\\Program Files (x86)\\Tesseract-OCR\\tessdata"));
+        candidates.add(Path.of("C:\\tesseract\\tessdata"));
 
         for (Path c : candidates) {
-            if (Files.exists(c.resolve("tessdata"))) {
+            if (Files.exists(c)) {
                 return c;
             }
         }
 
         throw new IllegalStateException(
-                "Tesseract introuvable. Installez Tesseract OCR et configurez TESSDATA_PREFIX (ex: C:/Program Files/Tesseract-OCR).");
+                "Tesseract introuvable. Installez Tesseract OCR et configurez TESSDATA_PREFIX (ex: C:/Program Files/Tesseract-OCR or C:/Program Files/Tesseract-OCR/tessdata)."
+        );
     }
 
     private Path preprocessToTempPng(Path input) throws Exception {
