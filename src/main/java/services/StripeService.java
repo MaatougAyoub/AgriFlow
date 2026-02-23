@@ -50,9 +50,9 @@ public class StripeService {
             nomProduit = "Réservation - " + reservation.getAnnonce().getTitre();
         }
 
-        // URLs de redirection apres paiement (pages locales)
-        String successUrl = getLocalPageUrl("paiement_reussi.html");
-        String cancelUrl = getLocalPageUrl("paiement_annule.html");
+        // URLs de redirection apres paiement (Stripe exige https://)
+        String successUrl = "https://example.com/paiement-reussi";
+        String cancelUrl = "https://example.com/paiement-annule";
 
         // nebniw el session Checkout
         SessionCreateParams params = SessionCreateParams.builder()
