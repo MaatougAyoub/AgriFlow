@@ -1,76 +1,45 @@
-<<<<<<< HEAD
-# Build
+# ===== BUILD =====
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+out/
+build/
+bin/
 .kotlin
+
 *.class
 *.jar
 *.war
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
-# IDE
+# ===== INTELLIJ =====
 .idea/
 *.iml
 *.ipr
-=======
-### IntelliJ IDEA ###
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-.kotlin
->>>>>>> badis
+*.iws
 
-### Eclipse ###
-.apt_generated
-.vscode/
+# ===== ECLIPSE =====
 .settings/
+.project
 .classpath
 .factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-<<<<<<< HEAD
-=======
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
->>>>>>> badis
 
-### NetBeans ###
+# ===== NETBEANS =====
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-<<<<<<< HEAD
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-=======
->>>>>>> badis
-.factorypath
 
-### VS Code ###
+# ===== VSCODE =====
 .vscode/
 
-### Mac OS ###
-# OS
+# ===== OS =====
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# Media (trop volumineux pour Git)
+# ===== MEDIA =====
 *.mp4
 *.avi
 *.mkv
 
-# Dossier des documents professeur (garder en local seulement)
+# ===== LOCAL FILES =====
 Profs/
