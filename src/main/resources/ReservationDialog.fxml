@@ -35,6 +35,15 @@
         </VBox>
     </HBox>
 
+    <!-- Quantité demandée -->
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <VBox spacing="5">
+            <Label text="Quantité *" style="-fx-font-weight: bold;"/>
+            <Spinner fx:id="quantiteSpinner" prefWidth="120"/>
+        </VBox>
+        <Label fx:id="stockLabel" text="Stock: N/A" style="-fx-font-size: 13px; -fx-text-fill: #757575;"/>
+    </HBox>
+
     <Label fx:id="dureeLabel" text="Durée: 1 jour(s)" style="-fx-font-size: 12px; -fx-text-fill: #757575;"/>
     <Label fx:id="prixTotalLabel" text="Prix total: 100 DT" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;"/>
 

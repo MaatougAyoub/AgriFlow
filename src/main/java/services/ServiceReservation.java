@@ -304,6 +304,8 @@ public class ServiceReservation implements IService<Reservation> {
         reservation.setReponseProprietaire(rs.getString("reponse_proprietaire"));
         reservation.setContratUrl(rs.getString("contrat_url"));
         reservation.setContratSigne(rs.getBoolean("contrat_signe"));
+        reservation.setPaiementEffectue(rs.getBoolean("paiement_effectue"));
+        reservation.setModePaiement(rs.getString("mode_paiement"));
 
         Date dateDebut = rs.getDate("date_debut");
         if (dateDebut != null) {
@@ -328,6 +330,11 @@ public class ServiceReservation implements IService<Reservation> {
         Timestamp dateSignature = rs.getTimestamp("date_signature_contrat");
         if (dateSignature != null) {
             reservation.setDateSignatureContrat(dateSignature.toLocalDateTime());
+        }
+
+        Timestamp datePaiement = rs.getTimestamp("date_paiement");
+        if (datePaiement != null) {
+            reservation.setDatePaiement(datePaiement.toLocalDateTime());
         }
 
         int annonceId = rs.getInt("annonce_id");
@@ -393,7 +400,7 @@ public class ServiceReservation implements IService<Reservation> {
 
     // ===== ACCEPTER RESERVATION =====
     // 9bal ma n acceptiw, nchoufou ken famma conflit m3a reservation okhra deja ACCEPTEE
-    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE
+    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE + nna9sou el stock
     public void accepterReservation(int reservationId, String reponse) throws SQLException {
         Reservation reservation = recupererParId(reservationId);
         if (reservation == null) {
@@ -419,6 +426,11 @@ public class ServiceReservation implements IService<Reservation> {
             pst.setInt(4, reservationId);
             pst.executeUpdate();
         }
+
+        // nna9sou el stock mel annonce ba3d ma n acceptiw
+        int quantiteReservee = reservation.getQuantite();
+        if (quantiteReservee <= 0) quantiteReservee = 1;
+        new AnnonceService().decrementerQuantite(reservation.getAnnonce().getId(), quantiteReservee);
     }
 
     // ===== Refuser une réservation =====
@@ -429,6 +441,18 @@ public class ServiceReservation implements IService<Reservation> {
             pst.setString(2, reponse);
             pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
             pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
+    }
+
+    // ===== Marquer paiement effectué =====
+    // nbadlou el statut paiement fl base ba3d ma el user ykhallas b Stripe
+    public void marquerPaiement(int reservationId, String modePaiement) throws SQLException {
+        String query = "UPDATE reservations SET paiement_effectue=1, date_paiement=?, mode_paiement=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setTimestamp(1, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setString(2, modePaiement);
+            pst.setInt(3, reservationId);
             pst.executeUpdate();
         }
     }

@@ -23,11 +23,16 @@ public class Reservation {
     private String contratUrl;
     private boolean contratSigne;
     private LocalDateTime dateSignatureContrat;
+    private boolean paiementEffectue;
+    private LocalDateTime datePaiement;
+    private String modePaiement;
+    private String stripeSessionId;
 
     public Reservation() {
         this.statut = StatutReservation.EN_ATTENTE;
         this.dateDemande = LocalDateTime.now();
         this.contratSigne = false;
+        this.paiementEffectue = false;
     }
 
     public int getId() { return id; }
@@ -97,6 +102,18 @@ public class Reservation {
     public boolean peutEtreSigne() {
         return statut == StatutReservation.ACCEPTEE || statut == StatutReservation.EN_COURS;
     }
+
+    public boolean isPaiementEffectue() { return paiementEffectue; }
+    public void setPaiementEffectue(boolean paiementEffectue) { this.paiementEffectue = paiementEffectue; }
+
+    public LocalDateTime getDatePaiement() { return datePaiement; }
+    public void setDatePaiement(LocalDateTime datePaiement) { this.datePaiement = datePaiement; }
+
+    public String getModePaiement() { return modePaiement; }
+    public void setModePaiement(String modePaiement) { this.modePaiement = modePaiement; }
+
+    public String getStripeSessionId() { return stripeSessionId; }
+    public void setStripeSessionId(String stripeSessionId) { this.stripeSessionId = stripeSessionId; }
 
     @Override
     public String toString() {

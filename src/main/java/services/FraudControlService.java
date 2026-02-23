@@ -10,7 +10,7 @@ public class FraudControlService {
 
     // liste mta3 les mots machbouha (ken la9ina wa7da mel hethom -> rejet)
     private static final List<String> MOTS_SUSPECTS = Arrays.asList(
-            "arnaque", "western union", "gratuit", "cash",
+            "arnaque", "western union", "gratuit", "cash",  
             "virement", "scam", "fake", "urgent transfert",
             "moneygram", "bitcoin", "crypto"
     );

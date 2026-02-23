@@ -58,6 +58,8 @@
             <Label fx:id="localisationLabel" text="Localisation"
                    style="-fx-font-size: 11px; -fx-text-fill: #757575;"/>
         </HBox>
+        <Label fx:id="stockLabel" text="Stock: N/A"
+               style="-fx-font-size: 11px; -fx-text-fill: #FF8F00; -fx-font-weight: bold;"/>
     </VBox>
 
     <!-- Bas de la carte : prix + propriétaire + bouton -->

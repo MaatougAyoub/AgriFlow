@@ -45,6 +45,8 @@ public class AnnonceCardController implements Initializable {
     private Label proprietaireLabel;
     @FXML
     private Button reserverBtn;
+    @FXML
+    private Label stockLabel;
 
     @FXML
     private Button btnEdit;
@@ -105,6 +107,11 @@ public class AnnonceCardController implements Initializable {
 
         // === LOCALISATION ===
         localisationLabel.setText(annonce.getLocalisation() != null ? annonce.getLocalisation() : "N/A");
+
+        // === STOCK ===
+        int stock = annonce.getQuantiteDisponible();
+        String unite = annonce.getUniteQuantite() != null ? annonce.getUniteQuantite() : "unité";
+        stockLabel.setText("Stock: " + stock + " " + unite);
 
         // === PRIX ===
         prixLabel.setText(annonce.getPrixFormate());

@@ -74,3 +74,5 @@ desktop.ini
 
 # Dossier des documents professeur (garder en local seulement)
 Profs/
+
+stripe_config.txt

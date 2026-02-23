@@ -9,7 +9,7 @@ import java.util.List;
 
 // Service CRUD mta3 les Annonces - houni na3mlou kol les operations (ajouter, modifier, supprimer, recuperer)
 // yimplementi IService<Annonce> ya3ni lazem y7ot les 4 methodes CRUD
-public class AnnonceService implements IService<Annonce> {
+public class    AnnonceService implements IService<Annonce> {
 
     private Connection cnx; // el connexion mta3 la base
     private final UserService userService; // bech nrec5periw l user mta3 kol annonce
@@ -42,8 +42,9 @@ public class AnnonceService implements IService<Annonce> {
         // el query INSERT bel ? (PreparedStatement ya7mi men SQL Injection)
         String query = "INSERT INTO annonces (titre, description, type, statut, prix, unite_prix, " +
                 "categorie, marque, modele, annee_fabrication, localisation, proprietaire_id, " +
-                "date_debut_disponibilite, date_fin_disponibilite, avec_operateur, caution) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "date_debut_disponibilite, date_fin_disponibilite, avec_operateur, caution, " +
+                "quantite_disponible, unite_quantite) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         // RETURN_GENERATED_KEYS bech ba3d l INSERT, nraj3ou l ID elli tkhla9 (auto_increment)
         try (PreparedStatement pst = cnx.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -66,6 +67,9 @@ public class AnnonceService implements IService<Annonce> {
                     annonce.getDateFinDisponibilite() != null ? Date.valueOf(annonce.getDateFinDisponibilite()) : null);
             pst.setBoolean(15, annonce.isAvecOperateur());
             pst.setDouble(16, annonce.getCaution());
+            pst.setInt(17, annonce.getQuantiteDisponible());
+            String uniteQte = annonce.getUniteQuantite();
+            pst.setString(18, (uniteQte != null && !uniteQte.isBlank()) ? uniteQte : "kg");
 
             int affectedRows = pst.executeUpdate();
 
@@ -98,7 +102,8 @@ public class AnnonceService implements IService<Annonce> {
 
         String query = "UPDATE annonces SET titre=?, description=?, type=?, statut=?, prix=?, unite_prix=?, " +
                 "categorie=?, marque=?, modele=?, annee_fabrication=?, localisation=?, " +
-                "date_debut_disponibilite=?, date_fin_disponibilite=?, avec_operateur=?, caution=? " +
+                "date_debut_disponibilite=?, date_fin_disponibilite=?, avec_operateur=?, caution=?, " +
+                "quantite_disponible=?, unite_quantite=? " +
                 "WHERE id=?";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
@@ -120,7 +125,10 @@ public class AnnonceService implements IService<Annonce> {
                     annonce.getDateFinDisponibilite() != null ? Date.valueOf(annonce.getDateFinDisponibilite()) : null);
             pst.setBoolean(14, annonce.isAvecOperateur());
             pst.setDouble(15, annonce.getCaution());
-            pst.setInt(16, annonce.getId());
+            pst.setInt(16, annonce.getQuantiteDisponible());
+            String uniteQte = annonce.getUniteQuantite();
+            pst.setString(17, (uniteQte != null && !uniteQte.isBlank()) ? uniteQte : "kg");
+            pst.setInt(18, annonce.getId());
 
             int affectedRows = pst.executeUpdate();
 
@@ -210,15 +218,13 @@ public class AnnonceService implements IService<Annonce> {
     }
 
 
-    // njibou ken les annonces DISPONIBLES w elli ma3andhomch reservation ACCEPTEE
-    // ya3ni ken famma contrat deja signe 3la annonce, ma taffichihech fl marketplace
+    // njibou ken les annonces DISPONIBLES w elli 3andhom stock (quantite > 0)
+    // annonce tetkhaba ken el quantite tousal l 0
     public List<Annonce> recupererDisponibles() throws SQLException {
         List<Annonce> annonces = new ArrayList<>();
         String query = "SELECT * FROM annonces a WHERE a.statut=? " +
-                "AND NOT EXISTS (" +
-                "  SELECT 1 FROM reservations r " +
-                "  WHERE r.annonce_id = a.id AND r.statut = 'ACCEPTEE'" +
-                ") ORDER BY a.date_creation DESC";
+                "AND a.quantite_disponible > 0 " +
+                "ORDER BY a.date_creation DESC";
 
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setString(1, StatutAnnonce.DISPONIBLE.name());
@@ -236,6 +242,26 @@ public class AnnonceService implements IService<Annonce> {
         }
 
         return annonces;
+    }
+
+
+    // nna9sou el quantite mel stock ki reservation tetaccepta
+    public void decrementerQuantite(int annonceId, int quantiteReservee) throws SQLException {
+        String query = "UPDATE annonces SET quantite_disponible = quantite_disponible - ? WHERE id = ? AND quantite_disponible >= ?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, quantiteReservee);
+            pst.setInt(2, annonceId);
+            pst.setInt(3, quantiteReservee);
+
+            int affectedRows = pst.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("Stock décrémenté de " + quantiteReservee + " pour annonce ID: " + annonceId);
+            } else {
+                throw new SQLException("Stock insuffisant pour cette annonce.");
+            }
+        }
     }
 
 

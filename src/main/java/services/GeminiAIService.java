@@ -14,9 +14,9 @@ import java.time.Duration;
 public class GeminiAIService {
 
     // el cle API mta3 Gemini (men Google Cloud Console)
-    private static final String API_KEY = "AIzaSyBnIK2KXC3SrRZN-s4xd4M6dwMr78-KEqM";
-    // el URL mta3 l'API (endpoint REST)
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key="
+    private static final String API_KEY = "AIzaSyDbV5omSb7B0LIUOvycgAzcbQKT0ltyRbU";
+    // el URL mta3 l'API (endpoint REST) - nesta3mlou gemini-2.0-flash (modele stable)
+    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
             + API_KEY;
 
     // HttpClient mta3 Java 11+ bech nab3thou requetes HTTP
@@ -176,6 +176,8 @@ public class GeminiAIService {
 
         // nchoufou el status code : 200 = OK, ghir 200 = mochkla
         if (response.statusCode() != 200) {
+            System.err.println("Erreur API Gemini - Status: " + response.statusCode());
+            System.err.println("Réponse brute: " + response.body());
             switch (response.statusCode()) {
                 case 429:
                     throw new Exception("Quota API dépassé. Patientez quelques secondes et réessayez.");

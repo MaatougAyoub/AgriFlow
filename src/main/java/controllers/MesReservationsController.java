@@ -5,6 +5,7 @@ import entities.StatutReservation;
 import entities.User;
 import services.PDFService;
 import services.ServiceReservation;
+import services.StripeService;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -46,6 +47,7 @@ public class MesReservationsController implements Initializable {
     private ScrollPane scrollPane;
 
     private final ServiceReservation reservationService = new ServiceReservation();
+    private final StripeService stripeService = new StripeService();
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Override
@@ -261,12 +263,43 @@ public class MesReservationsController implements Initializable {
         btnSupprimer.setTooltip(new Tooltip("Supprimer la réservation"));
         btnSupprimer.setOnAction(e -> supprimerReservation(reservation));
 
-        // PDF button — bleu
+        footer.getChildren().add(btnSupprimer);
+
+        // Bouton Payer — apparait seulement si ACCEPTEE et pas encore payé
+        if (reservation.getStatut() == StatutReservation.ACCEPTEE && !reservation.isPaiementEffectue()) {
+            Button btnPayer = new Button("💳 Payer");
+            btnPayer.setStyle("-fx-background-color: #6200EA; -fx-text-fill: white; -fx-font-weight: bold; "
+                    + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;");
+            btnPayer.setOnMouseEntered(e -> btnPayer
+                    .setStyle("-fx-background-color: #4A148C; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px; -fx-scale-x: 1.05; -fx-scale-y: 1.05;"));
+            btnPayer.setOnMouseExited(e -> btnPayer
+                    .setStyle("-fx-background-color: #6200EA; -fx-text-fill: white; -fx-font-weight: bold; "
+                            + "-fx-padding: 8 20; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;"));
+            btnPayer.setOnAction(e -> onPayerReservation(reservation));
+            footer.getChildren().add(btnPayer);
+        }
+
+        // Badge paiement si deja paye
+        if (reservation.isPaiementEffectue()) {
+            Label paidLabel = new Label("✅ Payé");
+            paidLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #2E7D32; -fx-font-weight: bold; "
+                    + "-fx-padding: 4 10; -fx-background-color: #E8F5E9; -fx-background-radius: 8;");
+            footer.getChildren().add(paidLabel);
+        }
+
+        // PDF button — bleu, disable si pas encore payé et reservation ACCEPTEE
         Button btnContrat = creerIconButton(SVG_PDF, "#1565C0", "#E3F2FD", "#BBDEFB");
         btnContrat.setTooltip(new Tooltip("Générer contrat PDF"));
         btnContrat.setOnAction(e -> genererContratPDF(reservation));
 
-        footer.getChildren().addAll(btnSupprimer, btnContrat);
+        // Bloquer le PDF tant que le paiement n'est pas fait (si reservation ACCEPTEE)
+        if (reservation.getStatut() == StatutReservation.ACCEPTEE && !reservation.isPaiementEffectue()) {
+            btnContrat.setDisable(true);
+            btnContrat.setTooltip(new Tooltip("Payez d'abord pour générer le contrat"));
+        }
+
+        footer.getChildren().add(btnContrat);
         return footer;
     }
 
@@ -639,4 +672,46 @@ public class MesReservationsController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    // ===== Paiement Stripe =====
+    // ouvre le navigateur sur la page Stripe Checkout bech el user ykhallas
+    private void onPayerReservation(Reservation reservation) {
+        try {
+            String url = stripeService.creerSessionPaiement(reservation);
+            stripeService.ouvrirNavigateur(url);
+
+            // Demander confirmation apres paiement
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("💳 Vérification Paiement");
+            alert.setHeaderText("Avez-vous terminé le paiement ?");
+            alert.setContentText(
+                    "Une page Stripe s'est ouverte dans votre navigateur.\n" +
+                    "Cliquez OK une fois le paiement effectué.");
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        reservationService.marquerPaiement(reservation.getId(), "Carte bancaire (Stripe)");
+                        Alert ok = new Alert(Alert.AlertType.INFORMATION);
+                        ok.setTitle("Succès");
+                        ok.setHeaderText(null);
+                        ok.setContentText("✅ Paiement enregistré ! Vous pouvez maintenant générer le contrat PDF.");
+                        ok.showAndWait();
+                        chargerReservations(); // rafraichir
+                    } catch (SQLException e) {
+                        Alert err = new Alert(Alert.AlertType.ERROR);
+                        err.setTitle("Erreur");
+                        err.setContentText("Erreur enregistrement paiement : " + e.getMessage());
+                        err.showAndWait();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            Alert erreur = new Alert(Alert.AlertType.ERROR);
+            erreur.setTitle("Erreur Paiement");
+            erreur.setContentText("Impossible de lancer le paiement Stripe : " + e.getMessage());
+            erreur.showAndWait();
+        }
+    }
 }
+
