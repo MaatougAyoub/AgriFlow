@@ -13,20 +13,44 @@ import java.time.Duration;
 // ya3ni neb3thou prompt (texte) l Google, w howa yredlna reponse
 public class GeminiAIService {
 
-    // el cle API mta3 Gemini (men Google Cloud Console)
-    private static final String API_KEY = "AIzaSyDbV5omSb7B0LIUOvycgAzcbQKT0ltyRbU";
-    // el URL mta3 l'API (endpoint REST) - nesta3mlou gemini-2.0-flash (modele stable)
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="
-            + API_KEY;
+    // el cle API mta3 Gemini (chargee depuis fichier config pour securite)
+    private static String API_KEY;
+    // el URL de base mta3 l'API (endpoint REST) - nesta3mlou gemini-2.0-flash (modele stable)
+    private static final String GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
     // HttpClient mta3 Java 11+ bech nab3thou requetes HTTP
     private final HttpClient httpClient;
 
     public GeminiAIService() {
+        // nchargiw el cle men fichier gemini_config.txt
+        chargerCleAPI();
         // n7addrou el HttpClient b timeout 15 secondes
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(15))
                 .build();
+    }
+
+    // nkharjou el cle men fichier gemini_config.txt (mech hardcoded fl code)
+    private void chargerCleAPI() {
+        if (API_KEY != null) return; // deja chargee
+        try {
+            java.io.File configFile = new java.io.File("gemini_config.txt");
+            if (configFile.exists()) {
+                API_KEY = new String(java.nio.file.Files.readAllBytes(configFile.toPath())).trim();
+                System.out.println("Clé Gemini chargée depuis gemini_config.txt");
+            } else {
+                System.err.println("⚠️ Fichier gemini_config.txt introuvable ! Créez-le avec votre clé Gemini.");
+                API_KEY = "";
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur chargement clé Gemini : " + e.getMessage());
+            API_KEY = "";
+        }
+    }
+
+    // njibou el URL kamla mta3 Gemini API
+    private String getGeminiUrl() {
+        return GEMINI_BASE_URL + API_KEY;
     }
 
     // ===== 1. AMELIORER DESCRIPTION =====
@@ -153,7 +177,7 @@ public class GeminiAIService {
 
         // nab3thou requete HTTP POST bel JSON
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(GEMINI_URL))
+                .uri(URI.create(getGeminiUrl()))
                 .header("Content-Type", "application/json")
                 .timeout(Duration.ofSeconds(30))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
