@@ -104,17 +104,5 @@ public class StripeService {
             System.err.println("Impossible d'ouvrir le navigateur : " + e.getMessage());
         }
     }
-    // njibou el URL mta3 page HTML locale mel resources
-    private String getLocalPageUrl(String filename) {
-        try {
-            java.net.URL resource = getClass().getResource("/" + filename);
-            if (resource != null) {
-                return resource.toExternalForm();
-            }
-        } catch (Exception e) {
-            System.err.println("Page " + filename + " introuvable dans resources");
-        }
-        // fallback
-        return "https://stripe.com";
-    }
 }
+

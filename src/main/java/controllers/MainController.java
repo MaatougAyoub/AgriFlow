@@ -184,6 +184,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void goProfil() {
+        MarketplaceController.arreterMusique();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
             Parent view = loader.load();
@@ -261,6 +262,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void deconnecter() {
+        MarketplaceController.arreterMusique();
         currentUser = null;
         userData = null;
         try {
@@ -282,6 +284,11 @@ public class MainController implements Initializable {
 
     private void loadView(String fxmlPath) {
         try {
+            // arreter la musique si on quitte le Marketplace
+            if (!"/Marketplace.fxml".equals(fxmlPath)) {
+                MarketplaceController.arreterMusique();
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
 

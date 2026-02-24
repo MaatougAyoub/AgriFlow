@@ -33,7 +33,7 @@ public class FraudControlService {
     // ken kol chay behi -> retourne null (ya3ni OK)
     public static String getMotifRejet(Annonce annonce) {
         if (annonce == null) {
-            return "Annonce invalide (null).";
+            return "Annonce inval   ide (null).";
         }
 
         // 1. nchoufou el titre (lazem >= 3 caracteres)

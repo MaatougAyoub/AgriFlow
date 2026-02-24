@@ -2,82 +2,147 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="controllers.SignIn"
-            prefHeight="500.0" prefWidth="700.0"
-            style="-fx-background-color: #F5F5F5;">
+            prefHeight="700.0" prefWidth="1100.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #1B5E20, #2E7D32, #43A047);">
 
-    <!-- Carte centrée -->
-    <VBox alignment="CENTER" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+    <!-- Conteneur principal centre -->
+    <HBox alignment="CENTER" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
 
-        <VBox spacing="18"
-              style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6); -fx-max-width: 420;"
-              alignment="CENTER">
-            <padding>
-                <Insets top="28" right="32" bottom="28" left="32"/>
-            </padding>
+        <!-- Grande carte blanche avec ombre -->
+        <HBox maxWidth="900" maxHeight="550" spacing="0"
+              style="-fx-background-color: white; -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 30, 0, 0, 10);">
 
-            <!-- Titre -->
-            <Label text="Connexion"
-                   style="-fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: #2E7D32;"/>
+            <!-- Partie gauche : Image background + Branding overlay -->
+            <StackPane prefWidth="450" style="-fx-background-radius: 20 0 0 20;">
+                <!-- Image de fond agricole -->
+                <ImageView fitWidth="450" fitHeight="550" preserveRatio="false"
+                           style="-fx-background-radius: 20 0 0 20;">
+                    <image>
+                        <Image url="@images/login_bg.png"/>
+                    </image>
+                </ImageView>
 
-            <!-- Message erreur -->
-            <Label fx:id="errorLabel"
-                   visible="false"
-                   wrapText="true"
-                   style="-fx-text-fill: #F44336; -fx-background-color: #FFEBEE; -fx-padding: 10; -fx-background-radius: 6;"/>
+                <!-- Overlay sombre pour lisibilite -->
+                <VBox alignment="CENTER" spacing="14"
+                      style="-fx-background-color: rgba(27,94,32,0.7); -fx-background-radius: 20 0 0 20;">
+                    <padding>
+                        <Insets top="30" right="30" bottom="30" left="30"/>
+                    </padding>
 
-            <!-- Message succès -->
-            <Label fx:id="successLabel"
-                   visible="false"
-                   wrapText="true"
-                   style="-fx-text-fill: #2E7D32; -fx-background-color: #E8F5E9; -fx-padding: 10; -fx-background-radius: 6;"/>
+                    <!-- Logo AgriFlow - GRAND et visible -->
+                    <ImageView fitHeight="180" fitWidth="180" preserveRatio="true"
+                               style="-fx-effect: dropshadow(gaussian, rgba(255,255,255,0.4), 20, 0, 0, 0);">
+                        <image>
+                            <Image url="@images/logo.png"/>
+                        </image>
+                    </ImageView>
 
-            <!-- Formulaire -->
-            <GridPane vgap="12" hgap="12">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="90" prefWidth="120"/>
-                    <ColumnConstraints hgrow="ALWAYS"/>
-                </columnConstraints>
+                    <!-- Nom app - GRAND -->
+                    <Label text="AgriFlow"
+                           style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 8, 0, 0, 2);"/>
 
-                <Label style="-fx-font-size: 21px" text="Email *" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="emailField" promptText="exemple@email.com" style="-fx-font-size: 18px"
-                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <!-- Slogan -->
+                    <Label text="La plateforme agricole intelligente"
+                           style="-fx-font-size: 17px; -fx-text-fill: rgba(255,255,255,0.95); -fx-font-style: italic;"
+                           wrapText="true" alignment="CENTER"/>
 
-                <Label style="-fx-font-size: 17px" text="Mot de passe *" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="motDePasseField" promptText="********" style="-fx-font-size: 18px"
-                               GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-            </GridPane>
+                    <!-- Separateur dore -->
+                    <Region prefHeight="3" prefWidth="120" maxWidth="120"
+                            style="-fx-background-color: linear-gradient(to right, transparent, #FFD54F, transparent); -fx-background-radius: 2;"/>
 
-            <!-- Options -->
-            <HBox alignment="CENTER_LEFT" spacing="10">
-                <CheckBox fx:id="rememberMeCheck" style="-fx-font-size: 17px" text="Se souvenir de moi" />
-                <Region HBox.hgrow="ALWAYS"/>
-                <Hyperlink text="Mot de passe oublié ?" style="-fx-font-size: 15px" onAction="#motDePasseOublie"/>
-            </HBox>
+                    <!-- Features avec style premium -->
+                    <VBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="🛒  Marketplace sécurisé"
+                               style="-fx-font-size: 15px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="💳  Paiement en ligne Stripe"
+                               style="-fx-font-size: 15px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="🤖  IA intégrée (Gemini)"
+                               style="-fx-font-size: 15px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label text="📦  Gestion de stock intelligente"
+                               style="-fx-font-size: 15px; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                    </VBox>
+                </VBox>
+            </StackPane>
 
-            <!-- Boutons -->
-            <HBox spacing="14" alignment="CENTER">
-                <Button text="Se connecter"
-                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 10 26; -fx-font-size: 20px; -fx-font-weight: bold;"
+            <!-- Partie droite : Formulaire login -->
+            <VBox prefWidth="480" alignment="CENTER" spacing="18">
+                <padding>
+                    <Insets top="40" right="40" bottom="40" left="40"/>
+                </padding>
+
+                <!-- Titre connexion -->
+                <Label text="Bienvenue 👋"
+                       style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1B5E20;"/>
+
+                <Label text="Connectez-vous à votre compte"
+                       style="-fx-font-size: 14px; -fx-text-fill: #757575;"/>
+
+                <!-- Message erreur -->
+                <Label fx:id="errorLabel"
+                       visible="false"
+                       wrapText="true"
+                       maxWidth="380"
+                       style="-fx-text-fill: #F44336; -fx-background-color: #FFEBEE; -fx-padding: 10; -fx-background-radius: 8;"/>
+
+                <!-- Message succes -->
+                <Label fx:id="successLabel"
+                       visible="false"
+                       wrapText="true"
+                       maxWidth="380"
+                       style="-fx-text-fill: #2E7D32; -fx-background-color: #E8F5E9; -fx-padding: 10; -fx-background-radius: 8;"/>
+
+                <!-- Champ Email -->
+                <VBox spacing="6" maxWidth="380">
+                    <Label text="📧  Email"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #424242;"/>
+                    <TextField fx:id="emailField" promptText="exemple@agriflow.tn"
+                               style="-fx-font-size: 15px; -fx-padding: 12; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #E0E0E0; -fx-border-width: 1.5;"/>
+                </VBox>
+
+                <!-- Champ Mot de passe -->
+                <VBox spacing="6" maxWidth="380">
+                    <Label text="🔒  Mot de passe"
+                           style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #424242;"/>
+                    <PasswordField fx:id="motDePasseField" promptText="••••••••"
+                                   style="-fx-font-size: 15px; -fx-padding: 12; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #E0E0E0; -fx-border-width: 1.5;"/>
+                </VBox>
+
+                <!-- Options -->
+                <HBox alignment="CENTER_LEFT" spacing="10" maxWidth="380">
+                    <CheckBox fx:id="rememberMeCheck" text="Se souvenir de moi"
+                              style="-fx-font-size: 13px; -fx-text-fill: #616161;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Hyperlink text="Mot de passe oublié ?" onAction="#motDePasseOublie"
+                               style="-fx-font-size: 13px; -fx-text-fill: #2E7D32;"/>
+                </HBox>
+
+                <!-- Bouton Se connecter -->
+                <Button text="Se connecter  →" maxWidth="380" prefHeight="45"
+                        style="-fx-background-color: linear-gradient(to right, #1B5E20, #2E7D32); -fx-text-fill: white; -fx-padding: 12 30; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand;"
                         onAction="#seConnecter"/>
 
-                <Button text="Annuler"
-                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 10 26; -fx-font-size: 20px;"
+                <!-- Bouton Annuler -->
+                <Button text="Annuler" maxWidth="380" prefHeight="38"
+                        style="-fx-background-color: transparent; -fx-text-fill: #9E9E9E; -fx-padding: 8 20; -fx-font-size: 14px; -fx-border-color: #E0E0E0; -fx-border-width: 1; -fx-border-radius: 10; -fx-background-radius: 10; -fx-cursor: hand;"
                         onAction="#annuler"/>
-            </HBox>
 
-            <!-- Redirection vers inscription -->
-            <HBox alignment="CENTER" spacing="6">
-                <Label text="Vous n'avez pas de compte ?" style="-fx-text-fill: #757575; -fx-font-size: 14px;"/>
-                <Hyperlink text="Créer un compte" style="-fx-text-fill: #2E7D32; -fx-font-size: 14px;" onAction="#allerVersInscription"/>
-            </HBox>
+                <!-- Redirection inscription -->
+                <HBox alignment="CENTER" spacing="6">
+                    <Label text="Pas de compte ?" style="-fx-text-fill: #757575; -fx-font-size: 13px;"/>
+                    <Hyperlink text="Créer un compte" style="-fx-text-fill: #2E7D32; -fx-font-size: 13px; -fx-font-weight: bold;" onAction="#allerVersInscription"/>
+                </HBox>
 
-        </VBox>
-    </VBox>
+            </VBox>
+        </HBox>
+    </HBox>
 
 </AnchorPane>
