@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +34,50 @@ public class ServiceReservation implements IService<Reservation> {
         this.userService = new UserService();
     }
 
+    // ===== VERIFICATION DISPONIBILITE =====
+    // nchoufou ken famma reservation ACCEPTEE 3la nafs el annonce w nafs el dates
+    // chevauchement = (debut1 < fin2) AND (fin1 > debut2)
+    // reservationIdExclue : nista3mlouha bech manblokiwch reservation nafsaha (utile fi accepter)
+    private boolean verifierDisponibilite(int annonceId, LocalDate dateDebut, LocalDate dateFin, int reservationIdExclue) throws SQLException {
+        String query = "SELECT COUNT(*) FROM reservations " +
+                "WHERE annonce_id = ? AND statut = 'ACCEPTEE' " +
+                "AND date_debut < ? AND date_fin > ? " +
+                "AND id != ?";
+
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setInt(1, annonceId);
+            pst.setDate(2, Date.valueOf(dateFin));
+            pst.setDate(3, Date.valueOf(dateDebut));
+            pst.setInt(4, reservationIdExclue);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0; // true = disponible, false = conflit
+                }
+            }
+        }
+        return true;
+    }
+
     // ===== AJOUTER RESERVATION = INSERT INTO reservations =====
     // 9bal ma na3mlou INSERT, nvalidaw (dates s7a7, prix > 0, etc)
-    // w nzidou commission 10% 3al prix
+    // w nchoufou ken el periode deja mahdouza (ACCEPTEE) + nzidou commission 10%
     @Override
     public void ajouter(Reservation reservation) throws SQLException {
         // njibou el proprietaire mel annonce automatiquement ken ma7attouch
         autoSetProprietaire(reservation);
         validateReservationForInsert(reservation);
+
+        // nchoufou ken el periode deja mahdouza b reservation ACCEPTEE
+        boolean disponible = verifierDisponibilite(
+                reservation.getAnnonce().getId(),
+                reservation.getDateDebut(),
+                reservation.getDateFin(),
+                0 // 0 = pas d'exclusion (nouvelle reservation)
+        );
+        if (!disponible) {
+            throw new SQLException("Cette période est déjà réservée (contrat signé). Veuillez choisir d'autres dates.");
+        }
 
         if (reservation.getQuantite() <= 0) {
             reservation.setQuantite(1);
@@ -267,6 +304,8 @@ public class ServiceReservation implements IService<Reservation> {
         reservation.setReponseProprietaire(rs.getString("reponse_proprietaire"));
         reservation.setContratUrl(rs.getString("contrat_url"));
         reservation.setContratSigne(rs.getBoolean("contrat_signe"));
+        reservation.setPaiementEffectue(rs.getBoolean("paiement_effectue"));
+        reservation.setModePaiement(rs.getString("mode_paiement"));
 
         Date dateDebut = rs.getDate("date_debut");
         if (dateDebut != null) {
@@ -291,6 +330,11 @@ public class ServiceReservation implements IService<Reservation> {
         Timestamp dateSignature = rs.getTimestamp("date_signature_contrat");
         if (dateSignature != null) {
             reservation.setDateSignatureContrat(dateSignature.toLocalDateTime());
+        }
+
+        Timestamp datePaiement = rs.getTimestamp("date_paiement");
+        if (datePaiement != null) {
+            reservation.setDatePaiement(datePaiement.toLocalDateTime());
         }
 
         int annonceId = rs.getInt("annonce_id");
@@ -354,8 +398,26 @@ public class ServiceReservation implements IService<Reservation> {
         return reservations;
     }
 
-    // ===== Accepter une réservation =====
+    // ===== ACCEPTER RESERVATION =====
+    // 9bal ma n acceptiw, nchoufou ken famma conflit m3a reservation okhra deja ACCEPTEE
+    // ken famma conflit -> exception, sinon nbadlou el statut l ACCEPTEE + nna9sou el stock
     public void accepterReservation(int reservationId, String reponse) throws SQLException {
+        Reservation reservation = recupererParId(reservationId);
+        if (reservation == null) {
+            throw new SQLException("Réservation introuvable.");
+        }
+
+        // verification disponibilite 9bal ma n acceptiw
+        boolean disponible = verifierDisponibilite(
+                reservation.getAnnonce().getId(),
+                reservation.getDateDebut(),
+                reservation.getDateFin(),
+                reservationId // on exclut la reservation actuelle
+        );
+        if (!disponible) {
+            throw new SQLException("Impossible d'accepter : un contrat existe déjà pour ces dates sur cet équipement.");
+        }
+
         String query = "UPDATE reservations SET statut=?, reponse_proprietaire=?, date_reponse=? WHERE id=?";
         try (PreparedStatement pst = cnx.prepareStatement(query)) {
             pst.setString(1, StatutReservation.ACCEPTEE.name());
@@ -364,6 +426,11 @@ public class ServiceReservation implements IService<Reservation> {
             pst.setInt(4, reservationId);
             pst.executeUpdate();
         }
+
+        // nna9sou el stock mel annonce ba3d ma n acceptiw
+        int quantiteReservee = reservation.getQuantite();
+        if (quantiteReservee <= 0) quantiteReservee = 1;
+        new AnnonceService().decrementerQuantite(reservation.getAnnonce().getId(), quantiteReservee);
     }
 
     // ===== Refuser une réservation =====
@@ -374,6 +441,18 @@ public class ServiceReservation implements IService<Reservation> {
             pst.setString(2, reponse);
             pst.setTimestamp(3, Timestamp.valueOf(java.time.LocalDateTime.now()));
             pst.setInt(4, reservationId);
+            pst.executeUpdate();
+        }
+    }
+
+    // ===== Marquer paiement effectué =====
+    // nbadlou el statut paiement fl base ba3d ma el user ykhallas b Stripe
+    public void marquerPaiement(int reservationId, String modePaiement) throws SQLException {
+        String query = "UPDATE reservations SET paiement_effectue=1, date_paiement=?, mode_paiement=? WHERE id=?";
+        try (PreparedStatement pst = cnx.prepareStatement(query)) {
+            pst.setTimestamp(1, Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pst.setString(2, modePaiement);
+            pst.setInt(3, reservationId);
             pst.executeUpdate();
         }
     }

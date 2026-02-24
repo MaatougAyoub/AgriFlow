@@ -104,6 +104,19 @@
                 <Label text="Collez un lien vers une image (JPG, PNG)" style="-fx-font-size: 11px; -fx-text-fill: #9E9E9E;"/>
             </VBox>
 
+            <!-- Quantité en stock -->
+            <HBox spacing="15">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Quantité disponible *" style="-fx-font-weight: bold;"/>
+                    <TextField fx:id="quantiteField" promptText="Ex: 50"
+                               style="-fx-padding: 10 15; -fx-background-radius: 8;"/>
+                </VBox>
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Unité" style="-fx-font-weight: bold;"/>
+                    <ComboBox fx:id="uniteQuantiteCombo" maxWidth="Infinity" promptText="kg"/>
+                </VBox>
+            </HBox>
+
             <!-- Message erreur -->
             <Label fx:id="errorLabel" styleClass="error-label" visible="false" managed="false" wrapText="true"/>
 

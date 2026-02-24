@@ -47,6 +47,10 @@ public class AjouterAnnonceController implements Initializable {
     @FXML
     private TextField imageUrlField;
     @FXML
+    private TextField quantiteField;
+    @FXML
+    private ComboBox<String> uniteQuantiteCombo;
+    @FXML
     private Label errorLabel;
 
     private Annonce annonceEnModification;
@@ -76,6 +80,10 @@ public class AjouterAnnonceController implements Initializable {
             typeCombo.getItems().add(t.getLabel());
         }
         typeCombo.setValue(TypeAnnonce.LOCATION.getLabel());
+
+        // Remplir le ComboBox Unite Quantite
+        uniteQuantiteCombo.getItems().addAll("kg", "pièce", "sac", "litre", "tonne", "unité");
+        uniteQuantiteCombo.setValue("kg");
     }
 
     // ken na3tiw annonce deja mawjouda, nraj3ouha l modification (mech ajout)
@@ -96,6 +104,10 @@ public class AjouterAnnonceController implements Initializable {
             categorieField.setText(annonce.getCategorie());
             localisationField.setText(annonce.getLocalisation());
             imageUrlField.setText(annonce.getImage()); // Peut être null
+            quantiteField.setText(String.valueOf(annonce.getQuantiteDisponible()));
+            if (annonce.getUniteQuantite() != null) {
+                uniteQuantiteCombo.setValue(annonce.getUniteQuantite());
+            }
 
             if (annonce.getType() != null) {
                 typeCombo.setValue(annonce.getType().getLabel());
@@ -251,6 +263,23 @@ public class AjouterAnnonceController implements Initializable {
             }
         }
         annonce.setType(type);
+
+        // Quantite
+        int quantite = 1;
+        if (quantiteField.getText() != null && !quantiteField.getText().trim().isEmpty()) {
+            try {
+                quantite = Integer.parseInt(quantiteField.getText().trim());
+            } catch (NumberFormatException e) {
+                showError("La quantité doit être un nombre entier.");
+                return;
+            }
+        }
+        if (quantite <= 0) {
+            showError("La quantité doit être supérieure à 0.");
+            return;
+        }
+        annonce.setQuantiteDisponible(quantite);
+        annonce.setUniteQuantite(uniteQuantiteCombo.getValue() != null ? uniteQuantiteCombo.getValue() : "kg");
 
         // Image
         if (!imageUrl.isEmpty()) {

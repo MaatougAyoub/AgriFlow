@@ -15,6 +15,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -40,6 +43,9 @@ public class MarketplaceController implements Initializable {
     private AnnonceService annonceService;
     private List<Annonce> toutesLesAnnonces;
 
+    // Musique de fond du marketplace
+    private static MediaPlayer musicPlayer;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         annonceService = new AnnonceService();
@@ -60,6 +66,37 @@ public class MarketplaceController implements Initializable {
 
         // njibou les annonces mel base
         loadAnnonces();
+
+        // nkhalkou musique de fond stylée
+        lancerMusique();
+    }
+
+    // lance la musique de fond bel volume bas w tloopi
+    private void lancerMusique() {
+        try {
+            // ken el musique deja tkhdem, ma na3mlouha ken marra
+            if (musicPlayer != null && musicPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
+                return;
+            }
+            String musicPath = getClass().getResource("/AgriFlow_A_Taste_of_Tomorrow.mp3").toExternalForm();
+            Media media = new Media(musicPath);
+            musicPlayer = new MediaPlayer(media);
+            musicPlayer.setVolume(0.3); // volume bas (30%)
+            musicPlayer.setCycleCount(1); // joue une seule fois
+            musicPlayer.play();
+            System.out.println("🎵 Musique AgriFlow lancée !");
+        } catch (Exception e) {
+            System.err.println("Impossible de lancer la musique : " + e.getMessage());
+        }
+    }
+
+    // methode statique pour arreter la musique quand on quitte le marketplace
+    public static void arreterMusique() {
+        if (musicPlayer != null) {
+            musicPlayer.stop();
+            musicPlayer.dispose();
+            musicPlayer = null;
+        }
     }
 
     // njibou les annonces DISPONIBLES mel base w naffichiwhoum

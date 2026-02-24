@@ -35,7 +35,7 @@
     <!-- Cards des réservations -->
     <ScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS"
                 style="-fx-background-color: transparent; -fx-background: transparent;">
-        <FlowPane fx:id="cardsContainer" hgap="18" vgap="18"/>
+        <VBox fx:id="cardsContainer" spacing="20" />
     </ScrollPane>
 
 </VBox>

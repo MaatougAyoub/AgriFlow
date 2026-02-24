@@ -280,6 +280,7 @@ public class MainController implements Initializable {
 
     private void loadView(String fxmlPath) {
         try {
+            // FXMLLoader y9ra el fichier FXML w yraj3a l interface
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
 

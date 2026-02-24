@@ -1,35 +1,62 @@
-# ===== BUILD =====
+# Build
 target/
-out/
-build/
-bin/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 .kotlin
-
 *.class
 *.jar
 *.war
 
-# ===== INTELLIJ =====
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+*.iws
+# IDE
 .idea/
 *.iml
 *.ipr
-*.iws
 
-# ===== ECLIPSE =====
+### IntelliJ IDEA ###
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.kotlin
+
+
+### Eclipse ###
+.apt_generated
+.vscode/
 .settings/
-.project
 .classpath
 .factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# ===== NETBEANS =====
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+
+### NetBeans ###
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+.factorypath
+
 # ===== VSCODE =====
 .vscode/
+
 
 # ===== OS =====
 .DS_Store
@@ -43,3 +70,5 @@ desktop.ini
 
 # ===== LOCAL FILES =====
 Profs/
+stripe_config.txt
+gemini_config.txt
