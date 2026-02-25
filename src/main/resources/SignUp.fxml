@@ -95,11 +95,11 @@
 
                 <!-- Nom (arabe) -->
                 <Label text="Nom (arabe) *" style="-fx-font-size: 21px" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="nomArField" style="-fx-font-size: 18px" promptText="مثال: أيوب" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <TextField fx:id="nomArField" style="-fx-font-size: 18px"  GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
                 <!-- Prénom (arabe) -->
                 <Label text="Prénom (arabe) *" style="-fx-font-size: 21px" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="prenomArField" style="-fx-font-size: 18px" promptText="مثال: معتوق" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <TextField fx:id="prenomArField" style="-fx-font-size: 18px"  GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                 <!-- Adresse -->
                 <Label text="Adresse *" style="-fx-font-size: 21px" GridPane.rowIndex="2" GridPane.columnIndex="0"/>

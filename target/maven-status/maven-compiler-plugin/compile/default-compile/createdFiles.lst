@@ -1,4 +1,5 @@
 services\PDFService.class
+services\StripeService.class
 controllers\ModifierProfil.class
 entities\Annonce.class
 services\ContentValidator.class

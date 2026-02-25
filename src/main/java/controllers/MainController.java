@@ -87,7 +87,7 @@ public class MainController implements Initializable {
     private Button activeButton;
     private static User currentUser;
 
-   @Override
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         refreshDrawerUserInfo();
 
@@ -280,7 +280,6 @@ public class MainController implements Initializable {
 
     private void loadView(String fxmlPath) {
         try {
-            // FXMLLoader y9ra el fichier FXML w yraj3a l interface
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
 
@@ -304,22 +303,22 @@ public class MainController implements Initializable {
 
     private void setActiveButton(Button button) {
         final String common =
-            "-fx-font-size: 20;" +
-                "-fx-text-fill: white;" +
-                "-fx-padding: 10 12;" +
-                "-fx-background-insets: 0;" +
-                "-fx-border-insets: 0;" +
-                "-fx-border-radius: 10;" +
-                "-fx-background-radius: 10;";
+                "-fx-font-size: 20;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-padding: 10 12;" +
+                        "-fx-background-insets: 0;" +
+                        "-fx-border-insets: 0;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;";
 
         if (activeButton != null) {
             // style non-actif (uniforme)
             activeButton.setStyle(
-                common +
-                    "-fx-font-weight: normal;" +
-                    "-fx-background-color: transparent;" +
-                    "-fx-border-color: rgba(255,255,255,0.35);" +
-                    "-fx-border-width: 1;");
+                    common +
+                            "-fx-font-weight: normal;" +
+                            "-fx-background-color: transparent;" +
+                            "-fx-border-color: rgba(255,255,255,0.35);" +
+                            "-fx-border-width: 1;");
         }
 
         activeButton = button;
@@ -327,11 +326,11 @@ public class MainController implements Initializable {
         if (activeButton != null) {
             // style actif
             activeButton.setStyle(
-                common +
-                    "-fx-font-weight: bold;" +
-                    "-fx-background-color: #1B5E20;" +
-                    "-fx-border-color: transparent;" +
-                    "-fx-border-width: 1;");
+                    common +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-color: #1B5E20;" +
+                            "-fx-border-color: transparent;" +
+                            "-fx-border-width: 1;");
         }
     }
 
