@@ -32,6 +32,8 @@ CREATE TABLE `collab_requests` (
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `location` varchar(100) NOT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `needed_people` int(11) NOT NULL DEFAULT 1,
@@ -47,12 +49,12 @@ CREATE TABLE `collab_requests` (
 -- Déchargement des données de la table `collab_requests`
 --
 
-INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `start_date`, `end_date`, `needed_people`, `salary`, `status`, `requester_id`, `publisher`, `created_at`, `updated_at`) VALUES
-(2, 'Plantation de tomates', 'Aide nécessaire pour la plantation de tomates dans une grande serre. Débutants acceptés.', 'Tunis', '2026-03-01', '2026-03-05', 3, 35.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
-(3, 'Taille de vignes', 'Recherche de personnes expérimentées pour la taille de vignes. Travail minutieux.', 'Nabeul', '2026-03-10', '2026-03-15', 4, 50.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 23:02:18'),
-(4, 'Irrigation et entretien', 'Besoin d\'aide pour l\'entretien des systèmes d\'irrigation. Formation fournie.', 'Sousse', '2026-03-20', '2026-03-25', 2, 30.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
-(5, 'recolte des tomates ', 'Besoin dun agriculteur serieux avec experience ', 'manzel abderahmen', '2026-02-21', '2026-03-01', 1, 20.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-19 23:42:19', '2026-02-19 23:54:28'),
-(6, 'aaaaa', 'a', 'aa', '2026-02-22', '2026-02-24', 1, 55.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-20 00:34:57', '2026-02-20 00:35:28');
+INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `latitude`, `longitude`, `start_date`, `end_date`, `needed_people`, `salary`, `status`, `requester_id`, `publisher`, `created_at`, `updated_at`) VALUES
+(2, 'Plantation de tomates', 'Aide nécessaire pour la plantation de tomates dans une grande serre. Débutants acceptés.', 'Tunis', NULL, NULL, '2026-03-01', '2026-03-05', 3, 35.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(3, 'Taille de vignes', 'Recherche de personnes expérimentées pour la taille de vignes. Travail minutieux.', 'Nabeul', NULL, NULL, '2026-03-10', '2026-03-15', 4, 50.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 23:02:18'),
+(4, 'Irrigation et entretien', 'Besoin d\'aide pour l\'entretien des systèmes d\'irrigation. Formation fournie.', 'Sousse', NULL, NULL, '2026-03-20', '2026-03-25', 2, 30.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(5, 'recolte des tomates ', 'Besoin dun agriculteur serieux avec experience ', 'manzel abderahmen', NULL, NULL, '2026-02-21', '2026-03-01', 1, 20.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-19 23:42:19', '2026-02-19 23:54:28'),
+(6, 'aaaaa', 'a', 'aa', NULL, NULL, '2026-02-22', '2026-02-24', 1, 55.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-20 00:34:57', '2026-02-20 00:35:28');
 
 --
 -- Index pour les tables déchargées

@@ -88,6 +88,14 @@
 
                     <Separator/>
 
+                    <!-- Prévisions météo (période de travail) -->
+                    <VBox spacing="12">
+                        <Text text="Prévisions météo (période de travail)" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+                        <VBox fx:id="weatherContainer" spacing="10"/>
+                    </VBox>
+
+                    <Separator/>
+
                     <!-- Bouton Postuler -->
                     <HBox alignment="CENTER">
                         <Button fx:id="applyButton" text="Postuler" onAction="#handleApply"

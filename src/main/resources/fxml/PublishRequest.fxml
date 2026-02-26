@@ -47,12 +47,19 @@
                                    style="-fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #CCCCCC; -fx-border-radius: 5;"/>
                     </VBox>
 
-                    <!-- Champ Lieu -->
+                    <!-- Champ Lieu + bouton carte -->
                     <VBox spacing="8">
-                        <Label text="Lieu *"
+                        <Label text="Lieu / Parcelle *"
                                style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #333333;"/>
-                        <TextField fx:id="locationField" promptText="Ex: Bizerte"
-                                   style="-fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #CCCCCC; -fx-border-radius: 5;"/>
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="locationField"
+                                       promptText="Cliquez sur 'Choisir sur la carte' ou saisissez le lieu"
+                                       HBox.hgrow="ALWAYS"
+                                       style="-fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 5; -fx-border-color: #CCCCCC; -fx-border-radius: 5;"/>
+                            <Button text="Choisir sur la carte"
+                                    onAction="#handleChooseOnMap"
+                                    style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 10 16; -fx-background-radius: 5; -fx-cursor: hand;"/>
+                        </HBox>
                     </VBox>
 
                     <!-- Dates (2 colonnes) -->

@@ -1,12 +1,25 @@
 package controllers;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import mains.MainFX;
 import entities.CollabRequest;
+import javafx.concurrent.Worker;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import mains.MainFX;
+import netscape.javascript.JSObject;
 import services.CollabRequestService;
+import utils.MapPickerBridge;
 import validators.CollabRequestValidator;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -36,7 +49,13 @@ public class PublishRequestController {
     @FXML
     private TextArea descriptionArea;
 
-    private CollabRequestService service = new CollabRequestService();
+    private final CollabRequestService service = new CollabRequestService();
+
+    // Coordonnées sélectionnées via la carte (facultatives)
+    private Double selectedLatitude;
+    private Double selectedLongitude;
+    private Stage mapStage;
+    private MapPickerBridge mapPickerBridge;
 
     @FXML
     public void initialize() {
@@ -71,7 +90,7 @@ public class PublishRequestController {
             CollabRequestValidator.validateNeededPeople(neededPeople);
 
             // Parser le salaire
-            double salary = 0.0;
+            double salary;
             try {
                 salary = Double.parseDouble(salaryText);
                 if (salary < 0) {
@@ -94,7 +113,13 @@ public class PublishRequestController {
             request.setNeededPeople(neededPeople);
             request.setSalary(salary);
             request.setPublisher("Ali Ben Ahmed"); // Nom utilisateur connecté (à remplacer par session)
-            request.setStatus("PENDING"); // ✅ STATUT PENDING par défaut
+            request.setStatus("PENDING"); // Statut PENDING par défaut
+
+            // Si l'utilisateur a choisi un point sur la carte, on persiste les coordonnées
+            if (selectedLatitude != null && selectedLongitude != null) {
+                request.setLatitude(selectedLatitude);
+                request.setLongitude(selectedLongitude);
+            }
 
             // Sauvegarder
             long id = service.add(request);
@@ -119,6 +144,58 @@ public class PublishRequestController {
             showError("Erreur de base de données", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Ouvre une fenêtre avec une carte OpenStreetMap (Leaflet) pour choisir la parcelle.
+     */
+    @FXML
+    private void handleChooseOnMap() {
+        if (mapStage != null && mapStage.isShowing()) {
+            mapStage.toFront();
+            return;
+        }
+
+        WebView webView = new WebView();
+        webView.setPrefSize(900, 600);
+        WebEngine engine = webView.getEngine();
+
+        mapPickerBridge = new MapPickerBridge(() -> {
+            // Callback invoqué depuis MapPickerBridge.setLocation(...)
+            locationField.setText(mapPickerBridge.getAddress());
+            selectedLatitude = mapPickerBridge.getLatitude();
+            selectedLongitude = mapPickerBridge.getLongitude();
+
+            if (mapStage != null) {
+                mapStage.close();
+                mapStage = null;
+            }
+        });
+
+        engine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+            if (newState == Worker.State.SUCCEEDED) {
+                try {
+                    JSObject window = (JSObject) engine.executeScript("window");
+                    window.setMember("javaBridge", mapPickerBridge);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showError("Erreur", "Impossible de connecter la carte à l'application.");
+                }
+            }
+        });
+
+        URL htmlUrl = getClass().getResource("/html/map_picker.html");
+        if (htmlUrl == null) {
+            showError("Erreur", "Fichier map_picker.html introuvable dans les ressources.");
+            return;
+        }
+        engine.load(htmlUrl.toExternalForm());
+
+        mapStage = new Stage();
+        mapStage.setTitle("Choisir l'emplacement de la parcelle");
+        mapStage.setScene(new Scene(webView));
+        mapStage.setOnHidden(event -> mapStage = null);
+        mapStage.show();
     }
 
     /**
@@ -173,7 +250,7 @@ public class PublishRequestController {
         confirm.setHeaderText("Annuler la publication ?");
         confirm.setContentText("Les informations saisies seront perdues.");
 
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             MainFX.showExploreCollaborations();
         }
     }

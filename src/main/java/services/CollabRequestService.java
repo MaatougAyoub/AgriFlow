@@ -2,7 +2,14 @@ package services;
 
 import entities.CollabRequest;
 import utils.MyDatabase;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +17,10 @@ public class CollabRequestService implements ICollabRequestService {
 
     @Override
     public long add(CollabRequest req) throws SQLException {
-        String sql = "INSERT INTO collab_requests(requester_id, title, description, start_date, end_date, needed_people, status, location, salary, publisher) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO collab_requests(" +
+                "requester_id, title, description, start_date, end_date, " +
+                "needed_people, status, location, latitude, longitude, salary, publisher" +
+                ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
         try (Connection c = MyDatabase.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,9 +32,21 @@ public class CollabRequestService implements ICollabRequestService {
             ps.setDate(5, req.getEndDate() == null ? null : Date.valueOf(req.getEndDate()));
             ps.setInt(6, req.getNeededPeople());
             ps.setString(7, req.getStatus());
-            ps.setString(8, req.getLocation());        // ✅ AJOUTÉ
-            ps.setDouble(9, req.getSalary());          // ✅ AJOUTÉ
-            ps.setString(10, req.getPublisher());      // ✅ AJOUTÉ
+            ps.setString(8, req.getLocation());
+
+            if (req.getLatitude() != null) {
+                ps.setDouble(9, req.getLatitude());
+            } else {
+                ps.setNull(9, Types.DOUBLE);
+            }
+            if (req.getLongitude() != null) {
+                ps.setDouble(10, req.getLongitude());
+            } else {
+                ps.setNull(10, Types.DOUBLE);
+            }
+
+            ps.setDouble(11, req.getSalary());
+            ps.setString(12, req.getPublisher());
 
             ps.executeUpdate();
 
@@ -71,8 +92,10 @@ public class CollabRequestService implements ICollabRequestService {
 
     @Override
     public void update(CollabRequest entity) throws SQLException {
-        String sql = "UPDATE collab_requests SET title=?, description=?, start_date=?, end_date=?, " +
-                "needed_people=?, status=?, location=?, salary=?, publisher=? WHERE id=?";
+        String sql = "UPDATE collab_requests SET " +
+                "title=?, description=?, start_date=?, end_date=?, " +
+                "needed_people=?, status=?, location=?, latitude=?, longitude=?, salary=?, publisher=? " +
+                "WHERE id=?";
 
         try (Connection c = MyDatabase.getInstance().getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -83,10 +106,22 @@ public class CollabRequestService implements ICollabRequestService {
             ps.setDate(4, entity.getEndDate() == null ? null : Date.valueOf(entity.getEndDate()));
             ps.setInt(5, entity.getNeededPeople());
             ps.setString(6, entity.getStatus());
-            ps.setString(7, entity.getLocation());      // ✅ AJOUTÉ
-            ps.setDouble(8, entity.getSalary());        // ✅ AJOUTÉ
-            ps.setString(9, entity.getPublisher());     // ✅ AJOUTÉ
-            ps.setLong(10, entity.getId());
+            ps.setString(7, entity.getLocation());
+
+            if (entity.getLatitude() != null) {
+                ps.setDouble(8, entity.getLatitude());
+            } else {
+                ps.setNull(8, Types.DOUBLE);
+            }
+            if (entity.getLongitude() != null) {
+                ps.setDouble(9, entity.getLongitude());
+            } else {
+                ps.setNull(9, Types.DOUBLE);
+            }
+
+            ps.setDouble(10, entity.getSalary());
+            ps.setString(11, entity.getPublisher());
+            ps.setLong(12, entity.getId());
 
             ps.executeUpdate();
         }
@@ -132,7 +167,7 @@ public class CollabRequestService implements ICollabRequestService {
         return list;
     }
 
-    // ✅ NOUVELLE MÉTHODE : Pour éviter la duplication de code
+    // Factorise le mapping d'une ligne SQL vers l'entité CollabRequest
     private CollabRequest mapResultSetToCollabRequest(ResultSet rs) throws SQLException {
         CollabRequest r = new CollabRequest();
         r.setId(rs.getLong("id"));
@@ -140,7 +175,6 @@ public class CollabRequestService implements ICollabRequestService {
         r.setTitle(rs.getString("title"));
         r.setDescription(rs.getString("description"));
 
-        // Dates
         Date sd = rs.getDate("start_date");
         Date ed = rs.getDate("end_date");
         r.setStartDate(sd == null ? null : sd.toLocalDate());
@@ -149,23 +183,18 @@ public class CollabRequestService implements ICollabRequestService {
         r.setNeededPeople(rs.getInt("needed_people"));
         r.setStatus(rs.getString("status"));
 
-        // ✅ NOUVELLES COLONNES avec gestion des erreurs
-        try {
-            r.setLocation(rs.getString("location"));
-        } catch (SQLException e) {
-            r.setLocation("Non spécifié");
-        }
+        r.setLocation(rs.getString("location"));
+        r.setSalary(rs.getDouble("salary"));
+        r.setPublisher(rs.getString("publisher"));
 
-        try {
-            r.setSalary(rs.getDouble("salary"));
-        } catch (SQLException e) {
-            r.setSalary(0.0);
+        // Coordonnées géographiques (peuvent être null)
+        double lat = rs.getDouble("latitude");
+        if (!rs.wasNull()) {
+            r.setLatitude(lat);
         }
-
-        try {
-            r.setPublisher(rs.getString("publisher"));
-        } catch (SQLException e) {
-            r.setPublisher("Anonyme");
+        double lng = rs.getDouble("longitude");
+        if (!rs.wasNull()) {
+            r.setLongitude(lng);
         }
 
         return r;

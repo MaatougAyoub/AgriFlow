@@ -15,6 +15,8 @@ public class CollabRequest {
     private double salary;          // ✅ AJOUTÉ
     private String publisher;       // ✅ AJOUTÉ
     private double salaryPerDay;
+    private Double latitude;
+    private Double longitude;
     // Constructeur vide
     public CollabRequest() {}
 
@@ -87,6 +89,13 @@ public class CollabRequest {
     public String getPublisher() {
         return publisher != null ? publisher : "Anonyme";
     }
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
 
     // ========== SETTERS ==========
 
@@ -147,4 +156,12 @@ public class CollabRequest {
     public void setSalaryPerDay(double salaryPerDay) {
         this.salaryPerDay = salaryPerDay;
     }
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }
+

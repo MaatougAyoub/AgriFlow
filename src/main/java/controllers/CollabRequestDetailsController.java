@@ -1,19 +1,31 @@
 package controllers;
 
 import entities.CollabRequest;
+import entities.DailyForecast;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import mains.MainFX;
 import services.CollabRequestService;
+import services.WeatherService;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class CollabRequestDetailsController {
 
@@ -25,11 +37,13 @@ public class CollabRequestDetailsController {
     @FXML private Text salaryText;
     @FXML private Text publisherText;
     @FXML private TextArea descriptionArea;
-    @FXML private Button applyButton;  // ✅ AJOUTÉ
+    @FXML private Button applyButton;
+    @FXML private VBox weatherContainer;
 
-    // ✅ Variables de classe
-    private CollabRequest currentRequest;  // ✅ AJOUTÉ
-    private CollabRequestService requestService = new CollabRequestService();
+    private CollabRequest currentRequest;
+    private final CollabRequestService requestService = new CollabRequestService();
+    private final WeatherService weatherService = new WeatherService();
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("EEE d MMM", java.util.Locale.FRENCH);
 
     /**
      * Définir les données de la demande à afficher
@@ -57,10 +71,87 @@ public class CollabRequestDetailsController {
 
         // Récupérer le nom du publisher (si disponible)
         try {
-            // Récupérer depuis la base de données ou utiliser un nom par défaut
             publisherText.setText("Publié par Ali Ben Ahmed");
         } catch (Exception e) {
             publisherText.setText("Publié par un agriculteur");
+        }
+
+        loadWeatherForecast();
+    }
+
+    private void loadWeatherForecast() {
+        if (weatherContainer == null) return;
+        weatherContainer.getChildren().clear();
+
+        if (currentRequest.getLatitude() == null || currentRequest.getLongitude() == null) {
+            Text noLoc = new Text("Prévisions non disponibles (localisation de la parcelle non renseignée).");
+            noLoc.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
+            weatherContainer.getChildren().add(noLoc);
+            return;
+        }
+
+        // Open-Meteo ne fournit que les 16 prochains jours
+        long joursRestants = ChronoUnit.DAYS.between(LocalDate.now(), currentRequest.getStartDate());
+        if (joursRestants > 16) {
+            Text horsPeriode = new Text("Les prévisions météo (Open-Meteo) ne couvrent que les 16 prochains jours. La période de travail de cette demande est au-delà ; consultez la météo plus proche des dates.");
+            horsPeriode.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
+            horsPeriode.setWrappingWidth(700);
+            weatherContainer.getChildren().add(horsPeriode);
+            return;
+        }
+
+        Text loading = new Text("Chargement des prévisions...");
+        loading.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
+        weatherContainer.getChildren().add(loading);
+
+        new Thread(() -> {
+            List<DailyForecast> forecast = weatherService.getForecast(
+                currentRequest.getLatitude(),
+                currentRequest.getLongitude(),
+                currentRequest.getStartDate(),
+                currentRequest.getEndDate()
+            );
+            Platform.runLater(() -> displayForecast(forecast));
+        }).start();
+    }
+
+    private void displayForecast(List<DailyForecast> forecast) {
+        weatherContainer.getChildren().clear();
+        if (forecast == null || forecast.isEmpty()) {
+            Text t = new Text("Aucune prévision disponible pour cette période (données indisponibles ou période hors des 16 prochains jours).");
+            t.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
+            t.setWrappingWidth(700);
+            weatherContainer.getChildren().add(t);
+            return;
+        }
+        for (DailyForecast day : forecast) {
+            HBox card = new HBox(20);
+            card.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            card.setPadding(new Insets(12, 16, 12, 16));
+            card.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 8;");
+
+            String dateStr = day.getDate().format(DATE_FMT);
+            String temps = String.format("%.0f°C / %.0f°C", day.getTempMin(), day.getTempMax());
+            String precip = day.getPrecipitationMm() > 0
+                ? String.format("%.1f mm pluie", day.getPrecipitationMm())
+                : "Pas de pluie";
+
+            Text dateText = new Text(dateStr);
+            dateText.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+            Text tempText = new Text(temps);
+            tempText.setStyle("-fx-font-size: 14px; -fx-fill: #1565C0;");
+            Text precipText = new Text(precip);
+            precipText.setStyle("-fx-font-size: 13px; -fx-fill: #424242;");
+            Text descText = new Text(day.getWeatherDescription());
+            descText.setStyle("-fx-font-size: 13px; -fx-fill: #616161;");
+
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            VBox left = new VBox(4, dateText, descText);
+            VBox right = new VBox(4, tempText, precipText);
+            card.getChildren().addAll(left, spacer, right);
+            weatherContainer.getChildren().add(card);
         }
     }
 

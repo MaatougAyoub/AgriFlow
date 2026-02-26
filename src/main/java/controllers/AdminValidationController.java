@@ -1,5 +1,6 @@
 package controllers;
 
+import entities.CollabRequest;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,8 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import mains.MainFX;
-import entities.CollabRequest;
 import services.CollabRequestService;
+import utils.TelegramNotifier;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -175,6 +176,13 @@ public class AdminValidationController {
         if (confirm.showAndWait().get() == ButtonType.OK) {
             try {
                 service.updateStatus(request.getId(), "APPROVED");
+
+                // Notification Telegram (si configurée)
+                String msg = "✅ Demande approuvée : \"" + request.getTitle() + "\"\n"
+                        + "📍 Lieu : " + request.getLocation() + "\n"
+                        + "🗓 Période : " + request.getStartDate() + " → " + request.getEndDate();
+                TelegramNotifier.sendText(msg);
+
                 showInfo("Succès", "La demande a été validée avec succès !");
                 handleFilterChange(); // Rafraîchir la liste
             } catch (SQLException e) {
@@ -194,6 +202,12 @@ public class AdminValidationController {
         if (confirm.showAndWait().get() == ButtonType.OK) {
             try {
                 service.updateStatus(request.getId(), "REJECTED");
+
+                // Notification Telegram (si configurée)
+                String msg = "❌ Demande rejetée : \"" + request.getTitle() + "\"\n"
+                        + "📍 Lieu : " + request.getLocation();
+                TelegramNotifier.sendText(msg);
+
                 showInfo("Rejet", "La demande a été rejetée.");
                 handleFilterChange(); // Rafraîchir la liste
             } catch (SQLException e) {

@@ -1,11 +1,12 @@
 package controllers;
 
+import entities.CollabApplication;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import entities.CollabApplication;
 import services.CollabApplicationService;
+import utils.TelegramNotifier;
 
 import java.sql.SQLException;
 
@@ -79,6 +80,14 @@ public class ApplyCollaborationController {
 
             if (id > 0) {
                 System.out.println("✅ Candidature envoyée avec l'ID: " + id);
+
+                // Notification Telegram (si configurée)
+                String msg = "📥 Nouvelle candidature pour la demande : \"" + requestTitle + "\"\n"
+                        + "👤 Candidat : " + application.getFullName() + "\n"
+                        + "📧 Email : " + application.getEmail() + "\n"
+                        + "📞 Téléphone : " + application.getPhone();
+                TelegramNotifier.sendText(msg);
+
                 showSuccess();
                 closeModal();
             } else {
