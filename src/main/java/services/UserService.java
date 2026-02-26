@@ -2,6 +2,7 @@ package services;
 
 import entities.User;
 import utils.MyDatabase;
+import utils.PasswordUtils;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -29,7 +30,8 @@ public class UserService implements IService<User> {
             pst.setString(2, user.getPrenom());
             pst.setInt(3, user.getCin());
             pst.setString(4, user.getEmail());
-            pst.setString(5, user.getMotDePasse());
+            // stocker le mot de passe haché
+            pst.setString(5, PasswordUtils.hashPassword(user.getMotDePasse()));
             pst.setString(6, user.getRole() != null ? user.getRole() : "AGRICULTEUR");
             pst.setDate(7, Date.valueOf(user.getDateCreation() != null ? user.getDateCreation() : LocalDate.now()));
             pst.setString(8, user.getSignature() != null ? user.getSignature() : "");
@@ -52,7 +54,8 @@ public class UserService implements IService<User> {
             pst.setString(2, user.getPrenom());
             pst.setInt(3, user.getCin());
             pst.setString(4, user.getEmail());
-            pst.setString(5, user.getMotDePasse());
+            // stocker le mot de passe haché
+            pst.setString(5, PasswordUtils.hashPassword(user.getMotDePasse()));
             pst.setString(6, user.getRole());
             pst.setString(7, user.getSignature());
             pst.setInt(8, user.getId());

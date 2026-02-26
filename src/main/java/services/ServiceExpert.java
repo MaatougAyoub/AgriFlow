@@ -3,6 +3,7 @@ package services;
 import entities.Expert;
 import entities.Role;
 import utils.MyDatabase;
+import utils.PasswordUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
             ps.setString(2, expert.getPrenom());
             ps.setInt(3, expert.getCin());
             ps.setString(4, expert.getEmail());
-            ps.setString(5, expert.getMotDePasse());
+            // stocker le mot de passe haché
+            ps.setString(5, PasswordUtils.hashPassword(expert.getMotDePasse()));
             ps.setString(6, Role.EXPERT.toString());
             ps.setObject(7, expert.getDateCreation());
             ps.setString(8, expert.getSignature());
@@ -47,7 +49,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
             psUser.setString(2, expert.getPrenom());
             psUser.setInt(3, expert.getCin());
             psUser.setString(4, expert.getEmail());
-            psUser.setString(5, expert.getMotDePasse());
+            // stocker le mot de passe haché lors de la modification
+            psUser.setString(5, PasswordUtils.hashPassword(expert.getMotDePasse()));
             psUser.setString(6, Role.EXPERT.toString());
             psUser.setObject(7, expert.getDateCreation());
             psUser.setString(8, expert.getSignature());
@@ -118,7 +121,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
         // 1) utilisateurs
         String sqlUser = "UPDATE utilisateurs SET motDePasse = ? WHERE email = ? AND role = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
-            ps.setString(1, nouveauMotDePasse);
+            // hasher le mot de passe avant de le stocker
+            ps.setString(1, PasswordUtils.hashPassword(nouveauMotDePasse));
             ps.setString(2, email);
             ps.setString(3, Role.EXPERT.toString());
             ps.executeUpdate();

@@ -3,6 +3,7 @@ package services;
 import entities.Agriculteur;
 import entities.Role;
 import utils.MyDatabase;
+import utils.PasswordUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,7 +25,8 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
             ps.setString(4, agriculteur.getPrenomAr());
             ps.setInt(5, agriculteur.getCin());
             ps.setString(6, agriculteur.getEmail());
-            ps.setString(7, agriculteur.getMotDePasse());
+            // stocker le mot de passe haché
+            ps.setString(7, PasswordUtils.hashPassword(agriculteur.getMotDePasse()));
             ps.setString(8, Role.AGRICULTEUR.toString());
             ps.setObject(9, agriculteur.getDateCreation());
             ps.setString(10, agriculteur.getSignature());
@@ -49,7 +51,8 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
             psUser.setString(2, agriculteur.getPrenom());
             psUser.setInt(3, agriculteur.getCin());
             psUser.setString(4, agriculteur.getEmail());
-            psUser.setString(5, agriculteur.getMotDePasse());
+            // stocker le mot de passe haché lors de la modification
+            psUser.setString(5, PasswordUtils.hashPassword(agriculteur.getMotDePasse()));
             psUser.setString(6, Role.AGRICULTEUR.toString());
             psUser.setObject(7, agriculteur.getDateCreation());
             psUser.setString(8, agriculteur.getSignature());
@@ -127,7 +130,8 @@ public class ServiceAgriculteur implements IServiceAgriculteur <Agriculteur>{
         // 1) utilisateurs
         String sqlUser = "UPDATE utilisateurs SET motDePasse = ? WHERE email = ? AND role = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
-            ps.setString(1, nouveauMotDePasse);
+            // hasher le mot de passe avant de le stocker
+            ps.setString(1, PasswordUtils.hashPassword(nouveauMotDePasse));
             ps.setString(2, email);
             ps.setString(3, Role.AGRICULTEUR.toString());
             ps.executeUpdate();
