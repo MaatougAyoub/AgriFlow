@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import mains.MainCollabFX;
 import mains.MainFX;
 import netscape.javascript.JSObject;
 import services.CollabRequestService;
@@ -133,7 +134,7 @@ public class PublishRequestController {
                                 "après validation par un administrateur.\n\n" +
                                 "Vous pouvez suivre son statut dans \"Mes Demandes\".");
 
-                MainFX.showMyRequests();
+                MainCollabFX.showMyRequests();
             } else {
                 showError("Erreur", "Impossible de publier la demande.");
             }
@@ -251,7 +252,7 @@ public class PublishRequestController {
         confirm.setContentText("Les informations saisies seront perdues.");
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            MainFX.showExploreCollaborations();
+            MainCollabFX.showExploreCollaborations();
         }
     }
 

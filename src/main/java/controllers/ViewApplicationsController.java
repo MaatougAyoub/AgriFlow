@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mains.MainCollabFX;
 import mains.MainFX;
 import services.*;
 import services.PredictionService.PredictionResult;
@@ -786,7 +787,7 @@ public class ViewApplicationsController {
 
     @FXML
     private void handleBack() {
-        MainFX.showMyRequests();
+        MainCollabFX.showMyRequests();
     }
 
     // Méthodes utilitaires

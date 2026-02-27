@@ -22,9 +22,8 @@ public class CollabRequestService implements ICollabRequestService {
                 "needed_people, status, location, latitude, longitude, salary, publisher" +
                 ") VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, req.getRequesterId());
             ps.setString(2, req.getTitle());
             ps.setString(3, req.getDescription());
@@ -62,10 +61,9 @@ public class CollabRequestService implements ICollabRequestService {
         List<CollabRequest> list = new ArrayList<>();
         String sql = "SELECT * FROM collab_requests ORDER BY created_at DESC";
 
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             Statement st = c.createStatement();
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
-
             while (rs.next()) {
                 list.add(mapResultSetToCollabRequest(rs));
             }
@@ -76,10 +74,8 @@ public class CollabRequestService implements ICollabRequestService {
     @Override
     public CollabRequest findById(long id) throws SQLException {
         String sql = "SELECT * FROM collab_requests WHERE id=?";
-
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -97,9 +93,8 @@ public class CollabRequestService implements ICollabRequestService {
                 "needed_people=?, status=?, location=?, latitude=?, longitude=?, salary=?, publisher=? " +
                 "WHERE id=?";
 
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, entity.getTitle());
             ps.setString(2, entity.getDescription());
             ps.setDate(3, entity.getStartDate() == null ? null : Date.valueOf(entity.getStartDate()));
@@ -130,8 +125,8 @@ public class CollabRequestService implements ICollabRequestService {
     @Override
     public void updateStatus(long id, String status) throws SQLException {
         String sql = "UPDATE collab_requests SET status=? WHERE id=?";
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setLong(2, id);
             ps.executeUpdate();
@@ -141,8 +136,8 @@ public class CollabRequestService implements ICollabRequestService {
     @Override
     public void delete(long id) throws SQLException {
         String sql = "DELETE FROM collab_requests WHERE id=?";
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, id);
             ps.executeUpdate();
         }
@@ -153,11 +148,9 @@ public class CollabRequestService implements ICollabRequestService {
         List<CollabRequest> list = new ArrayList<>();
         String sql = "SELECT * FROM collab_requests WHERE status=? ORDER BY created_at DESC";
 
-        try (Connection c = MyDatabase.getInstance().getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, status);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(mapResultSetToCollabRequest(rs));

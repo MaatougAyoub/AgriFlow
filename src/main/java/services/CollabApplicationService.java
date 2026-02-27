@@ -12,12 +12,7 @@ public class CollabApplicationService {
     private final Connection connection;
 
     public CollabApplicationService() {
-        try {
-            this.connection = MyDatabase.getInstance().getConnection();
-        } catch (SQLException e) {
-            System.err.println("❌ Erreur initialisation connexion : " + e.getMessage());
-            throw new RuntimeException("Impossible de se connecter à la base de données", e);
-        }
+            connection = MyDatabase.getInstance().getConnection();
     }
 
     /**

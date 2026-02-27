@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class MyDatabase {
 
     //private static final String URL = "jdbc:mysql://localhost:3306/db-gusers";
-    private static final String URL = "jdbc:mysql://localhost:3306/agriflow7";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow8";
     //amen
     //private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
 
@@ -40,6 +40,17 @@ public class MyDatabase {
     }
 
     public Connection getConnection() {
+        //-----------------------------------------------------------------------------
+        try {
+            if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+                // try to re-establish the connection
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Connection re-established");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //-----------------------------------------------------------------------------
         return connection;
     }
 }

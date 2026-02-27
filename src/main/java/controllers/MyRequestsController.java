@@ -3,6 +3,7 @@ package controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import mains.MainCollabFX;
 import mains.MainFX;
 import entities.CollabRequest;
 import services.CollabApplicationService;
@@ -128,7 +129,7 @@ public class MyRequestsController {
 
         if (selected != null) {
             System.out.println("🔍 Affichage des détails de la demande #" + selected.getId());
-            MainFX.showCollabRequestDetails(selected.getId());
+            MainCollabFX.showCollabRequestDetails(selected.getId());
         } else {
             showWarning("Aucune sélection", "Veuillez sélectionner une demande.");
         }
@@ -159,7 +160,7 @@ public class MyRequestsController {
             System.out.println("📋 Affichage de " + count + " candidature(s) pour la demande #" + selected.getId());
 
             // Naviguer vers la page ViewApplications
-            MainFX.showViewApplications();
+            MainCollabFX.showViewApplications();
 
         } catch (SQLException e) {
             showError("Erreur", "Impossible de charger les candidatures : " + e.getMessage());
@@ -194,7 +195,7 @@ public class MyRequestsController {
 
     @FXML
     private void handleBack() {
-        MainFX.showExploreCollaborations();
+        MainCollabFX.showExploreCollaborations();
     }
 
     // Getter pour l'ID de la demande sélectionnée

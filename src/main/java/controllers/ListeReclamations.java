@@ -421,7 +421,7 @@ public class ListeReclamations {
             mainController.setUserDataAndGoToProfil(userData);
 
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("AgriFlow - Marketplace");
+            stage.setTitle("AgriFlow - Profil");
             stage.setScene(new Scene(root));
             //stage.setMaximized(true);
             stage.setFullScreen(true);

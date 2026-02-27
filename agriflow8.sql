@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 25, 2026 at 04:42 PM
+-- Generation Time: Feb 27, 2026 at 05:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `agriflow7`
+-- Database: `agriflow8`
 --
 
 -- --------------------------------------------------------
@@ -60,7 +60,7 @@ CREATE TABLE `annonces` (
 --
 
 INSERT INTO `annonces` (`id`, `titre`, `description`, `type`, `statut`, `prix`, `unite_prix`, `categorie`, `marque`, `modele`, `annee_fabrication`, `localisation`, `latitude`, `longitude`, `proprietaire_id`, `date_debut_disponibilite`, `date_fin_disponibilite`, `date_creation`, `date_modification`, `avec_operateur`, `assurance_incluse`, `caution`, `conditions_location`, `quantite_disponible`, `unite_quantite`) VALUES
-(19, 'Tracteur John Deere 6120M', 'Tracteur puissant 120 CV, parfait pour les grandes exploitations. Entretien regulier, pneus neufs. Disponible avec ou sans operateur.', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', NULL, NULL, NULL, 'Sousse', NULL, NULL, 39, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-23 12:21:27', 1, 0, 500.00, NULL, 1, 'piece'),
+(19, 'Tracteur John Deere 6120M', 'Tracteur puissant 120 CV, parfait pour les grandes exploitations. Entretien regulier, pneus neufs. Disponible avec ou sans operateur.', 'LOCATION', 'DISPONIBLE', 250.00, 'jour', 'Tracteur', NULL, NULL, NULL, 'Sousse', NULL, NULL, 39, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-25 15:57:30', 1, 0, 500.00, NULL, 0, 'piece'),
 (20, 'Engrais NPK 15-15-15 Premium', 'Engrais equilibre haute qualite pour toutes cultures. Sacs de 50kg, livraison possible sur Sousse et environs.', 'VENTE', 'DISPONIBLE', 45.00, 'sac', 'Engrais', NULL, NULL, NULL, 'Sousse', NULL, NULL, 39, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 0.00, NULL, 100, 'sac'),
 (21, 'Systeme Irrigation Goutte a Goutte', 'Kit complet irrigation goutte a goutte pour 1 hectare. Tuyaux, goutteurs, filtre et programmateur inclus.', 'VENTE', 'DISPONIBLE', 1200.00, 'unite', 'Irrigation', NULL, NULL, NULL, 'Sousse', NULL, NULL, 39, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 0.00, NULL, 5, 'unite'),
 (22, 'Moissonneuse-Batteuse Claas Lexion', 'Moissonneuse-batteuse professionnelle, ideale pour ble et orge. Capacite tremie 9000L.', 'LOCATION', 'DISPONIBLE', 800.00, 'jour', 'Moissonneuse', NULL, NULL, NULL, 'Tunis', NULL, NULL, 40, '2026-03-01', '2026-09-30', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 1, 0, 1000.00, NULL, 2, 'piece'),
@@ -128,7 +128,17 @@ INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `full_nam
 (4, 5, 1, 'yakine', '000', 'yy@yy.com', 6, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 20.00, 'APPROVED', '2026-02-20 00:05:32', '2026-02-20 02:24:04'),
 (5, 9, 1, 'aa', '0000000', 'bb@bb.com', 5, 'je suis aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 50.00, 'APPROVED', '2026-02-22 14:39:53', '2026-02-22 14:42:28'),
 (8, 8, 1, 'bbbbbbbbbbbbb', '1111111111111', 'bb@bb.bb', 5, 'peut etre  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 100.00, 'PENDING', '2026-02-22 15:03:13', '2026-02-22 15:03:13'),
-(9, 6, 1, 'ccc', '00000000', 'aaa@aaa.c', 0, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 10.00, 'PENDING', '2026-02-22 15:24:14', '2026-02-22 15:24:14');
+(9, 6, 1, 'ccc', '00000000', 'aaa@aaa.c', 0, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 10.00, 'PENDING', '2026-02-22 15:24:14', '2026-02-22 15:24:14'),
+(11, 11, 1, 'ee', '0000000', 'cccc@cc.cc', 5, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 44.00, 'PENDING', '2026-02-23 02:37:20', '2026-02-23 02:37:20'),
+(13, 10, 1, 'aaa', '00000000', 'zzz@zz.v', 5, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 50.00, 'APPROVED', '2026-02-23 09:25:18', '2026-02-23 09:28:23'),
+(14, 12, 1, 'yakine', '28121078', 'yakkine@iii.fr', 5, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 50.00, 'REJECTED', '2026-02-26 03:10:37', '2026-02-26 03:12:23'),
+(15, 15, 2, 'aymen gh', '00000000', 'yaki@fff.com', 5, 'qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq', 50.00, 'PENDING', '2026-02-27 03:26:29', '2026-02-28 03:26:29'),
+(70, 2, 1, 'aymen ghabi', '00000000', 'ayme,@yy.vom', 8, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 50.00, 'APPROVED', '2026-02-28 03:29:50', '2026-02-26 03:41:04'),
+(71, 2, 71, 'ahmed garci', '11111111', 'ahmed@gmail.com', 0, 'je suis motivé , je suis passionné eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', 90.00, 'PENDING', '2026-02-27 03:31:56', '2026-02-26 03:31:56'),
+(74, 2, 74, 'imen ben kilani', '28121457', 'imen@imen.cpm', 10, 'motivé motivé  motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé ', 10.00, 'PENDING', '2026-02-27 03:38:15', '2026-02-27 03:38:15'),
+(75, 14, 1, 'ayoub', '111111111', 'ayy@yy.com', 5, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 20.00, 'APPROVED', '2026-02-26 23:09:29', '2026-02-26 23:10:03'),
+(76, 15, 1, 'Ayoub', '20305177', 'ayoub.maatoug@ipeib.ucar.tn', 6, 'lettre de motivation\niiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', 30.00, 'PENDING', '2026-02-27 16:03:40', '2026-02-27 16:03:40'),
+(77, 16, 1, 'sami', '20305177', 'maatougsami25@gmail.com', 10, 'yesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 50.00, 'PENDING', '2026-02-27 16:09:28', '2026-02-27 16:09:28');
 
 -- --------------------------------------------------------
 
@@ -141,6 +151,8 @@ CREATE TABLE `collab_requests` (
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
   `location` varchar(100) NOT NULL,
+  `latitude` decimal(10,7) DEFAULT NULL,
+  `longitude` decimal(10,7) DEFAULT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
   `needed_people` int(11) NOT NULL DEFAULT 1,
@@ -156,14 +168,19 @@ CREATE TABLE `collab_requests` (
 -- Dumping data for table `collab_requests`
 --
 
-INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `start_date`, `end_date`, `needed_people`, `salary`, `status`, `requester_id`, `publisher`, `created_at`, `updated_at`) VALUES
-(2, 'Plantation de tomates', 'Aide nécessaire pour la plantation de tomates dans une grande serre. Débutants acceptés.', 'Tunis', '2026-03-01', '2026-03-05', 3, 35.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
-(5, 'recolte des tomates ', 'Besoin dun agriculteur serieux avec experience ', 'manzel abderahmen', '2026-02-21', '2026-03-01', 1, 20.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-19 23:42:19', '2026-02-19 23:54:28'),
-(6, 'aaaaa', 'a', 'aa', '2026-02-22', '2026-02-24', 1, 55.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-20 00:34:57', '2026-02-20 00:35:28'),
-(7, 'Plantation des pommes de terres', 'On cherche 4 ouvriers serieux', 'Sfax', '2026-02-28', '2026-03-08', 4, 50.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-21 02:45:28', '2026-02-21 02:46:00'),
-(8, 'Récolte oranges ', 'on recherche ouvrier serieux', 'Bizerte', '2026-03-06', '2026-03-08', 1, 70.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-21 03:29:36', '2026-02-21 03:31:09'),
-(9, 'feunouilles', 'besoin dagriculteurs', 'Bizerte', '2026-02-24', '2026-03-01', 1, 40.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-22 14:35:10', '2026-02-22 14:36:22'),
-(10, 'bbbb', 'bbbb', 'Souuse', '2026-02-23', '2026-02-25', 3, 85.00, 'APPROVED', 2, 'bbb', '2026-02-22 16:11:00', '2026-02-22 16:13:45');
+INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `latitude`, `longitude`, `start_date`, `end_date`, `needed_people`, `salary`, `status`, `requester_id`, `publisher`, `created_at`, `updated_at`) VALUES
+(2, 'Plantation de tomates', 'Aide nécessaire pour la plantation de tomates dans une grande serre. Débutants acceptés.', 'Tunis', NULL, NULL, '2026-03-01', '2026-03-05', 3, 35.00, 'APPROVED', 1, NULL, '2026-02-19 16:54:29', '2026-02-19 16:54:29'),
+(5, 'recolte des tomates ', 'Besoin dun agriculteur serieux avec experience ', 'manzel abderahmen', NULL, NULL, '2026-02-21', '2026-03-01', 1, 20.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-19 23:42:19', '2026-02-19 23:54:28'),
+(6, 'aaaaa', 'a', 'aa', NULL, NULL, '2026-02-22', '2026-02-24', 1, 55.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-20 00:34:57', '2026-02-20 00:35:28'),
+(7, 'Plantation des pommes de terres', 'On cherche 4 ouvriers serieux', 'Sfax', NULL, NULL, '2026-02-28', '2026-03-08', 4, 50.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-21 02:45:28', '2026-02-21 02:46:00'),
+(8, 'Récolte oranges ', 'on recherche ouvrier serieux', 'Bizerte', NULL, NULL, '2026-03-06', '2026-03-08', 1, 70.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-21 03:29:36', '2026-02-21 03:31:09'),
+(9, 'feunouilles', 'besoin dagriculteurs', 'Bizerte', NULL, NULL, '2026-02-24', '2026-03-01', 1, 40.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-22 14:35:10', '2026-02-22 14:36:22'),
+(11, 'recolte fraise', 'recherche', 'Bizerte', NULL, NULL, '2026-02-24', '2026-02-25', 1, 55.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-23 02:36:14', '2026-02-23 02:36:42'),
+(12, 'Olives recolte', 'recherche ', 'Azmour, Délégation Kélibia, Gouvernorat Nabeul, 8055, Tunisie', 36.9279390, 11.0137939, '2026-02-27', '2026-03-01', 1, 50.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 01:59:52', '2026-02-26 02:00:14'),
+(13, 'Plantation des Fraises', 'on cherche plantation fraise ', 'Sidi Ahmed, Délégation Bizerte Sud, Gouvernorat Bizerte, Tunisie', 37.2740528, 9.7229004, '2026-02-27', '2026-03-01', 1, 10.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 03:20:11', '2026-02-26 03:20:29'),
+(14, 'Recolte des pommes ', 'on cherche des personnes seriesux pou......', 'Cherichira, Délégation Essouassi, Gouvernorat Mahdia, Tunisie', 35.2994355, 10.5249023, '2026-02-28', '2026-03-03', 2, 53.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 23:06:37', '2026-02-26 23:07:56'),
+(15, 'recolte oranges', 'on cherche', 'Habib Thameur, Délégation El Hamma, Gouvernorat Gabès, Tunisie', 33.8521697, 9.6679688, '2026-02-28', '2026-03-01', 1, 44.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 23:31:18', '2026-02-26 23:31:41'),
+(16, 'Récolte tomate ', 'illi yji ', 'Sidi Harreth, Délégation Kasserine Sud, Gouvernorat Kasserine, Tunisie', 35.2456191, 8.8165283, '2026-02-28', '2026-03-05', 2, 440.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-27 16:04:09', '2026-02-27 16:05:57');
 
 -- --------------------------------------------------------
 
@@ -446,7 +463,9 @@ INSERT INTO `reservations` (`id`, `annonce_id`, `demandeur_id`, `proprietaire_id
 (3, 1, 39, 36, '2026-02-15', '2026-02-16', 1, 550.00, 1000.00, 'EN_ATTENTE', 'salut', NULL, '2026-02-15 23:06:47', NULL, '2026-02-15 23:06:47', NULL, 0, NULL, 0, NULL, NULL),
 (4, 4, 41, 39, '2026-02-15', '2026-02-16', 1, 275.00, 0.00, 'EN_ATTENTE', 'interessé', NULL, '2026-02-15 23:15:01', NULL, '2026-02-15 23:15:01', NULL, 0, NULL, 0, NULL, NULL),
 (5, 1, 39, 36, '2026-02-16', '2026-02-17', 1, 550.00, 1000.00, 'EN_ATTENTE', 'salut', NULL, '2026-02-16 00:06:34', NULL, '2026-02-16 00:06:34', NULL, 0, NULL, 0, NULL, NULL),
-(6, 2, 39, 36, '2026-02-16', '2026-02-17', 1, 1760.00, 3000.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-16 00:11:01', NULL, '2026-02-16 00:11:01', NULL, 0, NULL, 0, NULL, NULL);
+(6, 2, 39, 36, '2026-02-16', '2026-02-17', 1, 1760.00, 3000.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-16 00:11:01', NULL, '2026-02-16 00:11:01', NULL, 0, NULL, 0, NULL, NULL),
+(7, 19, 74, 39, '2026-02-25', '2026-02-26', 1, 550.00, 500.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-25 15:55:14', NULL, '2026-02-25 15:55:14', NULL, 0, NULL, 0, NULL, NULL),
+(8, 19, 74, 39, '2026-02-25', '2026-02-26', 1, 550.00, 500.00, 'ACCEPTEE', 'aaaaaaa', 'Demande acceptée. Bienvenue !', '2026-02-25 15:56:46', '2026-02-25 15:57:30', '2026-02-25 15:56:46', NULL, 0, NULL, 1, '2026-02-25 15:58:14', 'Carte bancaire (Stripe)');
 
 -- --------------------------------------------------------
 
@@ -481,15 +500,17 @@ CREATE TABLE `utilisateurs` (
 --
 
 INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`, `carte_pro`, `adresse`, `parcelles`, `certification`, `verification_status`, `verification_reason`, `verification_score`, `nom_ar`, `prenom_ar`) VALUES
-(39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', 'pwayoub', 'ADMIN', '2026-02-16', 'C:\\xampp\\htdocs\\signatures\\1771633850595_signature_ayoub.jpg', 100.5, NULL, NULL, NULL, NULL, 'APPROVED', NULL, NULL, NULL, NULL),
+(39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', '$2a$12$aiBquFb/ffsalNnpdndEFuR0m0ZLh5luTEYjS.hVCfPS/plKY2j3q', 'ADMIN', '2026-02-16', 'C:\\xampp\\htdocs\\signatures\\1771633850595_signature_ayoub.jpg', 100.5, NULL, NULL, NULL, NULL, 'APPROVED', NULL, NULL, NULL, NULL),
 (43, 'Fattoumi', 'Oussama', 66554433, 'oussama@gmail.com', 'pwoussama', 'EXPERT', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634526954_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771634537416_diplome_expert_Oussama_.png', 'APPROVED', NULL, NULL, NULL, NULL),
 (44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634629497_signature_badis.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634642357_____________.jpg', 'araiana', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
 (49, 'sahli', 'yakine', 12345666, 'yakine@gmail.com', 'pwyakine', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771634702295_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634716151_logo.png', 'bizerte', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
 (50, 'Expert', 'Expert', 99999999, 'expert@gmail.com', 'pwexpert', 'EXPERT', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771632506007_signature_expert.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771632513711_certification_expert.jpg', 'APPROVED', NULL, NULL, NULL, NULL),
-(56, 'Maatoug2', 'Ayoub2', 78451200, 'maatougayoub7@gmail.com', 'pwayoub2', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771693117443_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771693147960_____________ayoub.JPG', 'Ras Jebel - Rue Ali Douagi', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
-(63, 'SAMI', 'MAATOUG', 74100000, 'maatougsami25@gmail.com', 'pwsami', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771730327340_signature_sami.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771730400439_sami____________.jpg', 'rue ali douagi - Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'سامي', 'معتوق'),
+(63, 'SAMI', 'MAATOUG', 74100000, 'maatougsami25@gmail.com', '$2a$12$OCCHJP1GqPJz5uThamkB/...VSdgqZiUrcyF5u0Y8CwR7T6nR675y', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771730327340_signature_sami.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771730400439_sami____________.jpg', 'rue ali douagi - Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'سامي', 'معتوق'),
 (70, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771779144715_signature_amen.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771779159143__amen_____________.jpg', 'korba', '', NULL, 'APPROVED', NULL, NULL, 'أمان الله', 'جربي'),
-(74, 'Ayoub', 'Maatoug', 11223344, 'ayoub.maatoug@ipeib.ucar.tn', 'pwayoub', 'AGRICULTEUR', '2026-02-23', 'C:\\xampp\\htdocs\\signatures\\1771821459799_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771821529933_Carte_pro__ayoub_.png', 'eeeeee', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق');
+(74, 'Ayoub', 'Maatoug', 11223344, 'ayoub.maatoug@ipeib.ucar.tn', '$2a$12$VqNLs/i7EdWxtFUxa./kQOQkecF3kgoCM/8oDAKvPJgICvomwTLbe', 'AGRICULTEUR', '2026-02-23', 'C:\\xampp\\htdocs\\signatures\\1771821459799_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771821529933_Carte_pro__ayoub_.png', 'eeeeee', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
+(75, 'AYOUB', 'MAATOUG', 25042000, 'maatougayoub7@gmail.com', '$2a$12$aiBquFb/ffsalNnpdndEFuR0m0ZLh5luTEYjS.hVCfPS/plKY2j3q', 'AGRICULTEUR', '2026-02-25', 'C:\\xampp\\htdocs\\signatures\\1772034356349_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772034408339_carte_pro_25042000.png', 'Ras Jebel 7070', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
+(76, 'yakine', 'sahli', 77882020, 'yakinesahli48@gmail.com', '$2a$12$RscsfaflKeKNiwTGqruexeZL.DS8D6tmcxyFErpOeKUTIwNw8HX0m', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209232788_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209276977_Carte_pro_yakine.png', 'Bizerte', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي'),
+(77, 'sahli', 'yakine eddine', 98765432, 'yakineddine.sahli@isgb.ucar.tn', '$2a$12$qD6nzyC34wBASVrNEkDXUOqV2hnzqppcBdiYlm4H7HuLiDNviraBm', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209652466_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209684709_carte_pro_yakine22.png', 'ariana', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي');
 
 --
 -- Indexes for dumped tables
@@ -625,13 +646,13 @@ ALTER TABLE `annonce_photos`
 -- AUTO_INCREMENT for table `collab_applications`
 --
 ALTER TABLE `collab_applications`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `collab_requests`
 --
 ALTER TABLE `collab_requests`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `cultures`
@@ -685,13 +706,13 @@ ALTER TABLE `reclamations`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

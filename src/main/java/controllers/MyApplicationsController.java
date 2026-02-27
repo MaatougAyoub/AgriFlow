@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import mains.MainCollabFX;
 import mains.MainFX;
 import services.CollabApplicationService;
 import services.CollabRequestService;
@@ -154,7 +155,7 @@ public class MyApplicationsController {
             CollabRequest request = requestService.findById(application.getRequestId());
 
             if (request != null) {
-                MainFX.showCollabRequestDetails(request.getId());
+                MainCollabFX.showCollabRequestDetails(request.getId());
             } else {
                 showWarning("Demande introuvable", "La demande n'existe plus.");
             }
@@ -205,7 +206,7 @@ public class MyApplicationsController {
      */
     @FXML
     private void handleBack() {
-        MainFX.showExploreCollaborations();  // ✅ CORRIGÉ
+        MainCollabFX.showExploreCollaborations();  // ✅ CORRIGÉ
     }
 
     /**

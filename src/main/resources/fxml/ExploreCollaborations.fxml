@@ -17,14 +17,14 @@
                 <Text text="AGRIFLOW" styleClass="header-title"
                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="Publier" styleClass="btn-primary" onAction="#handlePublishRequest"
-                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-                <Button text="Mes Demandes" styleClass="btn-secondary" onAction="#handleMyRequests"
-                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-                <Button text="Mes Candidatures" styleClass="btn-secondary" onAction="#handleMyApplications"
-                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
-                <Button text="Admin" styleClass="btn-orange" onAction="#handleAdminValidation"
-                        style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="publishButton" text="Publier" styleClass="btn-primary" onAction="#handlePublishRequest"
+                    style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="myRequestsButton" text="Mes Demandes" styleClass="btn-secondary" onAction="#handleMyRequests"
+                    style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="myApplicationsButton" text="Mes Candidatures" styleClass="btn-secondary" onAction="#handleMyApplications"
+                    style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="adminButton" text="Admin" styleClass="btn-orange" onAction="#handleAdminValidation"
+                    style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
             </HBox>
         </VBox>
     </top>

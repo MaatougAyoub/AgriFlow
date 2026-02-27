@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import mains.MainCollabFX;
 import mains.MainFX;
 import services.CollabRequestService;
 import services.WeatherService;
@@ -207,7 +208,7 @@ public class CollabRequestDetailsController {
         // Si c'est le Stage principal, navigue. Sinon, ferme la fenêtre.
         if (stage.getOwner() == null) {
             // Fenêtre principale, on fait une navigation :
-            MainFX.showExploreCollaborations();
+            MainCollabFX.showExploreCollaborations();
         } else {
             // Fenêtre modale, on peut fermer :
             stage.close();

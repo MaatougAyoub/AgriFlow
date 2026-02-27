@@ -9,6 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import mains.MainCollabFX;
 import mains.MainFX;
 import entities.CollabRequest;
 import services.CollabRequestService;
@@ -29,9 +30,6 @@ public class ExploreCollaborationsController {
     @FXML
     private ComboBox<String> typeFilter;
 
-
-
-
     @FXML
     private DatePicker startDatePicker;
 
@@ -44,13 +42,25 @@ public class ExploreCollaborationsController {
     @FXML
     private GridPane cardsGrid;
 
+    @FXML
+    private Button adminButton;
+    @FXML
+    private Button publishButton;
+    @FXML
+    private Button myRequestsButton;
+    @FXML
+    private Button myApplicationsButton;
+
     private CollabRequestService service = new CollabRequestService();
     private List<CollabRequest> allRequests;
+    private String userRole = "";
 
     @FXML
     public void initialize() {
         initializeFilters();
         loadCollaborations();
+        setupNavigationButtons();
+        updateAdminButtonVisibility();
     }
 
     private void initializeFilters() {
@@ -60,6 +70,41 @@ public class ExploreCollaborationsController {
 
         typeFilter.getItems().addAll("type", "Récolte", "Plantation", "Taille", "Irrigation", "Entretien");
         typeFilter.setValue("type");
+    }
+
+    // Active la navigation pour les boutons
+    private void setupNavigationButtons() {
+        if (publishButton != null) {
+            publishButton.setOnAction(e -> handlePublishRequest());
+        }
+        if (myRequestsButton != null) {
+            myRequestsButton.setOnAction(e -> handleMyRequests());
+        }
+        if (myApplicationsButton != null) {
+            myApplicationsButton.setOnAction(e -> handleMyApplications());
+        }
+        if (adminButton != null) {
+            adminButton.setOnAction(e -> handleAdminValidation());
+        }
+    }
+
+    // Logique pour afficher le bouton Admin uniquement si l'utilisateur est admin
+    public void setUserData(java.util.Map<String, Object> userData) {
+        if (userData != null) {
+            Object roleObj = userData.get("role");
+            if (roleObj != null) {
+                userRole = String.valueOf(roleObj);
+            }
+        }
+        updateAdminButtonVisibility();
+    }
+
+    private void updateAdminButtonVisibility() {
+        if (adminButton != null) {
+            boolean isAdmin = "ADMIN".equalsIgnoreCase(userRole);
+            adminButton.setVisible(isAdmin);
+            adminButton.setManaged(isAdmin);
+        }
 
 
     }
@@ -257,22 +302,22 @@ public class ExploreCollaborationsController {
 
     @FXML
     private void handlePublishRequest() {
-        MainFX.showPublishRequest();
+        MainCollabFX.showPublishRequest();
     }
 
     @FXML
     private void handleMyRequests() {
-        MainFX.showMyRequests();
+        MainCollabFX.showMyRequests();
     }
 
     @FXML
     private void handleMyApplications() {
-        MainFX.showMyApplications();
+        MainCollabFX.showMyApplications();
     }
 
     @FXML
     private void handleAdminValidation() {
-        MainFX.showAdminValidation();
+        MainCollabFX.showAdminValidation();
     }
 
     private void showError(String title, String message) {

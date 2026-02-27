@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import mains.MainCollabFX;
 import mains.MainFX;
 import services.CollabRequestService;
 import utils.TelegramNotifier;
@@ -224,7 +225,7 @@ public class AdminValidationController {
 
     @FXML
     private void handleBack() {
-        MainFX.showExploreCollaborations();
+        MainCollabFX.showExploreCollaborations();
     }
 
     private void showError(String title, String message) {
