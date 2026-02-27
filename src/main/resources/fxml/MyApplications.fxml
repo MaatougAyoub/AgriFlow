@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.MyApplicationsController"
+            prefHeight="900.0" prefWidth="1200.0"
+            style="-fx-background-color: #F5F5F5;">
+
+    <!-- Header -->
+    <top>
+        <VBox style="-fx-background-color: #2E7D32;">
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15 30;">
+                <Button text="← Retour" onAction="#handleBack"
+                        style="-fx-background-color: #757575; -fx-text-fill: white; -fx-padding: 8 20; -fx-background-radius: 5;"/>
+                <Text text="AGRIFLOW" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Text text="Mes Candidatures" style="-fx-font-size: 18px; -fx-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" style="-fx-padding: 30;">
+
+            <!-- Titre -->
+            <VBox spacing="5">
+                <Text text="Mes Candidatures" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <Text text="(Candidatures soumises aux demandes)" style="-fx-font-size: 14px; -fx-fill: #757575;"/>
+            </VBox>
+
+            <!-- Tableau des candidatures -->
+            <VBox spacing="10" VBox.vgrow="ALWAYS"
+                  style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);">
+
+                <TableView fx:id="applicationsTable" VBox.vgrow="ALWAYS"
+                           style="-fx-background-color: white;">
+                    <columns>
+                        <TableColumn fx:id="idRequestColumn" text="ID Request" prefWidth="100" minWidth="80"/>
+                        <TableColumn fx:id="statusColumn" text="Statut" prefWidth="150" minWidth="120"/>
+                        <TableColumn fx:id="motivationColumn" text="Motivation" prefWidth="400" minWidth="200"/>
+                        <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="250" minWidth="200"/>
+                    </columns>
+                    <placeholder>
+                        <VBox alignment="CENTER" spacing="10">
+                            <Text text="Aucune candidature trouvée" style="-fx-font-size: 16px; -fx-fill: #757575;"/>
+                            <Text text="Explorez les offres pour postuler !" style="-fx-font-size: 14px; -fx-fill: #BDBDBD;"/>
+                        </VBox>
+                    </placeholder>
+                </TableView>
+            </VBox>
+
+            <!-- Légende des statuts -->
+            <VBox spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 8;">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Text text="ℹ️" style="-fx-font-size: 18px;"/>
+                    <Text text="Statut de vos candidatures" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+                </HBox>
+                <VBox spacing="5" style="-fx-padding: 0 0 0 30;">
+                    <Text text="• EN ATTENTE: Votre candidature est en cours d'examen" style="-fx-font-size: 14px;"/>
+                    <Text text="• ACCEPTÉE: Félicitations! Vous avez été sélectionné" style="-fx-font-size: 14px;"/>
+                    <Text text="• REJETÉE: Votre candidature n'a pas été retenue" style="-fx-font-size: 14px;"/>
+                </VBox>
+            </VBox>
+
+        </VBox>
+    </center>
+</BorderPane>
