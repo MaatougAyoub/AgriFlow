@@ -12,7 +12,10 @@ public class FraudControlService {
     private static final List<String> MOTS_SUSPECTS = Arrays.asList(
             "arnaque", "western union", "gratuit", "cash",  
             "virement", "scam", "fake", "urgent transfert",
-            "moneygram", "bitcoin", "crypto"
+            "moneygram", "bitcoin", "crypto",
+            "fraude", "trich", "faux", "contrefacon",
+            "volé", "vol", "drogue", "arme", "illegal",
+            "pirate", "hack", "escroquerie"
     );
 
     // el prix lezem ykoun bin 1 DT w 100000 DT (sinon louche)

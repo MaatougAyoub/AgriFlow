@@ -94,9 +94,9 @@ public class AjouterAnnonceController implements Initializable {
         if (annonce != null) {
             // Mode Modification
             if (pageTitle != null)
-                pageTitle.setText("🖊️ Modifier l'Annonce");
+                pageTitle.setText("✏️ Modifier l'Annonce");
             if (btnPublier != null)
-                btnPublier.setText("💾 Enregistrer les modifications");
+                btnPublier.setText("✅ Enregistrer les modifications");
 
             titreField.setText(annonce.getTitre());
             descriptionArea.setText(annonce.getDescription());
@@ -315,6 +315,7 @@ public class AjouterAnnonceController implements Initializable {
 
             if (motifIA != null) {
                 // IA a rejeté l'annonce
+                System.out.println(">>> MODERATION IA : CONTENU REJETÉ — " + motifIA);
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("🤖 Modération IA — Contenu Rejeté");
                 alert.setHeaderText("L'IA a détecté un problème");
@@ -326,13 +327,13 @@ public class AjouterAnnonceController implements Initializable {
             }
 
             // IA a validé → Enregistrement BDD
+            System.out.println(">>> MODERATION IA : CONTENU VALIDÉ ✅");
             sauvegarderAnnonce(annonce, imageUrl);
         }));
 
         moderationTask.setOnFailed(event -> Platform.runLater(() -> {
             // Si l'IA échoue (réseau, etc.), on publie quand même
-            // avec un avertissement mais sans bloquer l'utilisateur
-            System.err.println("Modération IA indisponible : " + moderationTask.getException().getMessage());
+            System.err.println(">>> MODERATION IA INDISPONIBLE — Publication avec filtre local");
             sauvegarderAnnonce(annonce, imageUrl);
         }));
 

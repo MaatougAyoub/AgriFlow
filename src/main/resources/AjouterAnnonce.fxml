@@ -24,12 +24,7 @@
                 </graphic>
             </Button>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="pageTitle" text="Publier une Annonce" styleClass="page-title">
-                <graphic>
-                    <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                             fill="#333333" scaleX="0.9" scaleY="0.9"/>
-                </graphic>
-            </Label>
+            <Label fx:id="pageTitle" text="📝 Publier une Annonce" styleClass="page-title"/>
         </HBox>
 
         <!-- Formulaire -->
@@ -122,8 +117,8 @@
 
             <!-- Boutons -->
             <HBox spacing="15" alignment="CENTER">
-                <Button fx:id="btnPublier" text="Publier l'annonce" styleClass="action-button"
-                        onAction="#publierAnnonce" prefWidth="200">
+                <Button fx:id="btnPublier" text="✅ Publier l'annonce" styleClass="action-button"
+                        onAction="#publierAnnonce" prefWidth="280">
                     <graphic>
                         <SVGPath content="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
                                  fill="white" scaleX="0.7" scaleY="0.7"/>

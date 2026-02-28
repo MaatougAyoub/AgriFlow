@@ -39,6 +39,8 @@ public class MarketplaceController implements Initializable {
     private FlowPane annoncesContainer;
     @FXML
     private Label resultCountLabel;
+    @FXML
+    private Button btnMusique;
 
     private AnnonceService annonceService;
     private List<Annonce> toutesLesAnnonces;
@@ -67,24 +69,41 @@ public class MarketplaceController implements Initializable {
         // njibou les annonces mel base
         loadAnnonces();
 
-        // nkhalkou musique de fond stylée
-        lancerMusique();
+        // Musique OFF par defaut - el user yappuyi 3al bouton bech ylanci
     }
 
-    // lance la musique de fond bel volume bas w tloopi
-    private void lancerMusique() {
+    // bouton Play / Pause musique
+    @FXML
+    private void toggleMusique() {
         try {
-            // ken el musique deja tkhdem, ma na3mlouha ken marra
             if (musicPlayer != null && musicPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
-                return;
+                // Pause
+                musicPlayer.pause();
+                btnMusique.setText("🎵 Musique");
+                btnMusique.setStyle("-fx-background-color: #E8F5E9; -fx-text-fill: #2D5A27; -fx-font-size: 13px; -fx-background-radius: 8; -fx-border-color: #2D5A27; -fx-border-radius: 8; -fx-cursor: hand;");
+            } else if (musicPlayer != null && musicPlayer.getStatus() == MediaPlayer.Status.PAUSED) {
+                // Resume
+                musicPlayer.play();
+                btnMusique.setText("⏸ Pause");
+                btnMusique.setStyle("-fx-background-color: #2D5A27; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 8; -fx-cursor: hand;");
+            } else {
+                // Premier lancement
+                String musicPath = getClass().getResource("/AgriFlow_A_Taste_of_Tomorrow.mp3").toExternalForm();
+                Media media = new Media(musicPath);
+                musicPlayer = new MediaPlayer(media);
+                musicPlayer.setVolume(0.3);
+                musicPlayer.setCycleCount(1);
+                musicPlayer.play();
+                btnMusique.setText("⏸ Pause");
+                btnMusique.setStyle("-fx-background-color: #2D5A27; -fx-text-fill: white; -fx-font-size: 13px; -fx-background-radius: 8; -fx-cursor: hand;");
+                System.out.println("🎵 Musique AgriFlow lancée !");
+
+                // Quand la musique finit, remettre le bouton a "Musique"
+                musicPlayer.setOnEndOfMedia(() -> {
+                    btnMusique.setText("🎵 Musique");
+                    btnMusique.setStyle("-fx-background-color: #E8F5E9; -fx-text-fill: #2D5A27; -fx-font-size: 13px; -fx-background-radius: 8; -fx-border-color: #2D5A27; -fx-border-radius: 8; -fx-cursor: hand;");
+                });
             }
-            String musicPath = getClass().getResource("/AgriFlow_A_Taste_of_Tomorrow.mp3").toExternalForm();
-            Media media = new Media(musicPath);
-            musicPlayer = new MediaPlayer(media);
-            musicPlayer.setVolume(0.3); // volume bas (30%)
-            musicPlayer.setCycleCount(1); // joue une seule fois
-            musicPlayer.play();
-            System.out.println("🎵 Musique AgriFlow lancée !");
         } catch (Exception e) {
             System.err.println("Impossible de lancer la musique : " + e.getMessage());
         }
