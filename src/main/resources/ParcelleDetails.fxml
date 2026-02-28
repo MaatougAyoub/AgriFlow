@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ParcelleDetails"
+            style="-fx-background-color: #F4F6F3;"
+            prefWidth="1200" prefHeight="720">
+
+    <!-- HEADER -->
+    <top>
+        <VBox spacing="12" style="-fx-background-color: white;">
+            <padding>
+                <Insets top="18" right="20" bottom="18" left="20"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Détails parcelle"
+                       style="-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #2D5A27;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+
+
+                <Button text="Retour"
+                        onAction="#retour"
+                        style="-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding: 10 16; -fx-background-radius: 10;"/>
+            </HBox>
+
+            <Label fx:id="errorLabel" visible="false" managed="false"
+                   style="-fx-text-fill:#B71C1C; -fx-background-color:#FFEBEE; -fx-padding:10; -fx-background-radius:10;"/>
+        </VBox>
+    </top>
+
+    <!-- CONTENT -->
+    <center>
+        <VBox spacing="14" style="-fx-padding: 16;">
+        <VBox fx:id="parcelleCard"
+              spacing="10"
+              style="-fx-background-color:white; -fx-background-radius:14; -fx-border-radius:14; -fx-padding:16;">
+            <!-- tes labels ici -->
+            <!-- FICHE PARCELLE -->
+            <VBox spacing="12"
+                  style="-fx-background-color:white; -fx-padding:16; -fx-background-radius:14; -fx-border-radius:14; -fx-border-color: rgba(0,0,0,0.08); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label fx:id="lblNom"
+                           text="(Nom parcelle)"
+                           style="-fx-font-size: 20px; -fx-font-weight: 800; -fx-text-fill:#2D5A27;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="badgeType"
+                           text="TYPE"
+                           visible="false" managed="false"
+                           style="-fx-background-color:#E8F5E9; -fx-text-fill:#2E7D32; -fx-font-weight:700; -fx-padding:6 10; -fx-background-radius:999;"/>
+                </HBox>
+
+            </VBox>
+
+
+            <Separator/>
+            <!-- IMPORTANT dans ton FXML : donner une vraie hauteur au mockup -->
+            <StackPane fx:id="mockupPane"
+                       prefHeight="260"
+                       minHeight="260"
+                       maxHeight="420"
+                       style="-fx-background-color: transparent;"/>
+
+                <!-- Grille détails -->
+                <GridPane hgap="16" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints minWidth="140" prefWidth="160" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                        <ColumnConstraints minWidth="140" prefWidth="160" />
+                        <ColumnConstraints hgrow="ALWAYS" />
+                    </columnConstraints>
+
+                    <Label text="Superficie" style="-fx-text-fill:#616161; -fx-font-weight:700;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblSuperficie" text="-" style="-fx-font-weight:800; -fx-text-fill:#212121;" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Type de terre" style="-fx-text-fill:#616161; -fx-font-weight:700;" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                    <Label fx:id="lblType" text="-" style="-fx-font-weight:800; -fx-text-fill:#212121;" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+                    <Label text="Localisation" style="-fx-text-fill:#616161; -fx-font-weight:700;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblLocalisation" text="-" style="-fx-font-weight:800; -fx-text-fill:#212121;" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Date de création" style="-fx-text-fill:#616161; -fx-font-weight:700;" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                    <Label fx:id="lblDateCreation" text="-" style="-fx-font-weight:800; -fx-text-fill:#212121;" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+                    <Label text="ID" style="-fx-text-fill:#616161; -fx-font-weight:700;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <Label fx:id="lblId" text="-" style="-fx-font-weight:800; -fx-text-fill:#212121;" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                </GridPane>
+            </VBox>
+
+            <!-- TABLE CULTURES -->
+            <VBox spacing="10"
+                  style="-fx-background-color:white; -fx-padding:16; -fx-background-radius:14; -fx-border-radius:14; -fx-border-color: rgba(0,0,0,0.08); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Cultures associées"
+                           style="-fx-font-size: 16px; -fx-font-weight: 800; -fx-text-fill:#212121;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblCountCultures" text="0 culture(s)" style="-fx-text-fill:#616161;"/>
+                </HBox>
+
+                <TableView fx:id="tableCultures" prefHeight="420">
+                    <columns>
+                        <TableColumn fx:id="colCultureId" text="ID" prefWidth="60"/>
+                        <TableColumn fx:id="colCultureNom" text="Nom" prefWidth="200"/>
+                        <TableColumn fx:id="colCultureType" text="Type" prefWidth="140"/>
+                        <TableColumn fx:id="colCultureSuperficie" text="Superficie" prefWidth="120"/>
+                        <TableColumn fx:id="colCultureEtat" text="État" prefWidth="120"/>
+                        <TableColumn fx:id="colCultureDateRecolte" text="Date récolte" prefWidth="140"/>
+                        <TableColumn fx:id="colCultureActions" text="Actions" prefWidth="240"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

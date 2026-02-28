@@ -14,6 +14,7 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\MesReservationsController.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ModifierProfil.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\MotDePasseOublie.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ParcelleDetails.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ParcellesCulturesController.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ProfilUtilisateur.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\controllers\ReservationDialogController.java
@@ -24,7 +25,6 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Annonce.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Categorie.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Culture.java
-C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\CultureVendue.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Expert.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Message.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\entities\Parcelle.java
@@ -46,12 +46,12 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\mains\MainPlanIrrigation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\AnnonceService.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ContentValidator.java
+C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\CulturePDF.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\FraudControlService.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\GeminiAIService.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IService.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IServiceAdmin.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IServiceAgriculteur.java
-C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IServiceB.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IServiceExpert.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\IServiceReclamation.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\MessageService.java
@@ -62,7 +62,6 @@ C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\mai
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceAnnonce.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceAuth.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceCulture.java
-C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceCultureVendue.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceExpert.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceGenerateurPlan.java
 C:\Users\badis\Desktop\S1\s2\PIDEV\New folder - Copy\agriflow - parcelle\src\main\java\services\ServiceParcelle.java

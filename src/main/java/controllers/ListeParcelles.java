@@ -233,44 +233,85 @@ public class ListeParcelles {
     }
 
     private Node buildCard(Parcelle p) {
-        VBox card = new VBox(8);
-        card.setPadding(new Insets(14));
-        card.setStyle(
+
+        VBox card = new VBox(12);
+        card.setPadding(new Insets(16));
+
+        final String baseStyle =
                 "-fx-background-color: white;" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-border-radius: 12;" +
-                        "-fx-border-color: rgba(0,0,0,0.08);" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);"
+                        "-fx-background-radius: 14;" +
+                        "-fx-border-radius: 14;" +
+                        "-fx-border-color: rgba(0,0,0,0.07);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14, 0, 0, 4);";
+
+        final String hoverStyle =
+                "-fx-background-color: white;" +
+                        "-fx-background-radius: 14;" +
+                        "-fx-border-radius: 14;" +
+                        "-fx-border-color: rgba(46,125,50,0.25);" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 18, 0, 0, 6);";
+
+        card.setStyle(baseStyle);
+
+        // clic sur card => page détails (sauf si clic sur bouton)
+        card.setOnMouseClicked(e -> {
+            if (e.getTarget() instanceof Button) return;
+            openParcelleDetailsPage(p.getId());
+        });
+
+        card.setOnMouseEntered(e -> card.setStyle(hoverStyle));
+        card.setOnMouseExited(e -> card.setStyle(baseStyle));
+
+        // HEADER
+        Label title = new Label(p.getNom() == null ? "(Sans nom)" : p.getNom());
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #2D5A27;");
+
+        Label badgeType = createChip(
+                p.getTypeTerre() == null ? "TYPE -" : p.getTypeTerre().name(),
+                "#E8F5E9", "#2E7D32"
         );
 
-        Label title = new Label(p.getNom() == null ? "(Sans nom)" : p.getNom());
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label l1 = new Label("Superficie: " + p.getSuperficie());
-        Label l2 = new Label("Type: " + (p.getTypeTerre() == null ? "-" : p.getTypeTerre().name()));
-        Label l3 = new Label("Localisation: " + (p.getLocalisation() == null ? "-" : p.getLocalisation()));
-        Label l4 = new Label("Créée: " + (p.getDateCreation() == null ? "-" : p.getDateCreation().toString()));
+        HBox header = new HBox(10, title, spacer, badgeType);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
 
-        l1.setStyle("-fx-text-fill:#424242;");
-        l2.setStyle("-fx-text-fill:#424242;");
-        l3.setStyle("-fx-text-fill:#424242;");
-        l4.setStyle("-fx-text-fill:#616161;");
+        // INFOS
+        VBox left = new VBox(6,
+                buildInfoRow("Superficie", formatSuperficie(p.getSuperficie()) + " m²"),
+                buildInfoRow("Localisation", safe(p.getLocalisation()))
+        );
 
+        VBox right = new VBox(6,
+                buildInfoRow("Créée le", p.getDateCreation() == null ? "-" : p.getDateCreation().toString()),
+                buildInfoRow("ID", String.valueOf(p.getId()))
+        );
+
+        HBox infos = new HBox(24, left, right);
+        infos.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+
+        // ACTIONS (uniquement modifier/supprimer)
         Button btnEdit = new Button("Modifier");
-        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
+        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:8 14; -fx-background-radius:10; -fx-font-weight:700;");
+        btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(p));
 
         Button btnDelete = new Button("Supprimer");
-        btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
-
-        btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(p));
+        btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:8 14; -fx-background-radius:10; -fx-font-weight:700;");
         btnDelete.setOnAction(e -> supprimerParcelle(p));
 
-        HBox actions = new HBox(10, btnEdit, btnDelete);
+        Region spacer2 = new Region();
+        HBox.setHgrow(spacer2, Priority.ALWAYS);
 
-        card.getChildren().addAll(title, l1, l2, l3, l4, actions);
+        HBox actions = new HBox(10, spacer2, btnEdit, btnDelete);
+        actions.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        Separator sep = new Separator();
+        sep.setStyle("-fx-opacity: 0.35;");
+
+        card.getChildren().addAll(header, infos, sep, actions);
         return card;
     }
-
     private void ouvrirPopupModificationAgriculteur(Parcelle p) {
         User u = MainController.getCurrentUser();
         if (u == null) {
@@ -346,6 +387,31 @@ public class ListeParcelles {
             }
         });
     }
+    private Label createChip(String text, String bg, String fg) {
+        Label chip = new Label(text);
+        chip.setStyle(
+                "-fx-background-color:" + bg + ";" +
+                        "-fx-text-fill:" + fg + ";" +
+                        "-fx-font-weight:800;" +
+                        "-fx-padding:6 10;" +
+                        "-fx-background-radius:999;" +
+                        "-fx-border-radius:999;" +
+                        "-fx-border-color: rgba(0,0,0,0.06);"
+        );
+        return chip;
+    }
+
+    private HBox buildInfoRow(String key, String value) {
+        Label k = new Label(key + ":");
+        k.setStyle("-fx-text-fill:#757575; -fx-font-weight:700;");
+
+        Label v = new Label(value == null || value.isBlank() ? "-" : value);
+        v.setStyle("-fx-text-fill:#212121; -fx-font-weight:800;");
+
+        HBox row = new HBox(8, k, v);
+        row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        return row;
+    }
     @FXML
     private void retourParcellesCultures() {
         naviguerVers("/ParcellesCultures.fxml");
@@ -387,6 +453,7 @@ public class ListeParcelles {
             e.printStackTrace();
         }
     }
+
 
     // ===== AGRICULTEUR: add (popup window) =====
 
@@ -467,4 +534,79 @@ public class ListeParcelles {
             }
         });
     }
+    private void openParcelleDetailsPage(int parcelleId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParcelleDetails.fxml"));
+            Parent view = loader.load();
+
+            ParcelleDetails controller = loader.getController();
+            controller.setParcelleId(parcelleId);
+
+            StackPane contentArea = (StackPane) cardsScroll.getScene().lookup("#contentArea");
+            contentArea.getChildren().setAll(view);
+            if (cardsScroll != null && cardsScroll.getScene() != null) {
+                contentArea = (StackPane) cardsScroll.getScene().lookup("#contentArea");
+                if (contentArea == null && cardsScroll.getScene().getRoot() != null) {
+                    contentArea = (StackPane) cardsScroll.getScene().getRoot().lookup("#contentArea");
+                }
+            }
+
+            if (contentArea != null) contentArea.getChildren().setAll(view);
+
+        } catch (Exception e) {
+            showError("Erreur ouverture détails parcelle: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    private void ouvrirPopupDetailsParcelle(Parcelle p) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Détails Parcelle");
+        dialog.setHeaderText(p.getNom() == null ? "(Sans nom)" : p.getNom());
+
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(12);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(14));
+
+        // Affichage propre
+        Label vNom = new Label(safe(p.getNom()));
+        Label vSup = new Label(formatSuperficie(p.getSuperficie()) + " m²");
+        Label vType = new Label(p.getTypeTerre() == null ? "-" : p.getTypeTerre().name());
+        Label vLoc = new Label(safe(p.getLocalisation()));
+        Label vDate = new Label(p.getDateCreation() == null ? "-" : p.getDateCreation().toString());
+
+        vNom.setStyle("-fx-font-weight:bold;");
+        vSup.setStyle("-fx-font-weight:bold;");
+        vType.setStyle("-fx-font-weight:bold;");
+        vLoc.setStyle("-fx-font-weight:bold;");
+        vDate.setStyle("-fx-font-weight:bold;");
+
+        int r = 0;
+        grid.add(new Label("Nom parcelle:"), 0, r);      grid.add(vNom, 1, r++);
+        grid.add(new Label("Superficie:"), 0, r);        grid.add(vSup, 1, r++);
+        grid.add(new Label("Type de terre:"), 0, r);     grid.add(vType, 1, r++);
+        grid.add(new Label("Localisation:"), 0, r);      grid.add(vLoc, 1, r++);
+        grid.add(new Label("Date de création:"), 0, r);  grid.add(vDate, 1, r++);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // style (option)
+        dialog.getDialogPane().setStyle("-fx-background-color: white;");
+
+        dialog.showAndWait();
+    }
+
+    private String safe(String s) {
+        return (s == null || s.isBlank()) ? "-" : s;
+    }
+
+    private String formatSuperficie(double s) {
+        // évite 500.0 -> 500
+        if (s == (long) s) return String.valueOf((long) s);
+        return String.format(java.util.Locale.US, "%.2f", s);
+    }
+
 }
+

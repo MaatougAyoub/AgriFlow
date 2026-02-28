@@ -3,6 +3,10 @@ package controllers;
 import entities.Culture;
 import entities.Parcelle;
 import entities.User;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,13 +15,23 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import services.CulturePDF;
 import services.ServiceCulture;
 import services.ServiceParcelle;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 
+import javafx.beans.value.ChangeListener;
+import java.io.InputStream;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.shape.Rectangle;
+import services.UserService;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +46,6 @@ public class ListeCultures {
     @FXML private Button btnRafraichir;
     @FXML private Button btnAjouterCulture;
 
-    // ✅ bouton retour (ajoute-le dans ton FXML avec onAction="#retourParcellesCultures")
     @FXML private Button btnRetour;
 
     @FXML private Label countLabel;
@@ -60,14 +73,11 @@ public class ListeCultures {
 
     private final ServiceCulture sc = new ServiceCulture();
     private final ServiceParcelle sp = new ServiceParcelle();
+    private final UserService userService = new UserService();
+    private final CulturePDF pdfService = new CulturePDF();
 
-    // Pour afficher le NOM de la parcelle au lieu de l'ID
     private final Map<Integer, String> parcelleNameById = new HashMap<>();
-
-    // Liste déroulante d'ajout/modif = parcelles du user connecté
     private List<Parcelle> parcellesDuUser = new ArrayList<>();
-
-    // reste (m²) par parcelle
     private final Map<Integer, Double> parcelleResteById = new HashMap<>();
 
     private static double round2(double v) {
@@ -165,8 +175,7 @@ public class ListeCultures {
                 contentArea = (StackPane) anyNode.getScene().getRoot().lookup("#contentArea");
             }
             if (contentArea != null) {
-                contentArea.getChildren().clear();
-                contentArea.getChildren().add(view);
+                contentArea.getChildren().setAll(view);
             } else {
                 showError("Navigation impossible: contentArea introuvable (id=contentArea).");
             }
@@ -178,22 +187,21 @@ public class ListeCultures {
 
     // ===== ADMIN table =====
     private void setupAdminTable() {
-        colId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getId()).asObject());
-        colParcelleId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getParcelleId()).asObject());
-        colProprietaireId.setCellValueFactory(c -> new javafx.beans.property.SimpleIntegerProperty(c.getValue().getProprietaireId()).asObject());
-        colNom.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getNom()));
-        colType.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+        colId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getId()).asObject());
+        colParcelleId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getParcelleId()).asObject());
+        colProprietaireId.setCellValueFactory(c -> new SimpleIntegerProperty(c.getValue().getProprietaireId()).asObject());
+        colNom.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getNom()));
+        colType.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getTypeCulture() == null ? "-" : c.getValue().getTypeCulture().name()
         ));
-        colSuperficie.setCellValueFactory(c -> new javafx.beans.property.SimpleDoubleProperty(c.getValue().getSuperficie()).asObject());
-        colEtat.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(
+        colSuperficie.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getSuperficie()).asObject());
+        colEtat.setCellValueFactory(c -> new SimpleStringProperty(
                 c.getValue().getEtat() == null ? "-" : c.getValue().getEtat().name()
         ));
-        colDateRecolte.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getDateRecolte()));
-        colRecolteEstime.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getRecolteEstime()));
-        colDateCreation.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getDateCreation()));
+        colDateRecolte.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getDateRecolte()));
+        colRecolteEstime.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getRecolteEstime()));
+        colDateCreation.setCellValueFactory(c -> new SimpleObjectProperty<>(c.getValue().getDateCreation()));
 
-        // ADMIN: supprimer فقط
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button btnDelete = new Button("Supprimer");
             {
@@ -210,9 +218,41 @@ public class ListeCultures {
             }
         });
     }
+    private void imprimerContratPdf(int cultureId) {
+        hideError();
+        try {
+            Culture cdb = sc.recupererParId(cultureId);
+            if (cdb == null) { showError("Culture introuvable."); return; }
 
+            if (cdb.getEtat() != Culture.Etat.VENDUE || cdb.getIdAcheteur() == null) {
+                showError("Contrat impossible: la culture n'est pas vendue.");
+                return;
+            }
+
+            User vendeur = userService.recupererParId(cdb.getProprietaireId());
+            User acheteur = userService.recupererParId(cdb.getIdAcheteur());
+            Parcelle parcelle = sp.recupererParId(cdb.getParcelleId());
+
+            if (vendeur == null || acheteur == null || parcelle == null) {
+                showError("Données manquantes (vendeur/acheteur/parcelle).");
+                return;
+            }
+
+            java.io.File pdf = pdfService.genererContratVente(cdb, vendeur, acheteur, parcelle);
+
+            if (java.awt.Desktop.isDesktopSupported()) {
+                java.awt.Desktop.getDesktop().open(pdf);
+            } else {
+                showError("Impossible d'ouvrir automatiquement le PDF. Chemin: " + pdf.getAbsolutePath());
+            }
+
+        } catch (Exception ex) {
+            showError("Erreur PDF: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
     // ===== Parcelles du user + map id->nom + reste =====
-    // ✅ précision: on NE compte PAS les cultures RECOLTEE dans le "used"
+    // (reste: on ignore RECOLTEE)
     private void preloadParcelles() {
         parcelleNameById.clear();
         parcellesDuUser = new ArrayList<>();
@@ -221,7 +261,6 @@ public class ListeCultures {
         try {
             List<Parcelle> allParcelles = sp.recuperer();
 
-            // map id->nom
             for (Parcelle p : allParcelles) {
                 parcelleNameById.put(p.getId(), p.getNom());
             }
@@ -240,7 +279,6 @@ public class ListeCultures {
 
                 Map<Integer, Double> usedByParcelle = new HashMap<>();
                 for (Culture c : culturesUser) {
-                    // ✅ ignore RECOLTEE
                     if (c.getEtat() != null && c.getEtat() == Culture.Etat.RECOLTEE) continue;
                     usedByParcelle.merge(c.getParcelleId(), c.getSuperficie(), Double::sum);
                 }
@@ -256,8 +294,81 @@ public class ListeCultures {
 
         } catch (Exception ignored) {}
     }
+    private String imagePathForType(Culture.TypeCulture type) {
+        if (type == null) return "/images/cultures/autre.jpg";
+
+        return switch (type) {
+            case BLE -> "/images/cultures/ble.jpg";
+            case ORGE -> "/images/cultures/orge.jpg";
+            case MAIS -> "/images/cultures/mais.jpg";
+            case POMME_DE_TERRE -> "/images/cultures/patates.jpg";
+            case TOMATE -> "/images/cultures/tomates.jpg";
+            case OLIVIER -> "/images/cultures/olivier.jpg";
+            case AGRUMES -> "/images/cultures/agrumes.jpg";
+            case VIGNE -> "/images/cultures/vigne.jpg";
+            case FRAISE -> "/images/cultures/fraise.jpg";
+            case LEGUMES -> "/images/cultures/legume.jpg";
+            case AUTRE -> "/images/cultures/autre.jpg";
+        };
+    }
+    private ImageView createCultureImageViewSquare(Culture.TypeCulture type, double size) {
+        String path = imagePathForType(type);
+
+        InputStream is = getClass().getResourceAsStream(path);
+        if (is == null) is = getClass().getResourceAsStream("/images/cultures/autre.jpg");
+
+        Image img = (is != null) ? new Image(is) : null;
+
+        ImageView iv = new ImageView(img);
+
+        // carré
+        iv.setFitWidth(size);
+        iv.setFitHeight(size);
+
+        // on remplit le carré
+        iv.setPreserveRatio(false);
+        iv.setSmooth(true);
+
+        // Crop centré
+        if (img != null && img.getWidth() > 0 && img.getHeight() > 0) {
+            double w = img.getWidth();
+            double h = img.getHeight();
+            double side = Math.min(w, h);
+            double x = (w - side) / 2.0;
+            double y = (h - side) / 2.0;
+            iv.setViewport(new Rectangle2D(x, y, side, side));
+        }
+
+        // Clip (coins arrondis)
+        Rectangle clip = new Rectangle(size, size);
+        clip.setArcWidth(16);
+        clip.setArcHeight(16);
+        iv.setClip(clip);
+
+        return iv;
+    }
+
+    private ImageView createCultureImageView(Culture.TypeCulture type, double w, double h) {
+        String path = imagePathForType(type);
+
+        InputStream is = getClass().getResourceAsStream(path);
+        if (is == null) {
+            // fallback si path/nom incorrect
+            is = getClass().getResourceAsStream("/images/cultures/autre.jpg");
+        }
+
+        Image img = (is != null) ? new Image(is) : null;
+
+        ImageView iv = new ImageView(img);
+        iv.setFitWidth(w);
+        iv.setFitHeight(h);
+        iv.setPreserveRatio(true);
+        iv.setSmooth(true);
+        return iv;
+    }
 
     // ===== Chargement cultures =====
+    // IMPORTANT: pour AGRICULTEUR -> (propriétaire OU acheteur)
     private List<Culture> baseListByRole() throws SQLException {
         User u = MainController.getCurrentUser();
         if (u == null) return List.of();
@@ -267,7 +378,7 @@ public class ListeCultures {
 
         int uid = u.getId();
         return all.stream()
-                .filter(c -> c.getProprietaireId() == uid)
+                .filter(c -> c.getProprietaireId() == uid || (c.getIdAcheteur() != null && c.getIdAcheteur() == uid))
                 .collect(Collectors.toList());
     }
 
@@ -312,11 +423,16 @@ public class ListeCultures {
     }
 
     // ===== Delete (droits) =====
+    // ADMIN ou PROPRIETAIRE ou ACHETEUR
     private void supprimerCulture(Culture c) {
         User u = MainController.getCurrentUser();
         if (u == null) { showError("Session vide."); return; }
 
-        if (!isAdmin(u) && c.getProprietaireId() != u.getId()) {
+        boolean admin = isAdmin(u);
+        boolean owner = c.getProprietaireId() == u.getId();
+        boolean buyer = (c.getIdAcheteur() != null && c.getIdAcheteur() == u.getId());
+
+        if (!admin && !owner && !buyer) {
             showError("Accès refusé.");
             return;
         }
@@ -347,7 +463,9 @@ public class ListeCultures {
     }
 
     private Node buildCard(Culture c) {
-        VBox card = new VBox(8);
+
+        // ====== Card container ======
+        VBox card = new VBox(12);
         card.setPadding(new Insets(14));
         card.setStyle(
                 "-fx-background-color: white;" +
@@ -357,10 +475,33 @@ public class ListeCultures {
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);"
         );
 
-        String parcelleNom = parcelleNameById.getOrDefault(c.getParcelleId(), "Parcelle #" + c.getParcelleId());
+        User me = MainController.getCurrentUser();
+        int myId = me != null ? me.getId() : -1;
+
+        boolean iAmOwner = (myId != -1 && c.getProprietaireId() == myId);
+        boolean iAmBuyer = (myId != -1 && c.getIdAcheteur() != null && c.getIdAcheteur() == myId) && !iAmOwner;
+
+        String parcelleNom = parcelleNameById.getOrDefault(
+                c.getParcelleId(),
+                "Parcelle #" + c.getParcelleId()
+        );
+
+        // ====== Image à gauche (carrée) ======
+        ImageView iv = createCultureImageViewSquare(c.getTypeCulture(), 200); // taille carré
+        VBox imageBox = new VBox(iv);
+        imageBox.setPadding(new Insets(6));
+        imageBox.setStyle(
+                "-fx-background-color: #ffffff;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-color: rgba(0,0,0,0.10);"
+        );
+
+        // ====== Texte à droite ======
+        VBox info = new VBox(6);
 
         Label title = new Label(c.getNom() == null ? "(Sans nom)" : c.getNom());
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
 
         Label l1 = new Label("Parcelle: " + parcelleNom);
         Label l2 = new Label("Type: " + (c.getTypeCulture() == null ? "-" : c.getTypeCulture().name()));
@@ -369,7 +510,30 @@ public class ListeCultures {
         Label l5 = new Label("Date récolte: " + (c.getDateRecolte() == null ? "-" : c.getDateRecolte().toString()));
         Label l6 = new Label("Récolte estimée: " + (c.getRecolteEstime() == null ? "-" : c.getRecolteEstime()) + " Kg");
 
-        for (Label l : List.of(l1,l2,l3,l4,l5,l6)) l.setStyle("-fx-text-fill:#424242;");
+        Label l7 = null;
+        Label l8 = null;
+        if (c.getEtat() == Culture.Etat.EN_VENTE) {
+            l7 = new Label("Prix: " + (c.getPrixVente() == null ? "-" : (c.getPrixVente() + " DT")));
+            l8 = new Label("Publié le: " + (c.getDatePublication() == null ? "-" : c.getDatePublication().toString()));
+        }
+
+        Label l9 = null;
+        if (iAmBuyer) {
+            l9 = new Label("Achetée le: " + (c.getDateVente() == null ? "-" : c.getDateVente().toString()));
+        }
+
+        ArrayList<Label> labs = new ArrayList<>();
+        labs.add(l1); labs.add(l2); labs.add(l3); labs.add(l4); labs.add(l5); labs.add(l6);
+        if (l7 != null) labs.add(l7);
+        if (l8 != null) labs.add(l8);
+        if (l9 != null) labs.add(l9);
+
+        for (Label l : labs) {
+            l.setStyle("-fx-text-fill:#424242; -fx-font-size: 13px;");
+        }
+
+        // ====== Actions ======
+        HBox actions = new HBox(10);
 
         Button btnEdit = new Button("Modifier");
         btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
@@ -377,13 +541,59 @@ public class ListeCultures {
         Button btnDelete = new Button("Supprimer");
         btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
 
-        btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(c));
-        btnDelete.setOnAction(e -> supprimerCulture(c));
+        Button btnPrint = new Button("Imprimer contrat");
+        btnPrint.setStyle("-fx-background-color:#737373; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
+        btnPrint.setOnAction(e -> imprimerContratPdf(c.getId()));
 
-        HBox actions = new HBox(10, btnEdit, btnDelete);
+        // règles demandées:
+        // - acheteur -> ACHETEE -> فقط imprimer
+        // - propriétaire + VENDUE -> VENDUE -> modifier + supprimer + imprimer
+        // - propriétaire autres états -> modifier + supprimer
+        if (iAmBuyer && c.getEtat() == Culture.Etat.VENDUE) {
+            actions.getChildren().add(btnPrint);
+        } else if (iAmOwner && c.getEtat() == Culture.Etat.VENDUE) {
+            btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(c));
+            btnDelete.setOnAction(e -> supprimerCulture(c));
+            actions.getChildren().addAll(btnEdit, btnDelete, btnPrint);
+        } else if (iAmOwner) {
+            btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(c));
+            btnDelete.setOnAction(e -> supprimerCulture(c));
+            actions.getChildren().addAll(btnEdit, btnDelete);
+        } else {
+            // si tu veux rien afficher pour un user qui n'est ni owner ni buyer:
+            // actions.getChildren().clear();
+            // ou laisser supprimer (comme ton code précédent):
+            btnDelete.setOnAction(e -> supprimerCulture(c));
+            actions.getChildren().add(btnDelete);
+        }
 
-        card.getChildren().addAll(title, l1, l2, l3, l4, l5, l6, actions);
-        return card;
+        info.getChildren().add(title);
+        info.getChildren().addAll(labs);
+        info.getChildren().add(actions);
+
+        // ====== Ligne principale : image gauche + texte droite ======
+        HBox mainRow = new HBox(18, imageBox, info);
+        mainRow.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+        HBox.setHgrow(info, Priority.ALWAYS);
+
+        card.getChildren().add(mainRow);
+
+        // ====== Badge (sticker) en haut à droite ======
+        Label badge = null;
+        if (iAmBuyer && c.getEtat() == Culture.Etat.VENDUE) {
+            badge = makeBadge("ACHETÉE", "#0B7A33");
+        } else if (iAmOwner && c.getEtat() == Culture.Etat.VENDUE) {
+            badge = makeBadge("VENDUE", "#0B7A33");
+        }
+
+        StackPane wrapper = new StackPane(card);
+        if (badge != null) {
+            StackPane.setAlignment(badge, javafx.geometry.Pos.TOP_RIGHT);
+            StackPane.setMargin(badge, new Insets(10, 10, 0, 0));
+            wrapper.getChildren().add(badge);
+        }
+
+        return wrapper;
     }
 
     // ===== ComboBox Parcelle (nom + reste) =====
@@ -414,12 +624,41 @@ public class ListeCultures {
         if (preselect != null) cb.setValue(preselect);
         return cb;
     }
+    private Label makeBadge(String text, String bgColor) {
+        Label badge = new Label(text);
+        badge.setStyle(
+                "-fx-background-color: " + bgColor + ";" +
+                        "-fx-text-fill: white;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 12px;" +
+                        "-fx-padding: 6 10;" +
+                        "-fx-background-radius: 14;" +
+                        "-fx-border-radius: 14;"
+        );
+        return badge;
+    }
 
     private Parcelle findParcelleById(int id) {
         for (Parcelle p : parcellesDuUser) {
             if (p.getId() == id) return p;
         }
         return null;
+    }
+
+    // ===== Helpers UI EN_VENTE =====
+    private void setVisibleManaged(Control n, boolean v) {
+        if (n == null) return;
+        n.setVisible(v);
+        n.setManaged(v);
+    }
+    private void setVisibleManaged(Label n, boolean v) {
+        if (n == null) return;
+        n.setVisible(v);
+        n.setManaged(v);
+    }
+
+    private boolean isEnVente(Culture.Etat e) {
+        return e == Culture.Etat.EN_VENTE;
     }
 
     // ===== AGRICULTEUR: add popup =====
@@ -438,6 +677,12 @@ public class ListeCultures {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Ajouter Culture");
         dialog.setHeaderText("Nouvelle culture");
+
+        // ✅ IMPORTANT pour ton problème
+        dialog.setResizable(true);
+        dialog.getDialogPane().setPrefWidth(650);
+        dialog.getDialogPane().setPrefHeight(520);
+        dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
         ButtonType saveBtn = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
@@ -458,19 +703,58 @@ public class ListeCultures {
         TextField recolteEstime = new TextField();
         recolteEstime.setPromptText("ex: 300");
 
+        // ✅ Etat + prix vente (affiché seulement si EN_VENTE)
+        ComboBox<Culture.Etat> etat = new ComboBox<>(FXCollections.observableArrayList(Culture.Etat.values()));
+        etat.setValue(Culture.Etat.EN_COURS);
+
+        TextField prixVente = new TextField();
+        prixVente.setPromptText("ex: 250");
+        prixVente.setDisable(true);
+        prixVente.setManaged(false);
+        prixVente.setVisible(false);
+
+        // ✅ petite preview image (optionnel mais pratique)
+        ImageView preview = createCultureImageView(null, 120, 90);
+        type.valueProperty().addListener((obs, oldV, newV) -> {
+            ImageView iv = createCultureImageView(newV, 120, 90);
+            preview.setImage(iv.getImage());
+        });
+
+        etat.valueProperty().addListener((obs, oldV, newV) -> {
+            boolean enVente = (newV == Culture.Etat.EN_VENTE);
+            prixVente.setDisable(!enVente);
+            prixVente.setManaged(enVente);
+            prixVente.setVisible(enVente);
+            if (!enVente) prixVente.clear();
+        });
+
         GridPane grid = new GridPane();
         grid.setHgap(12);
         grid.setVgap(12);
-        grid.setPadding(new Insets(10));
+        grid.setPadding(new Insets(12));
+        grid.setMaxWidth(Double.MAX_VALUE);
 
-        grid.add(new Label("Parcelle *"), 0, 0);                 grid.add(parcelleCombo, 1, 0);
-        grid.add(new Label("Nom *"), 0, 1);                      grid.add(nom, 1, 1);
-        grid.add(new Label("Type *"), 0, 2);                     grid.add(type, 1, 2);
-        grid.add(new Label("Superficie (m²) *"), 0, 3);          grid.add(superficie, 1, 3);
-        grid.add(new Label("Date récolte *"), 0, 4);             grid.add(dateRecolte, 1, 4);
-        grid.add(new Label("Récolte estimée (Kg)"), 0, 5);       grid.add(recolteEstime, 1, 5);
+        int r = 0;
+        grid.add(new Label("Parcelle *"), 0, r);                 grid.add(parcelleCombo, 1, r++);
 
-        dialog.getDialogPane().setContent(grid);
+        grid.add(new Label("Nom *"), 0, r);                      grid.add(nom, 1, r++);
+
+        HBox typeRow = new HBox(12, type, preview);
+        grid.add(new Label("Type *"), 0, r);                     grid.add(typeRow, 1, r++);
+
+        grid.add(new Label("Superficie (m²) *"), 0, r);          grid.add(superficie, 1, r++);
+        grid.add(new Label("Date récolte *"), 0, r);             grid.add(dateRecolte, 1, r++);
+        grid.add(new Label("Récolte estimée (Kg)"), 0, r);       grid.add(recolteEstime, 1, r++);
+
+        grid.add(new Label("Etat *"), 0, r);                     grid.add(etat, 1, r++);
+        grid.add(new Label("Prix vente (DT) * (si EN_VENTE)"), 0, r);  grid.add(prixVente, 1, r++);
+
+        ScrollPane sp = new ScrollPane(grid);
+        sp.setFitToWidth(true);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        dialog.getDialogPane().setContent(sp);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveBtn) {
@@ -478,9 +762,12 @@ public class ListeCultures {
                     Parcelle selectedParcelle = parcelleCombo.getValue();
                     if (selectedParcelle == null) { showError("Parcelle obligatoire."); return; }
 
-                    String n = nom.getText().trim();
+                    String n = nom.getText() == null ? "" : nom.getText().trim();
                     Culture.TypeCulture t = type.getValue();
+                    if (n.isEmpty() || t == null) { showError("Nom et type sont obligatoires."); return; }
+
                     double s = Double.parseDouble(superficie.getText().trim());
+                    if (s <= 0) { showError("Superficie doit être > 0."); return; }
 
                     LocalDate ld = dateRecolte.getValue();
                     if (ld == null) { showError("Date récolte obligatoire."); return; }
@@ -494,41 +781,49 @@ public class ListeCultures {
 
                     // superficie <= reste parcelle (reste calcule sans RECOLTEE)
                     double reste = parcelleResteById.getOrDefault(selectedParcelle.getId(), 0.0);
-                    if (s <= 0) { showError("Superficie doit être > 0."); return; }
                     if (s > reste + 1e-9) {
                         showError("Superficie trop grande. Reste disponible: " + reste + " m².");
                         return;
                     }
 
-                    Date dr = Date.valueOf(ld);
+                    Double re = null;
+                    String rtxt = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
+                    if (!rtxt.isEmpty()) re = Double.parseDouble(rtxt);
 
-                    Double re = 0.0;
-                    String r = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
-                    if (!r.isEmpty()) re = Double.parseDouble(r);
+                    Culture.Etat e = etat.getValue();
+                    if (e == null) { showError("Etat obligatoire."); return; }
 
-                    if (n.isEmpty() || t == null) {
-                        showError("Veuillez remplir tous les champs obligatoires.");
-                        return;
+                    // prix vente si EN_VENTE
+                    Double pv = null;
+                    java.sql.Date dp = null;
+                    if (e == Culture.Etat.EN_VENTE) {
+                        String ptxt = prixVente.getText() == null ? "" : prixVente.getText().trim();
+                        if (ptxt.isEmpty()) { showError("Prix obligatoire si EN_VENTE."); return; }
+                        pv = Double.parseDouble(ptxt);
+                        if (pv <= 0) { showError("Prix doit être > 0."); return; }
+                        dp = java.sql.Date.valueOf(LocalDate.now()); // publication = maintenant
                     }
 
-                    Culture.Etat etat = Culture.Etat.EN_COURS;
-
                     Culture c = new Culture(
-                            selectedParcelle.getId(), // parcelleId
-                            u.getId(),                // proprietaireId
+                            selectedParcelle.getId(),
+                            u.getId(),
                             n,
                             t,
                             s,
-                            etat,
-                            dr,
+                            e,
+                            java.sql.Date.valueOf(ld),
                             re
                     );
+
+                    // champs vente intégrés
+                    c.setPrixVente(pv);
+                    c.setDatePublication(dp);
 
                     sc.ajouter(c);
                     rafraichir();
 
                 } catch (NumberFormatException ex) {
-                    showError("Superficie / récolte estimée doivent être numériques.");
+                    showError("Superficie / récolte estimée / prix doivent être numériques.");
                 } catch (SQLException ex) {
                     showError("Erreur DB: " + ex.getMessage());
                 }
@@ -539,9 +834,18 @@ public class ListeCultures {
     // ===== AGRICULTEUR: edit popup =====
     private void ouvrirPopupModificationAgriculteur(Culture c) {
         User u = MainController.getCurrentUser();
-        if (u == null) { showError("Session vide."); return; }
-        if (isAdmin(u)) { showError("ADMIN ne peut pas modifier."); return; }
-        if (c.getProprietaireId() != u.getId()) { showError("Accès refusé."); return; }
+        if (u == null) {
+            showError("Session vide.");
+            return;
+        }
+        if (isAdmin(u)) {
+            showError("ADMIN ne peut pas modifier.");
+            return;
+        }
+        if (c.getProprietaireId() != u.getId()) {
+            showError("Accès refusé.");
+            return;
+        }
 
         if (parcellesDuUser.isEmpty()) {
             showError("Vous n'avez aucune parcelle.");
@@ -551,6 +855,12 @@ public class ListeCultures {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Modifier Culture");
         dialog.setHeaderText("Modifier: " + (c.getNom() == null ? "" : c.getNom()));
+
+        // ✅ IMPORTANT pour ton problème
+        dialog.setResizable(true);
+        dialog.getDialogPane().setPrefWidth(650);
+        dialog.getDialogPane().setPrefHeight(560);
+        dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
         ButtonType saveBtn = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
@@ -564,44 +874,116 @@ public class ListeCultures {
         type.setValue(c.getTypeCulture());
 
         TextField superficie = new TextField(String.valueOf(c.getSuperficie()));
+        ComboBox<Culture.Etat> etat = new ComboBox<>();
+        Culture.Etat currentEtat = c.getEtat();
 
-        ComboBox<Culture.Etat> etat = new ComboBox<>(FXCollections.observableArrayList(Culture.Etat.values()));
-        etat.setValue(c.getEtat());
-
+        if (currentEtat == Culture.Etat.VENDUE) {
+            etat.setItems(FXCollections.observableArrayList(Culture.Etat.VENDUE, Culture.Etat.RECOLTEE));
+            etat.setValue(Culture.Etat.VENDUE);
+        } else if (currentEtat == Culture.Etat.RECOLTEE) {
+            etat.setItems(FXCollections.observableArrayList(Culture.Etat.RECOLTEE));
+            etat.setValue(Culture.Etat.RECOLTEE);
+            etat.setDisable(true);
+        } else {
+            etat.setItems(FXCollections.observableArrayList(Culture.Etat.values()));
+            etat.setValue(currentEtat);
+        }
         DatePicker dateRecolte = new DatePicker(c.getDateRecolte() == null ? null : c.getDateRecolte().toLocalDate());
 
         TextField recolteEstime = new TextField(c.getRecolteEstime() == null ? "" : String.valueOf(c.getRecolteEstime()));
 
+        // ✅ prix vente visible seulement si EN_VENTE
+        TextField prixVente = new TextField(c.getPrixVente() == null ? "" : String.valueOf(c.getPrixVente()));
+        boolean initEnVente = (c.getEtat() == Culture.Etat.EN_VENTE);
+        prixVente.setDisable(!initEnVente);
+        prixVente.setManaged(initEnVente);
+        prixVente.setVisible(initEnVente);
+
+        // ✅ preview image
+        ImageView preview = createCultureImageView(c.getTypeCulture(), 120, 90);
+        type.valueProperty().addListener((obs, oldV, newV) -> {
+            ImageView iv = createCultureImageView(newV, 120, 90);
+            preview.setImage(iv.getImage());
+        });
+
+        etat.valueProperty().addListener((obs, oldV, newV) -> {
+            boolean enVente = (newV == Culture.Etat.EN_VENTE);
+            prixVente.setDisable(!enVente);
+            prixVente.setManaged(enVente);
+            prixVente.setVisible(enVente);
+            if (!enVente) prixVente.clear();
+        });
+
         GridPane grid = new GridPane();
         grid.setHgap(12);
         grid.setVgap(12);
-        grid.setPadding(new Insets(10));
+        grid.setPadding(new Insets(12));
+        grid.setMaxWidth(Double.MAX_VALUE);
 
-        grid.add(new Label("Parcelle *"), 0, 0);                 grid.add(parcelleCombo, 1, 0);
-        grid.add(new Label("Nom *"), 0, 1);                      grid.add(nom, 1, 1);
-        grid.add(new Label("Type *"), 0, 2);                     grid.add(type, 1, 2);
-        grid.add(new Label("Superficie (m²) *"), 0, 3);          grid.add(superficie, 1, 3);
-        grid.add(new Label("Etat *"), 0, 4);                     grid.add(etat, 1, 4);
-        grid.add(new Label("Date récolte *"), 0, 5);             grid.add(dateRecolte, 1, 5);
-        grid.add(new Label("Récolte estimée (Kg)"), 0, 6);       grid.add(recolteEstime, 1, 6);
+        int r = 0;
+        grid.add(new Label("Parcelle *"), 0, r);
+        grid.add(parcelleCombo, 1, r++);
 
-        dialog.getDialogPane().setContent(grid);
+        grid.add(new Label("Nom *"), 0, r);
+        grid.add(nom, 1, r++);
+
+        HBox typeRow = new HBox(12, type, preview);
+        grid.add(new Label("Type *"), 0, r);
+        grid.add(typeRow, 1, r++);
+
+        grid.add(new Label("Superficie (m²) *"), 0, r);
+        grid.add(superficie, 1, r++);
+        grid.add(new Label("Etat *"), 0, r);
+        grid.add(etat, 1, r++);
+        grid.add(new Label("Date récolte *"), 0, r);
+        grid.add(dateRecolte, 1, r++);
+        grid.add(new Label("Récolte estimée (Kg)"), 0, r);
+        grid.add(recolteEstime, 1, r++);
+
+        grid.add(new Label("Prix vente (DT) * (si EN_VENTE)"), 0, r);
+        grid.add(prixVente, 1, r++);
+
+        ScrollPane spScroll = new ScrollPane(grid);
+        spScroll.setFitToWidth(true);
+        spScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        spScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        dialog.getDialogPane().setContent(spScroll);
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveBtn) {
                 try {
                     Parcelle selectedParcelle = parcelleCombo.getValue();
-                    if (selectedParcelle == null) { showError("Parcelle obligatoire."); return; }
+                    if (selectedParcelle == null) {
+                        showError("Parcelle obligatoire.");
+                        return;
+                    }
 
-                    String n = nom.getText().trim();
+                    String n = nom.getText() == null ? "" : nom.getText().trim();
                     Culture.TypeCulture t = type.getValue();
+                    if (n.isEmpty() || t == null) {
+                        showError("Nom et type obligatoires.");
+                        return;
+                    }
+
                     double s = Double.parseDouble(superficie.getText().trim());
+                    if (s <= 0) {
+                        showError("Superficie doit être > 0.");
+                        return;
+                    }
+
                     Culture.Etat e = etat.getValue();
+                    if (e == null) {
+                        showError("Etat obligatoire.");
+                        return;
+                    }
 
                     LocalDate ld = dateRecolte.getValue();
-                    if (ld == null) { showError("Date récolte obligatoire."); return; }
+                    if (ld == null) {
+                        showError("Date récolte obligatoire.");
+                        return;
+                    }
 
-                    // date création réelle (Timestamp -> LocalDate)
                     LocalDate creation = (c.getDateCreation() != null)
                             ? c.getDateCreation().toLocalDateTime().toLocalDate()
                             : LocalDate.now();
@@ -618,21 +1000,39 @@ public class ListeCultures {
                             ? resteNewParcelle + c.getSuperficie()
                             : resteNewParcelle;
 
-                    if (s <= 0) { showError("Superficie doit être > 0."); return; }
                     if (s > maxAllowed + 1e-9) {
                         showError("Superficie trop grande. Max autorisé: " + round2(maxAllowed) + " m².");
                         return;
                     }
 
-                    Date dr = Date.valueOf(ld);
+                    Double re = null;
+                    String rtxt = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
+                    if (!rtxt.isEmpty()) re = Double.parseDouble(rtxt);
 
-                    Double re = 0.0;
-                    String r = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
-                    if (!r.isEmpty()) re = Double.parseDouble(r);
+                    // vente
+                    Double pv = null;
+                    java.sql.Date dp = null;
+                    if (e == Culture.Etat.EN_VENTE) {
+                        String ptxt = prixVente.getText() == null ? "" : prixVente.getText().trim();
+                        if (ptxt.isEmpty()) {
+                            showError("Prix obligatoire si EN_VENTE.");
+                            return;
+                        }
+                        pv = Double.parseDouble(ptxt);
+                        if (pv <= 0) {
+                            showError("Prix doit être > 0.");
+                            return;
+                        }
 
-                    if (n.isEmpty() || t == null || e == null) {
-                        showError("Veuillez remplir tous les champs obligatoires.");
-                        return;
+                        // si elle n’était pas déjà publiée, on met publication = maintenant
+                        if (c.getDatePublication() != null) dp = c.getDatePublication();
+                        else dp = java.sql.Date.valueOf(LocalDate.now());
+                    } else {
+                        // si tu veux reset quand on sort de la vente
+                        pv = null;
+                        dp = null;
+                        c.setIdAcheteur(null);
+                        c.setDateVente(null);
                     }
 
                     c.setParcelleId(selectedParcelle.getId());
@@ -640,14 +1040,17 @@ public class ListeCultures {
                     c.setTypeCulture(t);
                     c.setSuperficie(s);
                     c.setEtat(e);
-                    c.setDateRecolte(dr);
+                    c.setDateRecolte(java.sql.Date.valueOf(ld));
                     c.setRecolteEstime(re);
+
+                    c.setPrixVente(pv);
+                    c.setDatePublication(dp);
 
                     sc.modifier(c);
                     rafraichir();
 
                 } catch (NumberFormatException ex) {
-                    showError("Superficie / récolte estimée doivent être numériques.");
+                    showError("Superficie / récolte estimée / prix doivent être numériques.");
                 } catch (SQLException ex) {
                     showError("Erreur modification: " + ex.getMessage());
                 }

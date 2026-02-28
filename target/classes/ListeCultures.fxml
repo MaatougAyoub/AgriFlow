@@ -5,10 +5,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.SVGPath?>
 
+
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="controllers.ListeCultures"
       spacing="15"
+      maxHeight="Infinity"
       style="-fx-background-color: #F4F6F3;"
       stylesheets="@styles.css">
 
@@ -95,6 +97,7 @@
     <VBox fx:id="agriculteurPane" spacing="10" visible="false" managed="false" VBox.vgrow="ALWAYS">
         <ScrollPane fx:id="cardsScroll" fitToWidth="true"
                     VBox.vgrow="ALWAYS"
+                    maxHeight="Infinity"
                     style="-fx-background-color: transparent; -fx-background: transparent;">
             <content>
                 <VBox fx:id="cardsContainer" spacing="12">

@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceParcelle implements IServiceB<Parcelle> {
+public class ServiceParcelle implements IService<Parcelle> {
 
     private Connection connection;
 
@@ -84,5 +84,23 @@ public class ServiceParcelle implements IServiceB<Parcelle> {
         }
 
         return parcelles;
+    }
+    public Parcelle recupererParId(int id) throws SQLException {
+        String sql = "SELECT * FROM parcelle WHERE id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                return new Parcelle(
+                        rs.getInt("id"),
+                        rs.getInt("agriculteur_id"),
+                        rs.getString("nom"),
+                        rs.getDouble("superficie"),
+                        Parcelle.TypeTerre.valueOf(rs.getString("type_terre")),
+                        rs.getString("localisation"),
+                        rs.getTimestamp("date_creation")
+                );
+            }
+        }
     }
 }
