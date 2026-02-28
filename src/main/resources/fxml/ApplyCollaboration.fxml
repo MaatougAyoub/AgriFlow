@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="controllers.ApplyCollaborationController"
+           style="-fx-background-color: rgba(0,0,0,0.5);">
+
+    <!-- Modal Card -->
+    <VBox spacing="20" maxWidth="600" maxHeight="700"
+          style="-fx-background-color: white; -fx-padding: 30; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 5);">
+
+        <!-- Header -->
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <Text text="📝" style="-fx-font-size: 32px;"/>
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Text text="Postuler à cette offre" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Text fx:id="requestTitleText" text="Récolte d'olives" style="-fx-font-size: 14px; -fx-fill: #757575;"/>
+            </VBox>
+            <Button text="✕" onAction="#handleCancel"
+                    style="-fx-background-color: transparent; -fx-text-fill: #757575; -fx-font-size: 20px; -fx-cursor: hand;"/>
+        </HBox>
+
+        <Separator/>
+
+        <!-- Formulaire scrollable -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
+            <VBox spacing="18">
+
+                <!-- Nom complet -->
+                <VBox spacing="6">
+                    <Label text="Nom complet *" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextField fx:id="fullNameField" promptText="Ex: Mohamed Ben Ahmed"
+                               style="-fx-font-size: 13px; -fx-padding: 10;"/>
+                </VBox>
+
+                <!-- Téléphone -->
+                <VBox spacing="6">
+                    <Label text="Téléphone *" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextField fx:id="phoneField" promptText="Ex: 22 123 456"
+                               style="-fx-font-size: 13px; -fx-padding: 10;"/>
+                </VBox>
+
+                <!-- Email -->
+                <VBox spacing="6">
+                    <Label text="Email *" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextField fx:id="emailField" promptText="Ex: mohamed@example.com"
+                               style="-fx-font-size: 13px; -fx-padding: 10;"/>
+                </VBox>
+
+                <!-- Années d'expérience -->
+                <VBox spacing="6">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="Années d'expérience *" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                        <Label fx:id="experienceLabel" text="5 ans"
+                               style="-fx-text-fill: #2E7D32; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <Slider fx:id="experienceSlider" min="0" max="20" value="5"
+                            showTickLabels="true" showTickMarks="true" majorTickUnit="5"
+                            blockIncrement="1" snapToTicks="true"/>
+                </VBox>
+
+                <!-- Salaire souhaité (optionnel) -->
+                <VBox spacing="6">
+                    <Label text="Salaire souhaité par jour (DT) - Optionnel" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextField fx:id="expectedSalaryField" promptText="Ex: 50"
+                               style="-fx-font-size: 13px; -fx-padding: 10;"/>
+                </VBox>
+
+                <!-- Lettre de motivation -->
+                <VBox spacing="6">
+                    <Label text="Lettre de motivation *" style="-fx-font-weight: bold; -fx-font-size: 13px;"/>
+                    <TextArea fx:id="motivationArea"
+                              promptText="Expliquez pourquoi vous êtes le candidat idéal pour cette mission..."
+                              wrapText="true" prefHeight="120"
+                              style="-fx-font-size: 13px;"/>
+                    <Text text="Minimum 50 caractères" style="-fx-font-size: 11px; -fx-fill: #757575;"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+
+        <Separator/>
+
+        <!-- Boutons -->
+        <HBox spacing="12" alignment="CENTER">
+            <Button text="Annuler" onAction="#handleCancel"
+                    prefWidth="140" prefHeight="40"
+                    style="-fx-background-color: #E0E0E0; -fx-text-fill: #333; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+            <Button text="Envoyer ma candidature" onAction="#handleSubmit"
+                    prefWidth="200" prefHeight="40"
+                    style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;"/>
+        </HBox>
+
+    </VBox>
+</StackPane>

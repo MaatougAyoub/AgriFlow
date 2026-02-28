@@ -63,6 +63,8 @@ public class MainController implements Initializable {
 
     private Map<String, Object> userData;
     private boolean navigateToProfile = false;
+    // Persist last user data across controller instances
+    private static java.util.Map<String, Object> lastUserData;
 
     public void setUserData(Map<String, Object> userData) {
         this.userData = userData;
@@ -73,6 +75,14 @@ public class MainController implements Initializable {
             navigateToProfile = false;
             goProfil();
         }
+    }
+
+    public static void setLastUserData(java.util.Map<String, Object> data) {
+        lastUserData = data;
+    }
+
+    public static java.util.Map<String, Object> getLastUserData() {
+        return lastUserData;
     }
 
     /**
@@ -218,15 +228,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void goParcellesCultures() {
-        // Quand tu auras la vue, change le chemin:
-        // loadView("/ParcellesCultures.fxml");
-        System.out.println("Parcelles et cultures - non implémenté");
+        loadView("/ParcellesCultures.fxml");
         setActiveButton(menuParcellesCultures);
     }
 
     @FXML
     private void goCollaborations() {
-        System.out.println("Collaborations - non implémenté");
+        loadView("/fxml/ExploreCollaborations.fxml");
         setActiveButton(menuCollaborations);
     }
 
@@ -295,6 +303,10 @@ public class MainController implements Initializable {
             // ✅ si certains contrôleurs ont besoin du user connecté,
             // tu peux les alimenter ici au cas par cas:
             Object controller = loader.getController();
+            if (controller instanceof controllers.ExploreCollaborationsController exploreCtrl) {
+                // Passer les données utilisateur si la vue ExploreCollaborations en a besoin
+                exploreCtrl.setUserData(userData);
+            }
             if (controller instanceof ProfilUtilisateur profilCtrl) {
                 // si ProfilUtilisateur utilise Map<String,Object>, tu dois adapter ici.
                 // profilCtrl.setUserData(...);
@@ -312,22 +324,22 @@ public class MainController implements Initializable {
 
     private void setActiveButton(Button button) {
         final String common =
-            "-fx-font-size: 20;" +
-                "-fx-text-fill: white;" +
-                "-fx-padding: 10 12;" +
-                "-fx-background-insets: 0;" +
-                "-fx-border-insets: 0;" +
-                "-fx-border-radius: 10;" +
-                "-fx-background-radius: 10;";
+                "-fx-font-size: 20;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-padding: 10 12;" +
+                        "-fx-background-insets: 0;" +
+                        "-fx-border-insets: 0;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-background-radius: 10;";
 
         if (activeButton != null) {
             // style non-actif (uniforme)
             activeButton.setStyle(
-                common +
-                    "-fx-font-weight: normal;" +
-                    "-fx-background-color: transparent;" +
-                    "-fx-border-color: rgba(255,255,255,0.35);" +
-                    "-fx-border-width: 1;");
+                    common +
+                            "-fx-font-weight: normal;" +
+                            "-fx-background-color: transparent;" +
+                            "-fx-border-color: rgba(255,255,255,0.35);" +
+                            "-fx-border-width: 1;");
         }
 
         activeButton = button;
@@ -335,11 +347,11 @@ public class MainController implements Initializable {
         if (activeButton != null) {
             // style actif
             activeButton.setStyle(
-                common +
-                    "-fx-font-weight: bold;" +
-                    "-fx-background-color: #1B5E20;" +
-                    "-fx-border-color: transparent;" +
-                    "-fx-border-width: 1;");
+                    common +
+                            "-fx-font-weight: bold;" +
+                            "-fx-background-color: #1B5E20;" +
+                            "-fx-border-color: transparent;" +
+                            "-fx-border-width: 1;");
         }
     }
 

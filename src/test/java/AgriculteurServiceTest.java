@@ -15,10 +15,30 @@ public class AgriculteurServiceTest {
 
     static ServiceAgriculteur sa;
     static int idAgriculteur;
+    static String emailAdd;
+    static String emailMod;
+    static int cinAdd;
+    static int cinMod;
 
     @BeforeAll
     static void setUp() {
         sa = new ServiceAgriculteur();
+
+        String suffix = String.valueOf(System.currentTimeMillis());
+        emailAdd = "agri.test." + suffix + "@gmail.com";
+        emailMod = "agri.test.mod." + suffix + "@gmail.com";
+        cinAdd = (int) (System.currentTimeMillis() % 1_000_000_000L);
+        if (cinAdd < 10000000) cinAdd += 10000000;
+        cinMod = cinAdd + 1;
+    }
+
+    @AfterAll
+    static void tearDown() throws SQLException {
+        if (idAgriculteur > 0) {
+            Agriculteur toDelete = new Agriculteur();
+            toDelete.setId(idAgriculteur);
+            sa.supprimerAgriculteur(toDelete);
+        }
     }
 
     @Test
@@ -26,8 +46,8 @@ public class AgriculteurServiceTest {
     void testAjouterAgriculteur() throws SQLException {
         Agriculteur a = new Agriculteur(
                 "agri_test", "user_test",
-                11223344,
-                "agri.test@gmail.com",
+                cinAdd,
+                emailAdd,
                 "pwd_test",
                 Role.AGRICULTEUR.toString(),
                 LocalDate.parse("2026-02-15"),
@@ -42,7 +62,7 @@ public class AgriculteurServiceTest {
         List<Agriculteur> agris = sa.recupererAgriculteurs();
 
         Agriculteur inserted = agris.stream()
-                .filter(x -> "agri_test".equals(x.getNom()) && "agri.test@gmail.com".equals(x.getEmail()))
+            .filter(x -> emailAdd.equals(x.getEmail()))
                 .max(Comparator.comparingInt(Agriculteur::getId))
                 .orElse(null);
 
@@ -60,8 +80,8 @@ public class AgriculteurServiceTest {
         Agriculteur updated = new Agriculteur(
                 idAgriculteur,
                 "agri_test_mod", "user_test_mod",
-                55667788,
-                "agri.test.mod@gmail.com",
+            cinMod,
+            emailMod,
                 "pwd_mod",
                 Role.AGRICULTEUR.toString(),
                 LocalDate.parse("2026-02-16"),
@@ -82,8 +102,8 @@ public class AgriculteurServiceTest {
         assertNotNull(found, "Agriculteur introuvable après modification");
         assertEquals("agri_test_mod", found.getNom());
         assertEquals("user_test_mod", found.getPrenom());
-        assertEquals(55667788, found.getCin());
-        assertEquals("agri.test.mod@gmail.com", found.getEmail());
+        assertEquals(cinMod, found.getCin());
+        assertEquals(emailMod, found.getEmail());
         assertEquals("pwd_mod", found.getMotDePasse());
         assertEquals("signature_mod.png", found.getSignature());
         assertEquals("carte_pro_mod.png", found.getCarte_pro());
@@ -94,7 +114,7 @@ public class AgriculteurServiceTest {
     @Test
     @Order(3)
     void testEmailExiste() throws SQLException {
-        assertTrue(sa.emailExiste("agri.test.mod@gmail.com"), "emailExiste devrait retourner true");
+        assertTrue(sa.emailExiste(emailMod), "emailExiste devrait retourner true");
         assertFalse(sa.emailExiste("email.inexistant." + System.currentTimeMillis() + "@gmail.com"),
                 "emailExiste devrait retourner false");
     }
@@ -103,7 +123,7 @@ public class AgriculteurServiceTest {
     @Order(4)
     void testModifierMotDePasseParEmail() throws SQLException {
         String newPwd = "NEW_PWD_AGRI_2026";
-        sa.modifierMotDePasseParEmail("agri.test.mod@gmail.com", newPwd);
+        sa.modifierMotDePasseParEmail(emailMod, newPwd);
 
         List<Agriculteur> agris = sa.recupererAgriculteurs();
         Agriculteur found = agris.stream()
@@ -112,7 +132,7 @@ public class AgriculteurServiceTest {
                 .orElse(null);
 
         assertNotNull(found);
-        assertEquals(newPwd, found.getMotDePasse(), "Le mot de passe dans agriculteurs n'a pas été mis à jour");
+        assertEquals(newPwd, found.getMotDePasse(), "Le mot de passe n'a pas été mis à jour");
     }
 
     @Test
@@ -120,13 +140,16 @@ public class AgriculteurServiceTest {
     void testSupprimerAgriculteur() throws SQLException {
         assertTrue(idAgriculteur > 0, "idAgriculteur non initialisé.");
 
+        int deletedId = idAgriculteur;
+
         Agriculteur toDelete = new Agriculteur();
         toDelete.setId(idAgriculteur);
 
         sa.supprimerAgriculteur(toDelete);
+        idAgriculteur = 0; // éviter que @AfterAll réessaie
 
         List<Agriculteur> agris = sa.recupererAgriculteurs();
-        assertFalse(agris.stream().anyMatch(x -> x.getId() == idAgriculteur),
-                "L'agriculteur n'a pas été supprimé de la table agriculteurs");
+        assertFalse(agris.stream().anyMatch(x -> x.getId() == deletedId),
+            "L'agriculteur n'a pas été supprimé");
     }
 }

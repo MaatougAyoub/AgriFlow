@@ -15,10 +15,30 @@ public class AdminServiceTest {
 
     static ServiceAdmin sa;
     static int idAdmin;
+    static String emailAdd;
+    static String emailMod;
+    static int cinAdd;
+    static int cinMod;
 
     @BeforeAll
     static void setUp() {
         sa = new ServiceAdmin();
+
+        String suffix = String.valueOf(System.currentTimeMillis());
+        emailAdd = "admin.test." + suffix + "@gmail.com";
+        emailMod = "admin.test.mod." + suffix + "@gmail.com";
+        cinAdd = (int) (System.currentTimeMillis() % 1_000_000_000L);
+        if (cinAdd < 10000000) cinAdd += 10000000;
+        cinMod = cinAdd + 1;
+    }
+
+    @AfterAll
+    static void tearDown() throws SQLException {
+        if (idAdmin > 0) {
+            Admin toDelete = new Admin();
+            toDelete.setId(idAdmin);
+            sa.supprimerAdmin(toDelete);
+        }
     }
 
     @Test
@@ -26,8 +46,8 @@ public class AdminServiceTest {
     void testAjouterAdmin() throws SQLException {
         Admin admin = new Admin(
                 "admin_test", "user_test",
-                12345678,
-                "admin.test@gmail.com",
+                cinAdd,
+                emailAdd,
                 "pwd_test",
                 Role.ADMIN.toString(),
                 LocalDate.parse("2026-02-15"),
@@ -40,8 +60,8 @@ public class AdminServiceTest {
         List<Admin> admins = sa.recupererAdmin();
 
         Admin inserted = admins.stream()
-                .filter(a -> "admin_test".equals(a.getNom()) && "admin.test@gmail.com".equals(a.getEmail()))
-                .max(Comparator.comparingInt(Admin::getId))
+            .filter(a -> emailAdd.equals(a.getEmail()))
+            .max(Comparator.comparingInt(Admin::getId))
                 .orElse(null);
 
         assertNotNull(inserted, "Admin non inséré");
@@ -58,8 +78,8 @@ public class AdminServiceTest {
         Admin updated = new Admin(
                 idAdmin,
                 "admin_test_mod", "user_test_mod",
-                87654321,
-                "admin.test.mod@gmail.com",
+            cinMod,
+            emailMod,
                 "pwd_mod",
                 Role.ADMIN.toString(),
                 LocalDate.parse("2026-02-16"),
@@ -78,8 +98,8 @@ public class AdminServiceTest {
         assertNotNull(found, "Admin introuvable après modification");
         assertEquals("admin_test_mod", found.getNom());
         assertEquals("user_test_mod", found.getPrenom());
-        assertEquals(87654321, found.getCin());
-        assertEquals("admin.test.mod@gmail.com", found.getEmail());
+        assertEquals(cinMod, found.getCin());
+        assertEquals(emailMod, found.getEmail());
         assertEquals("pwd_mod", found.getMotDePasse());
         assertEquals("signature_mod.png", found.getSignature());
         assertEquals(2500.5, found.getRevenus(), 0.0001);
@@ -100,13 +120,16 @@ public class AdminServiceTest {
     void testSupprimerAdmin() throws SQLException {
         assertTrue(idAdmin > 0, "idAdmin non initialisé.");
 
+        int deletedId = idAdmin;
+
         Admin toDelete = new Admin();
         toDelete.setId(idAdmin);
 
         sa.supprimerAdmin(toDelete);
+        idAdmin = 0; // éviter que @AfterAll réessaie
 
         List<Admin> admins = sa.recupererAdmin();
-        assertFalse(admins.stream().anyMatch(a -> a.getId() == idAdmin),
-                "L'admin n'a pas été supprimé de la table admins");
+        assertFalse(admins.stream().anyMatch(a -> a.getId() == deletedId),
+            "L'admin n'a pas été supprimé");
     }
 }

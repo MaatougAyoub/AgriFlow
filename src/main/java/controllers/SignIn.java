@@ -108,6 +108,8 @@ public class SignIn implements Initializable {
             // Passer les données au MainController (pour le profil)
             MainController mainController = loader.getController();
             mainController.setUserData(userData);
+            // Persist userData for future MainController instances
+            MainController.setLastUserData(userData);
 
             // Afficher dans le même Stage
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
@@ -115,6 +117,11 @@ public class SignIn implements Initializable {
             stage.setScene(new Scene(root));
             //stage.setMaximized(true);
             stage.setFullScreen(true);
+            // Ensure MainCollabFX knows about the primary stage so navigation works
+            try {
+                mains.MainCollabFX.setPrimaryStage(stage);
+            } catch (Exception ignored) {
+            }
             stage.show();
 
         } catch (Exception e) {

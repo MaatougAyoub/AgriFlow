@@ -3,6 +3,7 @@ package controllers;
 import entities.Agriculteur;
 import entities.Expert;
 import entities.Role;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,11 +17,15 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceExpert;
+import services.VerificationCodeEmailService;
+import services.ocr.TesseractOcrService;
+import services.verification.ExpertCertificationVerificationService;
+import services.verification.FarmerCardVerificationService;
+import services.verification.VerificationResult;
+import utils.XamppUploads;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
@@ -44,8 +49,15 @@ public class SignUp implements Initializable {
     @FXML private Label errorLabel;
     @FXML private Label successLabel;
 
+    // Steps (form -> code)
+    @FXML private VBox stepFormBox;
+    @FXML private VBox stepCodeBox;
+    @FXML private TextField codeField;
+
     // Champs Agriculteur
     @FXML private VBox agriculteurFieldsBox;
+    @FXML private TextField nomArField;
+    @FXML private TextField prenomArField;
     @FXML private TextField adresseField;
     @FXML private TextField parcellesField;
     @FXML private TextField carteProPathField;
@@ -58,6 +70,10 @@ public class SignUp implements Initializable {
     private String signaturePath = null;
     private String carteProPath = null;
     private String certificationPath = null;
+
+    // Inscription OTP (simulation)
+    private String generatedCode = null;
+    private String pendingUserType = null;
 
     private ServiceAgriculteur serviceAgriculteur;
     private ServiceExpert serviceExpert;
@@ -81,6 +97,8 @@ public class SignUp implements Initializable {
 
         hideMessages();
         hideSpecificBoxes();
+
+        showStepForm();
     }
 
     @FXML
@@ -102,8 +120,13 @@ public class SignUp implements Initializable {
     private void uploadSignature(ActionEvent event) {
         File file = chooseFile("Sélectionner la signature");
         if (file != null) {
-            signaturePath = saveFileAndReturnDbPath(file, "signatures");
-            signaturePathField.setText(file.getName());
+            try {
+                signaturePath = XamppUploads.save(file, XamppUploads.Category.SIGNATURES);
+                signaturePathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload signature: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,8 +134,13 @@ public class SignUp implements Initializable {
     private void uploadCartePro(ActionEvent event) {
         File file = chooseFile("Sélectionner la carte professionnelle");
         if (file != null) {
-            carteProPath = saveFileAndReturnDbPath(file, "cartes_pro");
-            carteProPathField.setText(file.getName());
+            try {
+                carteProPath = XamppUploads.save(file, XamppUploads.Category.CARTES);
+                carteProPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload carte professionnelle: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -120,8 +148,13 @@ public class SignUp implements Initializable {
     private void uploadCertification(ActionEvent event) {
         File file = chooseFile("Sélectionner la certification");
         if (file != null) {
-            certificationPath = saveFileAndReturnDbPath(file, "certifications");
-            certificationPathField.setText(file.getName());
+            try {
+                certificationPath = XamppUploads.save(file, XamppUploads.Category.CERTIFICATIONS);
+                certificationPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload certification: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -129,35 +162,9 @@ public class SignUp implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*")
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
         );
         return fileChooser.showOpenDialog(nomField.getScene().getWindow());
-    }
-
-    /**
-     * Sauvegarde le fichier dans uploads/<folderName>/ et retourne un chemin DB relatif:
-     * ex: uploads/signatures/1700_file.png
-     */
-    private String saveFileAndReturnDbPath(File file, String folderName) {
-        try {
-            Path uploadDir = Paths.get("uploads", folderName);
-            if (!Files.exists(uploadDir)) {
-                Files.createDirectories(uploadDir);
-            }
-
-            String fileName = System.currentTimeMillis() + "_" + file.getName();
-            Path targetPath = uploadDir.resolve(fileName);
-
-            Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            return "uploads/" + folderName + "/" + fileName;
-
-        } catch (IOException e) {
-            showError("Erreur lors de l'upload du fichier: " + e.getMessage());
-            return null;
-        }
     }
 
     // ===== Inscription =====
@@ -168,15 +175,15 @@ public class SignUp implements Initializable {
 
         try {
             if (!validateFields()) return;
+            if (!validateSpecificSignupFields()) return;
 
-            String type = typeUtilisateurCombo.getValue();
-            if ("Agriculteur".equals(type)) {
-                inscrireAgriculteur();
-            } else if ("Expert".equals(type)) {
-                inscrireExpert();
-            } else {
-                showError("Type d'utilisateur invalide.");
-            }
+            pendingUserType = typeUtilisateurCombo.getValue();
+
+            generatedCode = generateSimpleCode();
+
+            showSuccess("Envoi du code par email...");
+            showStepCode();
+            sendSignupCodeByEmailAsync(emailField.getText().trim(), generatedCode);
 
         } catch (Exception e) {
             showError("Erreur lors de l'inscription: " + e.getMessage());
@@ -184,17 +191,133 @@ public class SignUp implements Initializable {
         }
     }
 
-    private void inscrireAgriculteur() throws SQLException {
+    private void sendSignupCodeByEmailAsync(String email, String code) {
+        Thread t = new Thread(() -> {
+            try {
+                new VerificationCodeEmailService().sendSignupCode(email, code);
+                Platform.runLater(() -> showSuccess("Code envoyé par email. Vérifiez votre boîte de réception."));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    generatedCode = null;
+                    pendingUserType = null;
+                    showError("Impossible d'envoyer le code par email: " + e.getMessage());
+                    showStepForm();
+                });
+            }
+        }, "mailersend-signup-code");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    @FXML
+    private void confirmerInscription(ActionEvent event) {
+        hideMessages();
+
+        String code = codeField.getText() == null ? "" : codeField.getText().trim();
+        if (generatedCode == null || pendingUserType == null) {
+            showError("Veuillez d'abord lancer l'inscription pour générer un code.");
+            showStepForm();
+            return;
+        }
+        if (code.isEmpty()) {
+            showError("Veuillez saisir le code.");
+            return;
+        }
+        if (!generatedCode.equals(code)) {
+            showError("Code incorrect.");
+            return;
+        }
+
+        // invalider le code pour éviter double soumission
+        generatedCode = null;
+
+        showSuccess("Vérification OCR en cours...");
+
+        Thread t = new Thread(() -> {
+            try {
+                if ("Agriculteur".equals(pendingUserType)) {
+                    inscrireAgriculteurAvecVerification();
+                } else if ("Expert".equals(pendingUserType)) {
+                    inscrireExpertAvecVerification();
+                } else {
+                    Platform.runLater(() -> {
+                        showError("Type d'utilisateur invalide.");
+                        showStepForm();
+                    });
+                    return;
+                }
+
+                pendingUserType = null;
+                Platform.runLater(() -> {
+                    showStepForm();
+                });
+
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    showError("Erreur lors de la confirmation: " + e.getMessage());
+                    showStepForm();
+                });
+                e.printStackTrace();
+            }
+        }, "signup-ocr-verification");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    @FXML
+    private void retourFormulaire(ActionEvent event) {
+        hideMessages();
+        // Les champs peuvent changer => on force une nouvelle génération de code
+        generatedCode = null;
+        pendingUserType = null;
+        codeField.clear();
+        showStepForm();
+    }
+
+    private void inscrireAgriculteurAvecVerification() throws SQLException {
         if (adresseField.getText().trim().isEmpty()) {
-            showError("L'adresse est obligatoire pour un agriculteur.");
+            Platform.runLater(() -> showError("L'adresse est obligatoire pour un agriculteur."));
             return;
         }
         if (carteProPath == null || carteProPath.isBlank()) {
-            showError("La carte professionnelle est obligatoire.");
+            Platform.runLater(() -> showError("La carte professionnelle est obligatoire."));
             return;
         }
         if (signaturePath == null || signaturePath.isBlank()) {
-            showError("La signature est obligatoire.");
+            Platform.runLater(() -> showError("La signature est obligatoire."));
+            return;
+        }
+
+        VerificationResult verification;
+        try {
+            FarmerCardVerificationService verifier = new FarmerCardVerificationService(new TesseractOcrService());
+            verification = verifier.verify(
+                    java.nio.file.Path.of(carteProPath),
+                    cinField.getText().trim(),
+                    nomArField.getText().trim(),
+                    prenomArField.getText().trim()
+            );
+        } catch (Exception ocrError) {
+            // OCR indisponible -> on bloque l'inscription (impossible de vérifier la carte)
+            System.err.println("[AgriFlow][OCR][ERREUR] " + ocrError.getMessage());
+            Platform.runLater(() -> showError(
+                    "Vérification impossible. Impossible de lire la carte professionnelle.\n" +
+                    "Veuillez réessayer avec une image plus nette et bien éclairée."
+            ));
+            return;
+        }
+
+        System.out.println(
+            "[AgriFlow][VERIFY][FARMER] expectedCin=" + (cinField.getText() == null ? "" : cinField.getText().trim())
+                + " extractedCin=" + (verification.extractedCin() == null ? "" : verification.extractedCin())
+                + " status=" + verification.status()
+                + " score=" + verification.score()
+                + " reason=" + (verification.reason() == null ? "" : verification.reason())
+        );
+
+        if (verification.status() == entities.VerificationStatus.REJECTED) {
+            final String reason = verification.reason();
+            Platform.runLater(() -> showError("Inscription refusée: " + reason));
             return;
         }
 
@@ -212,19 +335,53 @@ public class SignUp implements Initializable {
                 parcellesField != null ? parcellesField.getText().trim() : ""
         );
 
+        // Arabic name (for OCR matching)
+        agriculteur.setNomAr(nomArField.getText().trim());
+        agriculteur.setPrenomAr(prenomArField.getText().trim());
+
+        // Verification fields
+        agriculteur.setVerificationStatus(verification.status().name());
+        agriculteur.setVerificationReason(verification.reason());
+        agriculteur.setVerificationScore(verification.score());
+
         serviceAgriculteur.ajouterAgriculteur(agriculteur);
 
-        showSuccess("Agriculteur inscrit avec succès ✅");
-        clearFields();
+        Platform.runLater(() -> {
+            clearFields();
+            if ("APPROVED".equalsIgnoreCase(agriculteur.getVerificationStatus())) {
+                showSuccess("Compte vérifié et créé ✅ Vous pouvez vous connecter.");
+            } else {
+                showSuccess("Compte créé mais en attente de validation admin (revue) ⏳");
+            }
+        });
     }
 
-    private void inscrireExpert() throws SQLException {
+    private void inscrireExpertAvecVerification() throws SQLException {
         if (certificationPath == null || certificationPath.isBlank()) {
-            showError("La certification est obligatoire.");
+            Platform.runLater(() -> showError("La certification est obligatoire."));
             return;
         }
         if (signaturePath == null || signaturePath.isBlank()) {
-            showError("La signature est obligatoire.");
+            Platform.runLater(() -> showError("La signature est obligatoire."));
+            return;
+        }
+
+        VerificationResult verification;
+        try {
+            ExpertCertificationVerificationService verifier = new ExpertCertificationVerificationService(new TesseractOcrService());
+            verification = verifier.verify(
+                    java.nio.file.Path.of(certificationPath),
+                    nomField.getText().trim(),
+                    prenomField.getText().trim()
+            );
+        } catch (Exception ocrError) {
+            verification = new VerificationResult(entities.VerificationStatus.NEEDS_REVIEW, 0.0, null, false,
+                    "OCR indisponible: " + ocrError.getMessage());
+        }
+
+        if (verification.status() == entities.VerificationStatus.REJECTED) {
+            final String reason = verification.reason();
+            Platform.runLater(() -> showError("Inscription refusée: " + reason));
             return;
         }
 
@@ -240,10 +397,61 @@ public class SignUp implements Initializable {
                 certificationPath
         );
 
+        expert.setVerificationStatus(verification.status().name());
+        expert.setVerificationReason(verification.reason());
+        expert.setVerificationScore(verification.score());
+
         serviceExpert.ajouterExpert(expert);
 
-        showSuccess("Expert inscrit avec succès ✅");
-        clearFields();
+        Platform.runLater(() -> {
+            clearFields();
+            if ("APPROVED".equalsIgnoreCase(expert.getVerificationStatus())) {
+                showSuccess("Compte vérifié et créé ✅ Vous pouvez vous connecter.");
+            } else {
+                showSuccess("Compte créé mais en attente de validation admin (revue) ⏳");
+            }
+        });
+    }
+
+    private boolean validateSpecificSignupFields() {
+        String type = typeUtilisateurCombo.getValue();
+
+        if ("Agriculteur".equals(type)) {
+            if (nomArField.getText() == null || nomArField.getText().trim().isEmpty()) {
+                showError("Le nom (arabe) est obligatoire pour vérification.");
+                return false;
+            }
+            if (prenomArField.getText() == null || prenomArField.getText().trim().isEmpty()) {
+                showError("Le prénom (arabe) est obligatoire pour vérification.");
+                return false;
+            }
+            if (adresseField.getText() == null || adresseField.getText().trim().isEmpty()) {
+                showError("L'adresse est obligatoire pour un agriculteur.");
+                return false;
+            }
+            if (carteProPath == null || carteProPath.isBlank()) {
+                showError("La carte professionnelle est obligatoire.");
+                return false;
+            }
+            if (signaturePath == null || signaturePath.isBlank()) {
+                showError("La signature est obligatoire.");
+                return false;
+            }
+        } else if ("Expert".equals(type)) {
+            if (certificationPath == null || certificationPath.isBlank()) {
+                showError("La certification est obligatoire.");
+                return false;
+            }
+            if (signaturePath == null || signaturePath.isBlank()) {
+                showError("La signature est obligatoire.");
+                return false;
+            }
+        } else {
+            showError("Veuillez sélectionner un type d'utilisateur.");
+            return false;
+        }
+
+        return true;
     }
 
     private boolean validateFields() {
@@ -360,6 +568,8 @@ public class SignUp implements Initializable {
         confirmMotDePasseField.clear();
 
         signaturePathField.clear();
+        if (nomArField != null) nomArField.clear();
+        if (prenomArField != null) prenomArField.clear();
         adresseField.clear();
         if (parcellesField != null) parcellesField.clear();
         carteProPathField.clear();
@@ -371,5 +581,38 @@ public class SignUp implements Initializable {
 
         hideSpecificBoxes();
         hideMessages();
+    }
+
+    private void showStepForm() {
+        if (stepFormBox != null) {
+            stepFormBox.setVisible(true);
+            stepFormBox.setManaged(true);
+        }
+        if (stepCodeBox != null) {
+            stepCodeBox.setVisible(false);
+            stepCodeBox.setManaged(false);
+        }
+        if (codeField != null) {
+            codeField.clear();
+        }
+    }
+
+    private void showStepCode() {
+        if (stepCodeBox != null) {
+            stepCodeBox.setVisible(true);
+            stepCodeBox.setManaged(true);
+        }
+        if (stepFormBox != null) {
+            stepFormBox.setVisible(false);
+            stepFormBox.setManaged(false);
+        }
+        if (codeField != null) {
+            codeField.clear();
+        }
+    }
+
+    private String generateSimpleCode() {
+        int code = (int) (Math.random() * 900000) + 100000;
+        return String.valueOf(code);
     }
 }

@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import services.ServiceAgriculteur;
 import services.ServiceAdmin;
 import services.ServiceExpert;
+import services.VerificationAdminService;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -51,6 +52,9 @@ public class ListeUtilisateurs {
     @FXML
     private TableColumn<Utilisateur, String> colDateCreation;
 
+    @FXML
+    private TableColumn<Utilisateur, String> colVerification;
+
     // ✅ images
     @FXML
     private TableColumn<Utilisateur, Void> colSignatureImg;
@@ -74,6 +78,7 @@ public class ListeUtilisateurs {
     private final ServiceAgriculteur serviceAgriculteur = new ServiceAgriculteur();
     private final ServiceExpert serviceExpert = new ServiceExpert();
     private final ServiceAdmin serviceAdmin = new ServiceAdmin();
+    private final VerificationAdminService verificationAdminService = new VerificationAdminService();
 
     private final ObservableList<Utilisateur> master = FXCollections.observableArrayList();
 
@@ -107,6 +112,8 @@ public class ListeUtilisateurs {
         colCin.setCellValueFactory(new PropertyValueFactory<>("cin"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+
+        colVerification.setCellValueFactory(cell -> new SimpleStringProperty(n(cell.getValue().getVerificationStatus())));
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         colDateCreation.setCellValueFactory(cell -> {
@@ -251,11 +258,18 @@ public class ListeUtilisateurs {
     private void setupActionsColumn() {
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button btnDelete = new Button("Supprimer");
-            private final HBox box = new HBox(btnDelete);
+            private final Button btnApprove = new Button("Approuver");
+            private final Button btnReject = new Button("Rejeter");
+            private final HBox box = new HBox(8, btnApprove, btnReject, btnDelete);
 
             {
+                btnApprove.setStyle("-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-padding: 6 10;");
+                btnReject.setStyle("-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-padding: 6 10;");
                 btnDelete.setStyle("-fx-background-color: #d32f2f; -fx-text-fill: white; -fx-padding: 6 10;");
                 btnDelete.setOnAction(e -> onDeleteClicked(getIndex()));
+
+                btnApprove.setOnAction(e -> onApproveClicked(getIndex()));
+                btnReject.setOnAction(e -> onRejectClicked(getIndex()));
             }
 
             @Override
@@ -272,6 +286,13 @@ public class ListeUtilisateurs {
                 // empêcher l'admin connecté de se supprimer lui-même
                 btnDelete.setDisable(getConnectedUserId() == u.getId());
 
+                boolean isAdminRow = u.getRole() != null && "ADMIN".equalsIgnoreCase(u.getRole());
+                String vs = u.getVerificationStatus() == null ? "" : u.getVerificationStatus();
+                boolean alreadyApproved = "APPROVED".equalsIgnoreCase(vs);
+
+                btnApprove.setDisable(isAdminRow || alreadyApproved);
+                btnReject.setDisable(isAdminRow);
+
                 setGraphic(box);
             }
         });
@@ -285,6 +306,8 @@ public class ListeUtilisateurs {
         colRole.setPrefWidth(90);
         colDateCreation.setPrefWidth(120);
 
+        colVerification.setPrefWidth(140);
+
         colSignatureImg.setPrefWidth(110);
         colCarteProImg.setPrefWidth(110);
         colCertificationImg.setPrefWidth(120);
@@ -292,7 +315,56 @@ public class ListeUtilisateurs {
         colAdresse.setPrefWidth(200);
         colParcelles.setPrefWidth(200);
 
-        colActions.setPrefWidth(120);
+        colActions.setPrefWidth(260);
+    }
+
+    private void onApproveClicked(int index) {
+        if (index < 0 || index >= table.getItems().size()) return;
+        Utilisateur u = table.getItems().get(index);
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmation");
+        confirm.setHeaderText("Approuver l'utilisateur");
+        confirm.setContentText("Approuver " + u.getNom() + " " + u.getPrenom() + " ?");
+        var res = confirm.showAndWait();
+        if (res.isEmpty() || res.get() != ButtonType.OK) return;
+
+        try {
+            verificationAdminService.updateUserVerification(u.getId(), "APPROVED", null, null);
+            rafraichir(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Erreur");
+            err.setHeaderText("Impossible d'approuver");
+            err.setContentText(e.getMessage());
+            err.showAndWait();
+        }
+    }
+
+    private void onRejectClicked(int index) {
+        if (index < 0 || index >= table.getItems().size()) return;
+        Utilisateur u = table.getItems().get(index);
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Rejet");
+        dialog.setHeaderText("Rejeter l'utilisateur");
+        dialog.setContentText("Raison du rejet:");
+        var res = dialog.showAndWait();
+        if (res.isEmpty()) return;
+
+        try {
+            String reason = res.get().trim();
+            verificationAdminService.updateUserVerification(u.getId(), "REJECTED", reason.isEmpty() ? "Rejeté par admin" : reason, null);
+            rafraichir(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert err = new Alert(Alert.AlertType.ERROR);
+            err.setTitle("Erreur");
+            err.setHeaderText("Impossible de rejeter");
+            err.setContentText(e.getMessage());
+            err.showAndWait();
+        }
     }
 
     @FXML

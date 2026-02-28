@@ -1,6 +1,7 @@
 package controllers;
 
 import entities.Role;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import services.ServiceAuth;
 import services.ServiceProfil;
+import services.VerificationCodeEmailService;
+import utils.XamppUploads;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,9 +102,9 @@ public class ModifierProfil {
         prenomField.setText(safeString(userData.get("prenom")));
         emailField.setText(safeString(userData.get("email")));
 
-        signaturePathField.setText(safeString(userData.get("signature")));
-        carteProPathField.setText(safeString(userData.get("carte_pro")));
-        certificationPathField.setText(safeString(userData.get("certification")));
+        signaturePathField.setText(XamppUploads.fileNameFromPath(safeString(userData.get("signature"))));
+        carteProPathField.setText(XamppUploads.fileNameFromPath(safeString(userData.get("carte_pro"))));
+        certificationPathField.setText(XamppUploads.fileNameFromPath(safeString(userData.get("certification"))));
 
         // reset "new paths"
         newSignaturePath = null;
@@ -134,10 +137,13 @@ public class ModifierProfil {
     private void uploadSignature(ActionEvent event) {
         File file = chooseFile("Sélectionner une signature");
         if (file != null) {
-            String dbPath = saveFileAndReturnDbPath(file, "signatures");
-            if (dbPath != null) {
-                newSignaturePath = dbPath;
+            try {
+                String absPath = XamppUploads.save(file, XamppUploads.Category.SIGNATURES);
+                newSignaturePath = absPath;
                 signaturePathField.setText(file.getName()); // affichage UI: nom fichier
+            } catch (Exception e) {
+                showError("Erreur upload signature: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -146,10 +152,13 @@ public class ModifierProfil {
     private void uploadCartePro(ActionEvent event) {
         File file = chooseFile("Sélectionner une carte professionnelle");
         if (file != null) {
-            String dbPath = saveFileAndReturnDbPath(file, "cartes_pro");
-            if (dbPath != null) {
-                newCarteProPath = dbPath;
+            try {
+                String absPath = XamppUploads.save(file, XamppUploads.Category.CARTES);
+                newCarteProPath = absPath;
                 carteProPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload carte professionnelle: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -158,10 +167,13 @@ public class ModifierProfil {
     private void uploadCertification(ActionEvent event) {
         File file = chooseFile("Sélectionner une certification");
         if (file != null) {
-            String dbPath = saveFileAndReturnDbPath(file, "certifications");
-            if (dbPath != null) {
-                newCertificationPath = dbPath;
+            try {
+                String absPath = XamppUploads.save(file, XamppUploads.Category.CERTIFICATIONS);
+                newCertificationPath = absPath;
                 certificationPathField.setText(file.getName());
+            } catch (Exception e) {
+                showError("Erreur upload certification: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -170,34 +182,8 @@ public class ModifierProfil {
         FileChooser fc = new FileChooser();
         fc.setTitle(title);
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"),
-                new FileChooser.ExtensionFilter("PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Tous les fichiers", "*.*"));
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
         return fc.showOpenDialog(nomField.getScene().getWindow());
-    }
-
-    /**
-     * Copie le fichier dans uploads/<folderName>/ et retourne le chemin relatif à
-     * stocker en DB.
-     * ex: uploads/signatures/1700_x.png
-     */
-    private String saveFileAndReturnDbPath(File file, String folderName) {
-        try {
-            Path uploadDir = Paths.get("uploads", folderName);
-            if (!Files.exists(uploadDir))
-                Files.createDirectories(uploadDir);
-
-            String fileName = System.currentTimeMillis() + "_" + file.getName();
-            Path targetPath = uploadDir.resolve(fileName);
-
-            Files.copy(file.toPath(), targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-            return "uploads/" + folderName + "/" + fileName;
-        } catch (IOException e) {
-            showError("Erreur upload: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
     }
 
     // ===== Step 1: demander code =====
@@ -212,10 +198,30 @@ public class ModifierProfil {
         pendingData = collectFormData();
 
         generatedCode = generateSimpleCode();
-        System.out.println("Code modification profil (debug) = " + generatedCode);
 
-        showSuccess("Code généré (simulation). Veuillez le saisir pour confirmer.");
+        showSuccess("Envoi du code par email...");
         showStepCode();
+
+        String email = String.valueOf(pendingData.get("email"));
+        sendProfileUpdateCodeByEmailAsync(email, generatedCode);
+    }
+
+    private void sendProfileUpdateCodeByEmailAsync(String email, String code) {
+        Thread t = new Thread(() -> {
+            try {
+                new VerificationCodeEmailService().sendProfileUpdateCode(email, code);
+                Platform.runLater(() -> showSuccess("Code envoyé par email. Vérifiez votre boîte de réception."));
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    generatedCode = null;
+                    pendingData = null;
+                    showError("Impossible d'envoyer le code par email: " + e.getMessage());
+                    showStepEdit();
+                });
+            }
+        }, "mailersend-profile-code");
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
@@ -310,11 +316,30 @@ public class ModifierProfil {
             return false;
         }
 
+        // Uploads obligatoires
+        String signatureEffective = (newSignaturePath != null) ? newSignaturePath : safeString(userData.get("signature"));
+        if (signatureEffective.isBlank()) {
+            showError("La signature est obligatoire.");
+            return false;
+        }
+
         Role role = Role.valueOf(String.valueOf(userData.get("role")));
         if (role == Role.AGRICULTEUR) {
             String adresse = adresseField.getText() == null ? "" : adresseField.getText().trim();
             if (adresse.isEmpty()) {
                 showError("Adresse obligatoire pour l'agriculteur.");
+                return false;
+            }
+
+            String carteEffective = (newCarteProPath != null) ? newCarteProPath : safeString(userData.get("carte_pro"));
+            if (carteEffective.isBlank()) {
+                showError("La carte professionnelle est obligatoire.");
+                return false;
+            }
+        } else if (role == Role.EXPERT) {
+            String certEffective = (newCertificationPath != null) ? newCertificationPath : safeString(userData.get("certification"));
+            if (certEffective.isBlank()) {
+                showError("La certification est obligatoire.");
                 return false;
             }
         }

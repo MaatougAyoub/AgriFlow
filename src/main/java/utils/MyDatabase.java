@@ -5,10 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MyDatabase {
+
     //private static final String URL = "jdbc:mysql://localhost:3306/db-gusers";
-    private static final String URL = "jdbc:mysql://localhost:3306/agriflow4";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow8";
     //amen
     //private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
+
 
     private static final String USER = "root";
     private static final String PASSWORD = "";
@@ -20,6 +22,9 @@ public class MyDatabase {
         try {
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
             System.out.println("Connection established");
+
+            // Ensure DB has required columns even when services/tests run without MainFX
+            DbMigrations.ensureUserVerificationColumns(connection);
         } catch (SQLException e) {
             // mieux pour debug:
             e.printStackTrace();
@@ -35,6 +40,17 @@ public class MyDatabase {
     }
 
     public Connection getConnection() {
+        //-----------------------------------------------------------------------------
+        try {
+            if (connection == null || connection.isClosed() || !connection.isValid(2)) {
+                // try to re-establish the connection
+                connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                System.out.println("Connection re-established");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        //-----------------------------------------------------------------------------
         return connection;
     }
 }

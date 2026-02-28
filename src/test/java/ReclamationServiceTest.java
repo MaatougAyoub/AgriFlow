@@ -4,7 +4,12 @@ import entities.ReclamationRow;
 import entities.Statut;
 import org.junit.jupiter.api.*;
 import services.ServiceReclamation;
+import utils.MyDatabase;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -17,21 +22,57 @@ public class ReclamationServiceTest {
 
     static ServiceReclamation sr;
     static int idReclamation;
-
-    // ⚠️ adapte cet id à un utilisateur qui existe chez toi dans la table utilisateurs
-    // (par ex. ton admin id=38 dans ta capture précédente)
-    static final int TEST_USER_ID = 38;
+    static int testUserId;
+    static String testUserEmail;
 
     @BeforeAll
-    static void setUp() {
+    static void setUp() throws SQLException {
         sr = new ServiceReclamation();
+
+        String suffix = String.valueOf(System.currentTimeMillis());
+        testUserEmail = "reclamation.test." + suffix + "@gmail.com";
+
+        // créer un utilisateur de test (nécessaire pour la FK reclamations.utilisateur_id)
+        Connection cnx = MyDatabase.getInstance().getConnection();
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, revenu) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, "Reclamation");
+            ps.setString(2, "Tester");
+            int cin = (int) (System.currentTimeMillis() % 1_000_000_000L);
+            if (cin < 10000000) cin += 10000000;
+            ps.setInt(3, cin);
+            ps.setString(4, testUserEmail);
+            ps.setString(5, "pwd_test");
+            ps.setString(6, "ADMIN");
+            ps.setObject(7, java.time.LocalDate.parse("2026-02-15"));
+            ps.setString(8, "-");
+            ps.setDouble(9, 1.0);
+            ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                assertTrue(keys.next(), "Impossible de récupérer l'id utilisateur de test");
+                testUserId = keys.getInt(1);
+            }
+        }
+    }
+
+    @AfterAll
+    static void tearDown() throws SQLException {
+        if (testUserId > 0) {
+            Connection cnx = MyDatabase.getInstance().getConnection();
+            try (PreparedStatement ps = cnx.prepareStatement("DELETE FROM utilisateurs WHERE id = ?")) {
+                ps.setInt(1, testUserId);
+                ps.executeUpdate();
+            }
+        }
     }
 
     @Test
     @Order(1)
     void testAjouterReclamation() throws SQLException {
         Reclamation r = new Reclamation(
-                TEST_USER_ID,
+            testUserId,
                 Categorie.TECHNIQUE,
                 "Titre test",
                 "Description test"
@@ -57,7 +98,7 @@ public class ReclamationServiceTest {
 
         Reclamation updated = new Reclamation(
                 idReclamation,
-                TEST_USER_ID,
+            testUserId,
                 Categorie.SERVICE,
                 "Titre modifié",
                 "Description modifiée"
@@ -74,7 +115,7 @@ public class ReclamationServiceTest {
                 .orElse(null);
 
         assertNotNull(found, "Réclamation introuvable après modification");
-        assertEquals(TEST_USER_ID, found.getId_utilisateur());
+        assertEquals(testUserId, found.getId_utilisateur());
         assertEquals(Categorie.SERVICE, found.getCategorie());
         assertEquals("Titre modifié", found.getTitre());
         assertEquals("Description modifiée", found.getDescription());
@@ -95,7 +136,7 @@ public class ReclamationServiceTest {
                 .orElse(null);
 
         assertNotNull(row, "La réclamation n'apparaît pas dans recupererReclamationAvecUtilisateur()");
-        assertEquals(TEST_USER_ID, row.getUtilisateurId());
+        assertEquals(testUserId, row.getUtilisateurId());
         assertNotNull(row.getEmail(), "Email utilisateur doit être rempli via JOIN");
         assertNotNull(row.getNom(), "Nom utilisateur doit être rempli via JOIN");
         assertNotNull(row.getPrenom(), "Prénom utilisateur doit être rempli via JOIN");
@@ -141,7 +182,7 @@ public class ReclamationServiceTest {
         assertTrue(idReclamation > 0, "idReclamation non initialisé.");
 
         // Service.supprimerReclamation attend un Reclamation (tu utilises id)
-        sr.supprimerReclamation(new Reclamation(idReclamation, TEST_USER_ID, null, null, null));
+        sr.supprimerReclamation(new Reclamation(idReclamation, testUserId, null, null, null));
 
         List<Reclamation> recs = sr.recupererReclamation();
         assertFalse(recs.stream().anyMatch(x -> x.getId() == idReclamation),

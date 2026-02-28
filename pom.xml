@@ -14,27 +14,59 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+        <!-- MySQL Connector -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
+
+        <!-- BCrypt for password hashing -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.4</version>
+        </dependency>
+
+
+        <!-- JUnit 5 API -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- JUnit 5 Engine -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JavaFX FXML -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>21.0.2</version>
         </dependency>
+
+        <!-- JavaFX Controls -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>21.0.2</version>
         </dependency>
+
+        <!-- OCR (local, free): Tesseract via Tess4J -->
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>5.11.0</version>
+        </dependency>
+
+        <!-- JavaFX media -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-media</artifactId>
@@ -47,6 +79,8 @@
             <artifactId>kernel</artifactId>
             <version>7.2.5</version>
         </dependency>
+
+
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
@@ -57,6 +91,15 @@
             <artifactId>io</artifactId>
             <version>7.2.5</version>
         </dependency>
+
+        <!-- JavaFX Web (pour WebView / carte OSM) (yakine)-->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>21.0.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -70,13 +113,31 @@
             <version>20240303</version>
         </dependency>
 
+        <!-- MailerSend Java SDK -->
+        <!--
+        <dependency>
+            <groupId>com.mailersend</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        -->
+        <!-- Brevo SDK removed: using HttpClient + org.json directly -->
+
         <!-- Stripe Payment -->
         <dependency>
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>28.2.0</version>
         </dependency>
+
+        <!-- Gson pour parsing JSON (API météo) (Yakine) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <plugins>

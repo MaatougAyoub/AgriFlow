@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.ExploreCollaborationsController"
+            prefHeight="800.0" prefWidth="1400.0"
+            style="-fx-background-color: #F5F5F5;">
+
+    <!-- Header -->
+    <top>
+        <VBox styleClass="header">
+            <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15 30;">
+                <Text text="AGRIFLOW" styleClass="header-title"
+                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button fx:id="publishButton" text="Publier" styleClass="btn-primary" onAction="#handlePublishRequest"
+                    style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="myRequestsButton" text="Mes Demandes" styleClass="btn-secondary" onAction="#handleMyRequests"
+                    style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="myApplicationsButton" text="Mes Candidatures" styleClass="btn-secondary" onAction="#handleMyApplications"
+                    style="-fx-background-color: #757575; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+                <Button fx:id="adminButton" text="Admin" styleClass="btn-orange" onAction="#handleAdminValidation"
+                    style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="20" style="-fx-padding: 30;">
+
+            <!-- Titre -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Text text="Explore Collaborations" style="-fx-font-size: 28px; -fx-font-weight: bold;"/>
+                <Text text="(Demandes disponibles)" style="-fx-font-size: 14px; -fx-fill: #757575;"/>
+            </HBox>
+
+            <!-- Barre de recherche et filtres (sur une seule ligne) -->
+            <HBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 10 0;">
+
+                <!-- Champ de recherche -->
+                <TextField fx:id="searchField" promptText="🔍 Rechercher une collaboration..."
+                           prefWidth="280" style="-fx-font-size: 14px; -fx-padding: 8;"/>
+
+                <!-- Filtre Lieu -->
+                <ComboBox fx:id="locationFilter" promptText="Lieu" prefWidth="140"
+                          style="-fx-font-size: 14px;"/>
+
+                <!-- Date début -->
+                <DatePicker fx:id="startDatePicker" promptText="Date début" prefWidth="140"
+                            style="-fx-font-size: 14px;"/>
+
+                <!-- Date fin -->
+                <DatePicker fx:id="endDatePicker" promptText="Date fin" prefWidth="140"
+                            style="-fx-font-size: 14px;"/>
+
+                <!-- Filtre Type -->
+                <ComboBox fx:id="typeFilter" promptText="Type" prefWidth="140"
+                          style="-fx-font-size: 14px;"/>
+
+                <!-- Filtre Statut -->
+
+
+                <!-- Salaire min -->
+                <TextField fx:id="salaryMinField" promptText="Salaire min." prefWidth="110"
+                           style="-fx-font-size: 14px; -fx-padding: 8;"/>
+
+                <!-- Bouton Rechercher -->
+                <Button text="🔍 Rechercher" styleClass="btn-primary"
+                        onAction="#handleSearch" prefWidth="130" prefHeight="38"
+                        style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8;"/>
+
+                <!-- Bouton Rafraîchir -->
+                <Button text="🔄 Rafraîchir" styleClass="btn-info"
+                        onAction="#handleRefresh" prefWidth="130" prefHeight="38"
+                        style="-fx-background-color: #007BFF; -fx-text-fill: white; -fx-font-size: 14px; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+            </HBox>
+
+            <!-- Grid de cards (sera rempli dynamiquement) -->
+            <ScrollPane fitToWidth="true" fitToHeight="true"
+                        style="-fx-background-color: transparent; -fx-background: transparent;">
+                <GridPane fx:id="cardsGrid" hgap="20" vgap="20"
+                          style="-fx-padding: 10;">
+                    <!-- Les cards seront créées dynamiquement par le controller -->
+                </GridPane>
+            </ScrollPane>
+
+        </VBox>
+    </center>
+</BorderPane>

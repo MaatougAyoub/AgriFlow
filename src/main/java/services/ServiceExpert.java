@@ -3,6 +3,7 @@ package services;
 import entities.Expert;
 import entities.Role;
 import utils.MyDatabase;
+import utils.PasswordUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,18 +20,23 @@ public class ServiceExpert implements IServiceExpert <Expert> {
 
     @Override
     public void ajouterExpert(Expert expert) throws SQLException {
-        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, certification) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO utilisateurs (nom, prenom, cin, email, motDePasse, role, dateCreation, signature, certification, verification_status, verification_reason, verification_score) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, expert.getNom());
             ps.setString(2, expert.getPrenom());
             ps.setInt(3, expert.getCin());
             ps.setString(4, expert.getEmail());
-            ps.setString(5, expert.getMotDePasse());
+            // stocker le mot de passe haché
+            ps.setString(5, PasswordUtils.hashPassword(expert.getMotDePasse()));
             ps.setString(6, Role.EXPERT.toString());
             ps.setObject(7, expert.getDateCreation());
             ps.setString(8, expert.getSignature());
             ps.setString(9, expert.getCertification());
+            ps.setString(10, expert.getVerificationStatus() == null ? "APPROVED" : expert.getVerificationStatus());
+            ps.setString(11, expert.getVerificationReason());
+            if (expert.getVerificationScore() == null) ps.setNull(12, Types.DOUBLE);
+            else ps.setDouble(12, expert.getVerificationScore());
             ps.executeUpdate();
         }
         System.out.println("Expert ajoute avec succés!!! ✅");
@@ -43,7 +49,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
             psUser.setString(2, expert.getPrenom());
             psUser.setInt(3, expert.getCin());
             psUser.setString(4, expert.getEmail());
-            psUser.setString(5, expert.getMotDePasse());
+            // stocker le mot de passe haché lors de la modification
+            psUser.setString(5, PasswordUtils.hashPassword(expert.getMotDePasse()));
             psUser.setString(6, Role.EXPERT.toString());
             psUser.setObject(7, expert.getDateCreation());
             psUser.setString(8, expert.getSignature());
@@ -87,6 +94,10 @@ public class ServiceExpert implements IServiceExpert <Expert> {
                     String signatureE = rs.getString("signature");
                     String certificationE = rs.getString("certification");
                     Expert expert = new Expert(idE, nomE, prenomE, cinE, emailE, motDePasseE, roleE, dateCreationE, signatureE, certificationE);
+                    expert.setVerificationStatus(rs.getString("verification_status"));
+                    expert.setVerificationReason(rs.getString("verification_reason"));
+                    Object scoreObj = rs.getObject("verification_score");
+                    expert.setVerificationScore(scoreObj == null ? null : rs.getDouble("verification_score"));
                     expertsList.add(expert);
                 }
             }
@@ -110,7 +121,8 @@ public class ServiceExpert implements IServiceExpert <Expert> {
         // 1) utilisateurs
         String sqlUser = "UPDATE utilisateurs SET motDePasse = ? WHERE email = ? AND role = ?";
         try (PreparedStatement ps = connection.prepareStatement(sqlUser)) {
-            ps.setString(1, nouveauMotDePasse);
+            // hasher le mot de passe avant de le stocker
+            ps.setString(1, PasswordUtils.hashPassword(nouveauMotDePasse));
             ps.setString(2, email);
             ps.setString(3, Role.EXPERT.toString());
             ps.executeUpdate();

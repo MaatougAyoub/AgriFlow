@@ -107,8 +107,8 @@ public class ContCultureDetails {
         this.culture = culture;
 
         if (culture != null) {
-            titreLabel.setText("Plan : " + culture.getNomCulture());
-            infoLabel.setText("Parcelle : " + culture.getIdParcelle()
+            titreLabel.setText("Plan : " + culture.getNom());
+            infoLabel.setText("Parcelle : " + culture.getParcelleId()
                     + " | Eau recommandée : " + culture.getQuantiteEau() + " mm");
         }
 
