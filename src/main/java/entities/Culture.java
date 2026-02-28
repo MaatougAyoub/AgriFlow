@@ -24,8 +24,8 @@ public class Culture {
     private Double recolteEstime; // nullable
     private Timestamp dateCreation;
 
-
-    public Culture() {}
+    public Culture() {
+    }
 
     public Culture(int id, int parcelleId, int proprietaireId, String nom,
                    TypeCulture typeCulture, double superficie, Etat etat,
@@ -54,40 +54,121 @@ public class Culture {
         this.recolteEstime = recolteEstime;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Culture(int id, String nom, int parcelleId, double superficie) {
+        this.id = id;
+        this.parcelleId = parcelleId;
+        this.nom = nom;
+        this.superficie = superficie;
 
-    public int getParcelleId() { return parcelleId; }
-    public void setParcelleId(int parcelleId) { this.parcelleId = parcelleId; }
+    }
 
-    public int getProprietaireId() { return proprietaireId; }
-    public void setProprietaireId(int proprietaireId) { this.proprietaireId = proprietaireId; }
+    public Culture(int id, String nom, int parcelleId, double superficie, TypeCulture typeCulture) {
+        this.id = id;
+        this.nom = nom;
+        this.parcelleId = parcelleId;
+        this.superficie = superficie;
+        this.typeCulture = typeCulture;
+    }
 
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public float calculerBesoinEau() {
+        if (typeCulture == null)
+            return 0;
 
-    public TypeCulture getTypeCulture() { return typeCulture; }
-    public void setTypeCulture(TypeCulture typeCulture) { this.typeCulture = typeCulture; }
+        float f = switch (typeCulture) {
+            case BLE, ORGE, FRAISE, AUTRE -> 2.0f;
+            case MAIS, TOMATE -> 4.0f;
+            case POMME_DE_TERRE, AGRUMES, LEGUMES -> 3.0f;
+            case OLIVIER, VIGNE -> 1.0f;
+        };
 
-    public double getSuperficie() { return superficie; }
-    public void setSuperficie(double superficie) { this.superficie = superficie; }
+        return (float) (f * superficie);
+    }
 
-    public Etat getEtat() { return etat; }
-    public void setEtat(Etat etat) { this.etat = etat; }
+    public int getId() {
+        return id;
+    }
 
-    public Date getDateRecolte() { return dateRecolte; }
-    public void setDateRecolte(Date dateRecolte) { this.dateRecolte = dateRecolte; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public Double getRecolteEstime() { return recolteEstime; }
-    public void setRecolteEstime(Double recolteEstime) { this.recolteEstime = recolteEstime; }
+    public int getParcelleId() {
+        return parcelleId;
+    }
 
-    public Timestamp getDateCreation() { return dateCreation; }
-    public void setDateCreation(Timestamp dateCreation) { this.dateCreation = dateCreation; }
+    public void setParcelleId(int parcelleId) {
+        this.parcelleId = parcelleId;
+    }
+
+    public int getProprietaireId() {
+        return proprietaireId;
+    }
+
+    public void setProprietaireId(int proprietaireId) {
+        this.proprietaireId = proprietaireId;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public TypeCulture getTypeCulture() {
+        return typeCulture;
+    }
+
+    public void setTypeCulture(TypeCulture typeCulture) {
+        this.typeCulture = typeCulture;
+    }
+
+    public double getSuperficie() {
+        return superficie;
+    }
+
+    public void setSuperficie(double superficie) {
+        this.superficie = superficie;
+    }
+
+    public Etat getEtat() {
+        return etat;
+    }
+
+    public void setEtat(Etat etat) {
+        this.etat = etat;
+    }
+
+    public Date getDateRecolte() {
+        return dateRecolte;
+    }
+
+    public void setDateRecolte(Date dateRecolte) {
+        this.dateRecolte = dateRecolte;
+    }
+
+    public Double getRecolteEstime() {
+        return recolteEstime;
+    }
+
+    public void setRecolteEstime(Double recolteEstime) {
+        this.recolteEstime = recolteEstime;
+    }
+
+    public Timestamp getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Timestamp dateCreation) {
+        this.dateCreation = dateCreation;
+    }
 
     public float getQuantiteEau() {
-        if (typeCulture == null ) return 0;
+        if (typeCulture == null)
+            return 0;
 
-        float f= switch (typeCulture) {
+        float f = switch (typeCulture) {
             case BLE -> 2;
             case ORGE -> 2;
             case MAIS -> 4;
@@ -99,7 +180,8 @@ public class Culture {
             case FRAISE -> 2;
             case LEGUMES -> 3;
             case AUTRE -> 2;
-        };return (float) (f* superficie);
+        };
+        return (float) (f * superficie);
     }
 
     @Override

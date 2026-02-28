@@ -1,50 +1,32 @@
 package controllers;
 
 import entities.Culture;
-import services.ServiceCulture;
-import services.ServicePlanIrrigation;
-import javafx.event.ActionEvent;          // ✅ CORRECT (javafx)
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import services.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 public class ContPlanIrrigation {
 
-    @FXML
-    private VBox plansContainer;
+    @FXML private VBox plansContainer;
 
     private final ServiceCulture serviceCulture = new ServiceCulture();
     private final ServicePlanIrrigation servicePlan = new ServicePlanIrrigation();
-
-    // ───── Navigation vers Dashboard ─────
-    @FXML
-    private void goToDashboard(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Dashboard.fxml"));
-            Parent root = loader.load();
-            ((Node) event.getSource()).getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // ───── Déjà sur cette page ─────
-    @FXML
-    private void goToIrrigationPlan(ActionEvent event) {   // ✅ javafx.event.ActionEvent
-        // Déjà sur Irrigation Plan
-    }
+    private final IrrigationSmartService smartService = new IrrigationSmartService();
+    private final ServicePlanIrrigationJour serviceJour = new ServicePlanIrrigationJour();
 
     @FXML
     public void initialize() {
@@ -53,50 +35,84 @@ public class ContPlanIrrigation {
 
     private void chargerListeCultures() {
         try {
-            List<Culture> cultures = serviceCulture.recuperer();
+            List<Culture> cultures = serviceCulture.recupererCultures();
             plansContainer.getChildren().clear();
-
             for (Culture c : cultures) {
                 plansContainer.getChildren().add(creerCarte(c));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private HBox creerCarte(Culture c) {
-        HBox card = new HBox(10);
-        card.setPadding(new Insets(12));
-        card.setStyle("-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-border-color: #E6E6E6; -fx-border-radius: 10; -fx-cursor: hand;");
+        HBox card = new HBox(15);
+        card.setPadding(new Insets(15));
+        card.getStyleClass().add("culture-card"); // Ajoute du CSS si tu en as
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5); -fx-cursor: hand;");
 
-        card.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> ouvrirDetailsCulture(card, c));
-
-        Region bar = new Region();
-        bar.setPrefWidth(6);
-        bar.setMinWidth(6);
-        bar.setMaxWidth(6);
-        bar.setStyle("-fx-background-color: #2ba3c4; -fx-background-radius: 10;");
-
-        VBox left = new VBox(6);
-        Label nomCulture = new Label(c.getNom());
-        nomCulture.setStyle("-fx-font-size: 13; -fx-font-weight: bold;");
-
-        Label parcelle = new Label("Parcelle: " + c.getParcelleId());
-        parcelle.setStyle("-fx-font-size: 11; -fx-text-fill: #6B7280;");
-        left.getChildren().addAll(nomCulture, parcelle);
+        VBox info = new VBox(5);
+        Label name = new Label(c.getNom().toUpperCase());
+        name.setStyle("-fx-font-weight: bold; -fx-text-fill: #2D5A27; -fx-font-size: 14;");
+        Label detail = new Label("Besoin : " + c.calculerBesoinEau() + " mm/semaine");
+        info.getChildren().addAll(name, detail);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label quantite = new Label(c.getQuantiteEau() + " mm");
-        quantite.setStyle("-fx-font-size: 12; -fx-font-weight: bold; -fx-text-fill: #2ba3c4;");
+        Button btnIA = new Button("🤖 Optimiser IA");
+        btnIA.setStyle("-fx-background-color: #E8F5E9; -fx-text-fill: #2D5A27; -fx-font-weight: bold;");
+        btnIA.setOnAction(e -> genererPlanIA(c));
 
-        card.getChildren().addAll(bar, left, spacer, quantite);
+        card.getChildren().addAll(info, spacer, btnIA);
+        card.setOnMouseClicked(e -> ouvrirDetailsCulture(card, c));
         return card;
     }
 
+    private void genererPlanIA(Culture c) {
+        try {
+            // 1. Créer le plan en BDD s'il n'existe pas
+            int planId = servicePlan.createDraftPlanAndReturnId(c.getId(), (float) c.calculerBesoinEau());
+
+            // 2. Appeler l'intelligence Open-Meteo
+            Map<String, float[]> data = smartService.genererPlanIA(c);
+
+            // 3. Sauvegarder les jours
+            for (Map.Entry<String, float[]> entry : data.entrySet()) {
+                serviceJour.saveDay(planId, entry.getKey(), entry.getValue()[0], (int)entry.getValue()[1], entry.getValue()[2]);
+            }
+
+            showAlert("IA Planification", "Le plan pour " + c.getNom() + " a été optimisé avec la météo réelle !");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Connexion météo impossible.");
+        }
+    }
+
+    // --- Navigation ---
+    private void navigateTo(ActionEvent event, String path) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(path));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML void goToHome(ActionEvent e) { navigateTo(e, "/ExpertHome.fxml"); }
+    @FXML void goToDashboard(ActionEvent e) { navigateTo(e, "/Dashboard.fxml"); }
+    @FXML void goToAjouterProduit(ActionEvent e) { navigateTo(e, "/listeProduits.fxml"); }
+    @FXML void goToDiagnostic(ActionEvent e) { navigateTo(e, "/ExpertDashboard.fxml"); }
+    @FXML void goToIrrigationPlan(ActionEvent e) { navigateTo(e, "/IrrigationPlan.fxml"); }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+    // Dans ta méthode ouvrirDetailsCulture :
     private void ouvrirDetailsCulture(HBox card, Culture culture) {
         try {
+            // Assure-toi que le nom du fichier est EXACTEMENT CultureDetails.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/CultureDetails.fxml"));
             Parent root = loader.load();
 
@@ -106,9 +122,7 @@ public class ContPlanIrrigation {
             int idCulture = culture.getId();
             int planId = servicePlan.getLastPlanIdByCulture(idCulture);
 
-            if (planId == 0) {
-                planId = servicePlan.createDraftPlanAndReturnId(idCulture, (float) culture.getQuantiteEau());
-            }
+
 
             controller.setPlanId(planId);
 
@@ -116,7 +130,7 @@ public class ContPlanIrrigation {
             scene.setRoot(root);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(); // L'erreur s'affichera ici si le FXML a un problème
         }
     }
 }

@@ -1,18 +1,20 @@
 package controllers;
 
 import entities.Culture;
-import services.ServiceGenerateurPlan;
-import services.ServicePlanIrrigationJour;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import services.IrrigationSmartService;
+import services.ServicePlanIrrigationJour;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -20,83 +22,92 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class ContCultureDetails {
 
     private final ServicePlanIrrigationJour serviceJour = new ServicePlanIrrigationJour();
-    private final ServiceGenerateurPlan serviceGenerateur = new ServiceGenerateurPlan();
-
     private int planId;
     private Culture culture;
-
     private LocalDate dateReference = LocalDate.now();
 
     enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
-    enum Row { EAU, TIME, TEMP }
+    enum Row { EAU, TIME, TEMP, HUMID, PLUIE }
 
-    @FXML private Label titreLabel;
+    @FXML private Label titreLabel; // Utilisé aussi comme titleLabel
     @FXML private Label infoLabel;
     @FXML private Label labelSemaine;
     @FXML private GridPane planningGrid;
+    @FXML private Label consoStandardLabel;
+    @FXML private Label consoSmartLabel;
+    @FXML private Label economieLabel;
+
+    // Boutons d'action pour l'expert
+    @FXML private Button btnEnregistrer;
+    @FXML private Button btnGenererIA;
+    @FXML private Button btnAnnuler;
 
     private final Map<Row, Map<Day, TextField>> fields = new EnumMap<>(Row.class);
 
-
     @FXML
     public void initialize() {
-
         for (Row r : Row.values()) {
             fields.put(r, new EnumMap<>(Day.class));
         }
-
         buildInputGrid();
         mettreAJourLabelSemaine();
     }
 
-    @FXML
-    private void semainePrecedente(ActionEvent event) {
-        dateReference = dateReference.minusWeeks(1);
-        mettreAJourLabelSemaine();
-        reloadFromDbIfPossible();
-    }
+    // --- LOGIQUE IA & ACTIONS ---
 
     @FXML
-    private void semaineSuivante(ActionEvent event) {
-        dateReference = dateReference.plusWeeks(1);
-        mettreAJourLabelSemaine();
-        reloadFromDbIfPossible();
-    }
+    private void genererPlanAutomatique(ActionEvent event) {
+        if (culture == null || planId <= 0) {
+            showAlert("Erreur", "Données de culture manquantes.");
+            return;
+        }
 
-    private LocalDate getDebutSemaineActuelle() {
-        return dateReference.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-    }
+        IrrigationSmartService smartService = new IrrigationSmartService();
+        LocalDate lundi = getDebutSemaineActuelle();
 
-    private void mettreAJourLabelSemaine() {
+        try {
+            Map<String, float[]> planData = smartService.genererPlanIA(this.culture);
 
-        LocalDate debut = getDebutSemaineActuelle();
-        LocalDate fin = debut.plusDays(6);
+            for (Map.Entry<String, float[]> entry : planData.entrySet()) {
+                float[] val = entry.getValue();
+                serviceJour.saveDayOptimized(
+                        this.planId, entry.getKey(), val[0], (int) val[1],
+                        val[2], val[3], val[4], lundi
+                );
+            }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            reloadFromDbIfPossible();
+            showAlert("Succès", "Plan optimisé via IA : La pluie a été déduite !");
 
-        labelSemaine.setText(debut.format(formatter) + " au " + fin.format(formatter));
-
-        updateGridHeaders(debut);
-    }
-
-    private void updateGridHeaders(LocalDate lundi) {
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
-        String[] nomsJours = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
-
-        for (int i = 0; i < 7; i++) {
-            LocalDate dateJour = lundi.plusDays(i);
-            String texte = nomsJours[i] + "\n" + dateJour.format(formatter);
-            addHeader(i + 1, 0, texte);
+        } catch (Exception e) {
+            showAlert("Erreur API", "Détail : " + e.getMessage());
         }
     }
 
-    //DONNÉES
+    @FXML
+    private void enregistrerPlanning(ActionEvent event) {
+        if (planId <= 0) return;
+        try {
+            LocalDate lundi = getDebutSemaineActuelle();
+            for (Day day : Day.values()) {
+                float eau = parseSafeFloat(fields.get(Row.EAU).get(day).getText());
+                int time = (int) parseSafeFloat(fields.get(Row.TIME).get(day).getText());
+                float temp = parseSafeFloat(fields.get(Row.TEMP).get(day).getText());
+                serviceJour.saveDay(planId, day.name(), eau, time, temp, lundi);
+            }
+            showAlert("Succès", "Planning enregistré !");
+        } catch (Exception e) {
+            showAlert("Erreur", "Vérifiez les formats numériques.");
+        }
+    }
+
+    // --- ACCÈS AUX DONNÉES ---
 
     public void setPlanId(int planId) {
         this.planId = planId;
@@ -105,161 +116,181 @@ public class ContCultureDetails {
 
     public void setCulture(Culture culture) {
         this.culture = culture;
-
-        if (culture != null) {
-            titreLabel.setText("Plan : " + culture.getNom());
-            infoLabel.setText("Parcelle : " + culture.getParcelleId()
-                    + " | Eau recommandée : " + culture.getQuantiteEau() + " mm");
+        if (culture != null && titreLabel != null) {
+            titreLabel.setText("Optimisation : " + culture.getNom());
+            infoLabel.setText("Parcelle N°" + culture.getIdParcelle() + " | Objectif : " + culture.calculerBesoinEau() + " mm/sem");
         }
-
         reloadFromDbIfPossible();
     }
 
-    // CHARGEMENT BD
+    // --- MODE LECTURE (AGRICULTEUR) ---
+
+    public void setReadOnlyMode(boolean readOnly) {
+        if (readOnly) {
+            // 1. Verrouiller tous les champs de texte de la grille
+            fields.values().forEach(rowMap ->
+                    rowMap.values().forEach(tf -> {
+                        tf.setEditable(false);
+                        tf.setStyle(tf.getStyle() + "-fx-background-color: #f8f9fa; -fx-opacity: 0.9;");
+                    })
+            );
+
+            // 2. Masquer les boutons d'édition (Expert)
+            if (btnEnregistrer != null) { btnEnregistrer.setVisible(false); btnEnregistrer.setManaged(false); }
+            if (btnGenererIA != null) { btnGenererIA.setVisible(false); btnGenererIA.setManaged(false); }
+
+            // 3. Adapter les labels
+            if (btnAnnuler != null) btnAnnuler.setText("Retour");
+            if (titreLabel != null) titreLabel.setText("📖 Consultation : " + (culture != null ? culture.getNom() : "Plan"));
+        }
+    }
+
+    // --- MISE À JOUR DE L'INTERFACE ---
 
     private void reloadFromDbIfPossible() {
-
         clearFields();
-
         if (planId <= 0) return;
-
         try {
-
             LocalDate lundi = getDebutSemaineActuelle();
             Map<String, float[]> map = serviceJour.loadAll(planId, lundi);
 
             for (Day day : Day.values()) {
-
                 float[] valeurs = map.get(day.name());
-
                 if (valeurs != null) {
-                    fields.get(Row.EAU).get(day).setText(String.valueOf(valeurs[0]));
+                    fields.get(Row.EAU).get(day).setText(String.format(Locale.US, "%.2f", valeurs[0]));
                     fields.get(Row.TIME).get(day).setText(String.valueOf((int) valeurs[1]));
-                    fields.get(Row.TEMP).get(day).setText(String.valueOf(valeurs[2]));
+                    fields.get(Row.TEMP).get(day).setText(String.format(Locale.US, "%.1f", valeurs[2]));
+                    if (fields.get(Row.HUMID).get(day) != null)
+                        fields.get(Row.HUMID).get(day).setText(String.format(Locale.US, "%.0f%%", valeurs[3]));
+                    if (fields.get(Row.PLUIE).get(day) != null)
+                        fields.get(Row.PLUIE).get(day).setText(String.format(Locale.US, "%.1f", valeurs[4]));
                 }
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void clearFields() {
-        for (Row row : Row.values()) {
-            for (Day day : Day.values()) {
-                fields.get(row).get(day).clear();
-            }
-        }
-    }
-
-    // GÉNÉRATION AUTOMATIQUE
-
-    @FXML
-    private void genererPlanAutomatique(ActionEvent event) {
-
-        if (culture == null) {
-            showAlert("Erreur", "Aucune culture sélectionnée.");
-            return;
-        }
-
-        float quantiteTotale = culture.getQuantiteEau();
-        Map<String, float[]> planGenere = serviceGenerateur.genererPlanHebdo(quantiteTotale);
-
-        for (Day day : Day.values()) {
-
-            float[] valeurs = planGenere.get(day.name());
-
-            if (valeurs != null) {
-                fields.get(Row.EAU).get(day).setText(String.valueOf(valeurs[0]));
-                fields.get(Row.TIME).get(day).setText(String.valueOf((int) valeurs[1]));
-                fields.get(Row.TEMP).get(day).setText(String.valueOf(valeurs[2]));
-            }
-        }
-
-        showAlert("Succès", "Plan généré (non enregistré).");
-    }
-
-    // ENREGISTREMENT
-
-    @FXML
-    private void enregistrerPlanning(ActionEvent event) {
-
-        try {
-
-            if (planId <= 0) return;
-
-            LocalDate lundi = getDebutSemaineActuelle();
-
-            for (Day day : Day.values()) {
-
-                String eauStr = fields.get(Row.EAU).get(day).getText().trim();
-                String timeStr = fields.get(Row.TIME).get(day).getText().trim();
-                String tempStr = fields.get(Row.TEMP).get(day).getText().trim();
-
-                float eau = eauStr.isEmpty() ? 0f : Float.parseFloat(eauStr);
-                int time = timeStr.isEmpty() ? 0 : Integer.parseInt(timeStr);
-                float temp = tempStr.isEmpty() ? 0f : Float.parseFloat(tempStr);
-
-                serviceJour.saveDay(planId, day.name(), eau, time, temp, lundi);
-            }
-
-            showAlert("Succès", "Planning enregistré pour la semaine du " + lundi);
-
-        } catch (NumberFormatException e) {
-            showAlert("Erreur", "Vérifiez les valeurs numériques.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // ================= UI =================
-
-    @FXML
-    private void retour(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/palnIrrigation.fxml"));
-            Parent root = loader.load();
-            ((Node) event.getSource()).getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            updateConsommationStats(map);
+            updateGridHeaders(lundi, map);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void buildInputGrid() {
-
         planningGrid.getChildren().clear();
-
-        addHeader(0, 1, "Total eau (mm)");
-        addHeader(0, 2, "Time (min)");
-        addHeader(0, 3, "Temp (°C)");
+        addSideLabel(0, 1, "EAU (mm)");
+        addSideLabel(0, 2, "DURÉE (min)");
+        addSideLabel(0, 3, "TEMP (°C)");
+        addSideLabel(0, 4, "HUMIDITÉ (%)");
+        addSideLabel(0, 5, "PLUIE (mm)");
 
         addRowInputs(Row.EAU, 1);
         addRowInputs(Row.TIME, 2);
         addRowInputs(Row.TEMP, 3);
+        addRowInputs(Row.HUMID, 4);
+        addRowInputs(Row.PLUIE, 5);
     }
 
     private void addRowInputs(Row row, int gridRow) {
-
         for (int i = 0; i < Day.values().length; i++) {
-
             Day day = Day.values()[i];
-
             TextField tf = new TextField();
-            tf.setPrefWidth(110);
-            tf.setPrefHeight(50);
-            tf.setStyle("-fx-background-color:white; -fx-border-color:#2d5a27; -fx-alignment:center;");
+            tf.setPrefWidth(85);
+            tf.setStyle("-fx-alignment: center; -fx-background-radius: 8;");
+
+            // Les données environnementales sont toujours en lecture seule
+            if (row == Row.TEMP || row == Row.HUMID || row == Row.PLUIE) {
+                tf.setEditable(false);
+                tf.setFocusTraversable(false);
+                tf.setStyle(tf.getStyle() + "-fx-background-color: #f4f4f4;");
+            }
 
             fields.get(row).put(day, tf);
             planningGrid.add(tf, i + 1, gridRow);
         }
     }
 
-    private void addHeader(int col, int row, String text) {
+    private void updateGridHeaders(LocalDate lundi, Map<String, float[]> data) {
+        String[] noms = {"LUN", "MAR", "MER", "JEU", "VEN", "SAM", "DIM"};
+        for (int i = 0; i < 7; i++) {
+            Day dayEnum = Day.values()[i];
+            LocalDate dateJour = lundi.plusDays(i);
 
+            VBox headerBox = new VBox(2);
+            headerBox.setAlignment(Pos.CENTER);
+            headerBox.setStyle("-fx-padding: 5;");
+
+            Label nameLabel = new Label(noms[i]);
+            nameLabel.setStyle("-fx-font-weight: bold;");
+
+            Label dateLabel = new Label(dateJour.format(DateTimeFormatter.ofPattern("dd/MM")));
+            dateLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10;");
+
+            String icon = "☀️";
+            if (data != null && data.containsKey(dayEnum.name())) {
+                float[] v = data.get(dayEnum.name());
+                float p = v.length > 4 ? v[4] : 0;
+                if (p > 0.5) icon = "🌧️";
+                else if (v[2] > 30) icon = "🔥";
+            }
+
+            Label iconLabel = new Label(icon);
+            iconLabel.setStyle("-fx-font-size: 20;");
+
+            headerBox.getChildren().addAll(nameLabel, dateLabel, iconLabel);
+            planningGrid.add(headerBox, i + 1, 0);
+        }
+    }
+
+    private void updateConsommationStats(Map<String, float[]> data) {
+        if (culture == null || data == null) return;
+        float totalSmart = 0;
+        for (float[] vals : data.values()) { totalSmart += vals[0]; }
+        float totalStandard = culture.calculerBesoinEau();
+
+        consoStandardLabel.setText(String.format("%.1f mm", totalStandard));
+        consoSmartLabel.setText(String.format("%.1f mm", totalSmart));
+
+        float economie = totalStandard - totalSmart;
+        float pourcent = (totalStandard > 0) ? (economie / totalStandard) * 100 : 0;
+
+        economieLabel.setText(String.format("%s : %.1f%%", (economie >= 0 ? "Économie" : "Surplus"), Math.abs(pourcent)));
+        economieLabel.setStyle("-fx-text-fill: " + (economie >= 0 ? "#2ecc71" : "#e74c3c") + "; -fx-font-weight: bold;");
+    }
+
+    // --- NAVIGATION & UTILS ---
+
+    private LocalDate getDebutSemaineActuelle() {
+        return dateReference.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    private void mettreAJourLabelSemaine() {
+        LocalDate debut = getDebutSemaineActuelle();
+        labelSemaine.setText(debut.format(DateTimeFormatter.ofPattern("dd/MM")) + " au " + debut.plusDays(6).format(DateTimeFormatter.ofPattern("dd/MM")));
+    }
+
+    @FXML void semainePrecedente(ActionEvent event) { dateReference = dateReference.minusWeeks(1); updateUI(); }
+    @FXML void semaineSuivante(ActionEvent event) { dateReference = dateReference.plusWeeks(1); updateUI(); }
+
+    private void updateUI() { mettreAJourLabelSemaine(); reloadFromDbIfPossible(); }
+
+    @FXML
+    private void retour(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/ExperpalnIrrigation.fxml"));
+            ((Stage)((Node)event.getSource()).getScene().getWindow()).getScene().setRoot(root);
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    private void addSideLabel(int col, int row, String text) {
         Label label = new Label(text);
-        label.setStyle("-fx-font-weight:bold; -fx-text-alignment:center;");
-        GridPane.setHalignment(label, HPos.CENTER);
+        label.setStyle("-fx-font-weight: bold; -fx-font-size: 10px;");
+        GridPane.setHalignment(label, HPos.RIGHT);
         planningGrid.add(label, col, row);
+    }
+
+    private void clearFields() { fields.values().forEach(m -> m.values().forEach(TextField::clear)); }
+
+    private float parseSafeFloat(String text) {
+        try {
+            if (text == null || text.trim().isEmpty()) return 0f;
+            return Float.parseFloat(text.replace(",", ".").replace("%", ""));
+        } catch (Exception e) { return 0f; }
     }
 
     private void showAlert(String title, String content) {
