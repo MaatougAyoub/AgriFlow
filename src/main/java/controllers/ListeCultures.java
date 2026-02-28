@@ -80,6 +80,9 @@ public class ListeCultures {
     private List<Parcelle> parcellesDuUser = new ArrayList<>();
     private final Map<Integer, Double> parcelleResteById = new HashMap<>();
 
+    // Cache de toutes les cultures du user (pour calcul reste dans popup modif)
+    private List<Culture> culturesUserCache = new ArrayList<>();
+
     private static double round2(double v) {
         return Math.round(v * 100.0) / 100.0;
     }
@@ -87,14 +90,12 @@ public class ListeCultures {
     @FXML
     public void initialize() {
 
-        // simulation session si vide
         if (MainController.getCurrentUser() == null) {
             User uu = new User(35, "Taaat", "ddd", "emaaail@test.com");
             uu.setRole("AGRICULTEUR");
             MainController.setCurrentUser(uu);
         }
 
-        // combos filtres
         etatFilterCombo.setItems(FXCollections.observableArrayList(
                 "TOUT", "EN_COURS", "RECOLTEE", "EN_VENTE", "VENDUE"
         ));
@@ -106,12 +107,10 @@ public class ListeCultures {
         ));
         typeFilterCombo.setValue("TOUT");
 
-        // refresh auto
         if (searchField != null) searchField.textProperty().addListener((obs, o, n) -> rafraichir());
         if (etatFilterCombo != null) etatFilterCombo.setOnAction(e -> rafraichir());
         if (typeFilterCombo != null) typeFilterCombo.setOnAction(e -> rafraichir());
 
-        // rôle
         User u = MainController.getCurrentUser();
         boolean admin = isAdmin(u);
 
@@ -149,7 +148,6 @@ public class ListeCultures {
         }
     }
 
-    // ===== Navigation retour =====
     @FXML
     private void retourParcellesCultures() {
         naviguerVers("/ParcellesCultures.fxml");
@@ -218,6 +216,7 @@ public class ListeCultures {
             }
         });
     }
+
     private void imprimerContratPdf(int cultureId) {
         hideError();
         try {
@@ -251,12 +250,13 @@ public class ListeCultures {
             ex.printStackTrace();
         }
     }
+
     // ===== Parcelles du user + map id->nom + reste =====
-    // (reste: on ignore RECOLTEE)
     private void preloadParcelles() {
         parcelleNameById.clear();
         parcellesDuUser = new ArrayList<>();
         parcelleResteById.clear();
+        culturesUserCache = new ArrayList<>();
 
         try {
             List<Parcelle> allParcelles = sp.recuperer();
@@ -273,12 +273,13 @@ public class ListeCultures {
                         .filter(p -> p.getAgriculteurId() == u.getId())
                         .collect(Collectors.toList());
 
-                List<Culture> culturesUser = sc.recuperer().stream()
+                List<Culture> allCultures = sc.recuperer();
+                culturesUserCache = allCultures.stream()
                         .filter(c -> c.getProprietaireId() == u.getId())
                         .collect(Collectors.toList());
 
                 Map<Integer, Double> usedByParcelle = new HashMap<>();
-                for (Culture c : culturesUser) {
+                for (Culture c : culturesUserCache) {
                     if (c.getEtat() != null && c.getEtat() == Culture.Etat.RECOLTEE) continue;
                     usedByParcelle.merge(c.getParcelleId(), c.getSuperficie(), Double::sum);
                 }
@@ -294,9 +295,9 @@ public class ListeCultures {
 
         } catch (Exception ignored) {}
     }
+
     private String imagePathForType(Culture.TypeCulture type) {
         if (type == null) return "/images/cultures/autre.jpg";
-
         return switch (type) {
             case BLE -> "/images/cultures/ble.jpg";
             case ORGE -> "/images/cultures/orge.jpg";
@@ -311,71 +312,45 @@ public class ListeCultures {
             case AUTRE -> "/images/cultures/autre.jpg";
         };
     }
+
     private ImageView createCultureImageViewSquare(Culture.TypeCulture type, double size) {
         String path = imagePathForType(type);
-
         InputStream is = getClass().getResourceAsStream(path);
         if (is == null) is = getClass().getResourceAsStream("/images/cultures/autre.jpg");
-
         Image img = (is != null) ? new Image(is) : null;
-
         ImageView iv = new ImageView(img);
-
-        // carré
         iv.setFitWidth(size);
         iv.setFitHeight(size);
-
-        // on remplit le carré
         iv.setPreserveRatio(false);
         iv.setSmooth(true);
-
-        // Crop centré
         if (img != null && img.getWidth() > 0 && img.getHeight() > 0) {
-            double w = img.getWidth();
-            double h = img.getHeight();
+            double w = img.getWidth(), h = img.getHeight();
             double side = Math.min(w, h);
-            double x = (w - side) / 2.0;
-            double y = (h - side) / 2.0;
-            iv.setViewport(new Rectangle2D(x, y, side, side));
+            iv.setViewport(new Rectangle2D((w - side) / 2.0, (h - side) / 2.0, side, side));
         }
-
-        // Clip (coins arrondis)
         Rectangle clip = new Rectangle(size, size);
-        clip.setArcWidth(16);
-        clip.setArcHeight(16);
+        clip.setArcWidth(16); clip.setArcHeight(16);
         iv.setClip(clip);
-
         return iv;
     }
 
     private ImageView createCultureImageView(Culture.TypeCulture type, double w, double h) {
         String path = imagePathForType(type);
-
         InputStream is = getClass().getResourceAsStream(path);
-        if (is == null) {
-            // fallback si path/nom incorrect
-            is = getClass().getResourceAsStream("/images/cultures/autre.jpg");
-        }
-
+        if (is == null) is = getClass().getResourceAsStream("/images/cultures/autre.jpg");
         Image img = (is != null) ? new Image(is) : null;
-
         ImageView iv = new ImageView(img);
-        iv.setFitWidth(w);
-        iv.setFitHeight(h);
-        iv.setPreserveRatio(true);
-        iv.setSmooth(true);
+        iv.setFitWidth(w); iv.setFitHeight(h);
+        iv.setPreserveRatio(true); iv.setSmooth(true);
         return iv;
     }
 
     // ===== Chargement cultures =====
-    // IMPORTANT: pour AGRICULTEUR -> (propriétaire OU acheteur)
     private List<Culture> baseListByRole() throws SQLException {
         User u = MainController.getCurrentUser();
         if (u == null) return List.of();
-
         List<Culture> all = sc.recuperer();
         if (isAdmin(u)) return all;
-
         int uid = u.getId();
         return all.stream()
                 .filter(c -> c.getProprietaireId() == uid || (c.getIdAcheteur() != null && c.getIdAcheteur() == uid))
@@ -386,7 +361,6 @@ public class ListeCultures {
         String q = (searchField == null || searchField.getText() == null) ? "" : searchField.getText().trim().toLowerCase();
         String etat = etatFilterCombo != null ? etatFilterCombo.getValue() : "TOUT";
         String type = typeFilterCombo != null ? typeFilterCombo.getValue() : "TOUT";
-
         return list.stream()
                 .filter(c -> q.isEmpty() || (c.getNom() != null && c.getNom().toLowerCase().contains(q)))
                 .filter(c -> "TOUT".equals(etat) || (c.getEtat() != null && c.getEtat().name().equals(etat)))
@@ -398,7 +372,6 @@ public class ListeCultures {
     void rafraichir() {
         hideError();
         preloadParcelles();
-
         try {
             List<Culture> list = applyFilters(baseListByRole());
             if (countLabel != null) countLabel.setText(list.size() + " culture(s)");
@@ -409,39 +382,26 @@ public class ListeCultures {
     }
 
     @FXML
-    void rechercher() {
-        rafraichir();
-    }
+    void rechercher() { rafraichir(); }
 
     private void render(List<Culture> list) {
         User u = MainController.getCurrentUser();
-        if (isAdmin(u)) {
-            table.setItems(FXCollections.observableArrayList(list));
-        } else {
-            renderCards(list);
-        }
+        if (isAdmin(u)) table.setItems(FXCollections.observableArrayList(list));
+        else renderCards(list);
     }
 
-    // ===== Delete (droits) =====
-    // ADMIN ou PROPRIETAIRE ou ACHETEUR
     private void supprimerCulture(Culture c) {
         User u = MainController.getCurrentUser();
         if (u == null) { showError("Session vide."); return; }
-
         boolean admin = isAdmin(u);
         boolean owner = c.getProprietaireId() == u.getId();
         boolean buyer = (c.getIdAcheteur() != null && c.getIdAcheteur() == u.getId());
-
-        if (!admin && !owner && !buyer) {
-            showError("Accès refusé.");
-            return;
-        }
+        if (!admin && !owner && !buyer) { showError("Accès refusé."); return; }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText("Supprimer la culture ?");
         confirm.setContentText("Culture: " + c.getNom() + " (ID: " + c.getId() + ")");
-
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 try {
@@ -457,14 +417,10 @@ public class ListeCultures {
     // ===== AGRICULTEUR cards =====
     private void renderCards(List<Culture> list) {
         cardsContainer.getChildren().clear();
-        for (Culture c : list) {
-            cardsContainer.getChildren().add(buildCard(c));
-        }
+        for (Culture c : list) cardsContainer.getChildren().add(buildCard(c));
     }
 
     private Node buildCard(Culture c) {
-
-        // ====== Card container ======
         VBox card = new VBox(12);
         card.setPadding(new Insets(14));
         card.setStyle(
@@ -477,29 +433,17 @@ public class ListeCultures {
 
         User me = MainController.getCurrentUser();
         int myId = me != null ? me.getId() : -1;
-
         boolean iAmOwner = (myId != -1 && c.getProprietaireId() == myId);
         boolean iAmBuyer = (myId != -1 && c.getIdAcheteur() != null && c.getIdAcheteur() == myId) && !iAmOwner;
 
-        String parcelleNom = parcelleNameById.getOrDefault(
-                c.getParcelleId(),
-                "Parcelle #" + c.getParcelleId()
-        );
+        String parcelleNom = parcelleNameById.getOrDefault(c.getParcelleId(), "Parcelle #" + c.getParcelleId());
 
-        // ====== Image à gauche (carrée) ======
-        ImageView iv = createCultureImageViewSquare(c.getTypeCulture(), 200); // taille carré
+        ImageView iv = createCultureImageViewSquare(c.getTypeCulture(), 200);
         VBox imageBox = new VBox(iv);
         imageBox.setPadding(new Insets(6));
-        imageBox.setStyle(
-                "-fx-background-color: #ffffff;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-border-radius: 10;" +
-                        "-fx-border-color: rgba(0,0,0,0.10);"
-        );
+        imageBox.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(0,0,0,0.10);");
 
-        // ====== Texte à droite ======
         VBox info = new VBox(6);
-
         Label title = new Label(c.getNom() == null ? "(Sans nom)" : c.getNom());
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
 
@@ -510,45 +454,30 @@ public class ListeCultures {
         Label l5 = new Label("Date récolte: " + (c.getDateRecolte() == null ? "-" : c.getDateRecolte().toString()));
         Label l6 = new Label("Récolte estimée: " + (c.getRecolteEstime() == null ? "-" : c.getRecolteEstime()) + " Kg");
 
-        Label l7 = null;
-        Label l8 = null;
+        Label l7 = null, l8 = null;
         if (c.getEtat() == Culture.Etat.EN_VENTE) {
             l7 = new Label("Prix: " + (c.getPrixVente() == null ? "-" : (c.getPrixVente() + " DT")));
             l8 = new Label("Publié le: " + (c.getDatePublication() == null ? "-" : c.getDatePublication().toString()));
         }
 
         Label l9 = null;
-        if (iAmBuyer) {
-            l9 = new Label("Achetée le: " + (c.getDateVente() == null ? "-" : c.getDateVente().toString()));
-        }
+        if (iAmBuyer) l9 = new Label("Achetée le: " + (c.getDateVente() == null ? "-" : c.getDateVente().toString()));
 
-        ArrayList<Label> labs = new ArrayList<>();
-        labs.add(l1); labs.add(l2); labs.add(l3); labs.add(l4); labs.add(l5); labs.add(l6);
+        ArrayList<Label> labs = new ArrayList<>(List.of(l1, l2, l3, l4, l5, l6));
         if (l7 != null) labs.add(l7);
         if (l8 != null) labs.add(l8);
         if (l9 != null) labs.add(l9);
+        for (Label l : labs) l.setStyle("-fx-text-fill:#424242; -fx-font-size: 13px;");
 
-        for (Label l : labs) {
-            l.setStyle("-fx-text-fill:#424242; -fx-font-size: 13px;");
-        }
-
-        // ====== Actions ======
         HBox actions = new HBox(10);
-
-        Button btnEdit = new Button("Modifier");
-        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
-
+        Button btnEdit   = new Button("Modifier");
         Button btnDelete = new Button("Supprimer");
+        Button btnPrint  = new Button("Imprimer contrat");
+        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
         btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
-
-        Button btnPrint = new Button("Imprimer contrat");
         btnPrint.setStyle("-fx-background-color:#737373; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
         btnPrint.setOnAction(e -> imprimerContratPdf(c.getId()));
 
-        // règles demandées:
-        // - acheteur -> ACHETEE -> فقط imprimer
-        // - propriétaire + VENDUE -> VENDUE -> modifier + supprimer + imprimer
-        // - propriétaire autres états -> modifier + supprimer
         if (iAmBuyer && c.getEtat() == Culture.Etat.VENDUE) {
             actions.getChildren().add(btnPrint);
         } else if (iAmOwner && c.getEtat() == Culture.Etat.VENDUE) {
@@ -560,9 +489,6 @@ public class ListeCultures {
             btnDelete.setOnAction(e -> supprimerCulture(c));
             actions.getChildren().addAll(btnEdit, btnDelete);
         } else {
-            // si tu veux rien afficher pour un user qui n'est ni owner ni buyer:
-            // actions.getChildren().clear();
-            // ou laisser supprimer (comme ton code précédent):
             btnDelete.setOnAction(e -> supprimerCulture(c));
             actions.getChildren().add(btnDelete);
         }
@@ -571,20 +497,14 @@ public class ListeCultures {
         info.getChildren().addAll(labs);
         info.getChildren().add(actions);
 
-        // ====== Ligne principale : image gauche + texte droite ======
         HBox mainRow = new HBox(18, imageBox, info);
         mainRow.setAlignment(javafx.geometry.Pos.TOP_LEFT);
         HBox.setHgrow(info, Priority.ALWAYS);
-
         card.getChildren().add(mainRow);
 
-        // ====== Badge (sticker) en haut à droite ======
         Label badge = null;
-        if (iAmBuyer && c.getEtat() == Culture.Etat.VENDUE) {
-            badge = makeBadge("ACHETÉE", "#0B7A33");
-        } else if (iAmOwner && c.getEtat() == Culture.Etat.VENDUE) {
-            badge = makeBadge("VENDUE", "#0B7A33");
-        }
+        if (iAmBuyer && c.getEtat() == Culture.Etat.VENDUE)  badge = makeBadge("ACHETÉE", "#0B7A33");
+        else if (iAmOwner && c.getEtat() == Culture.Etat.VENDUE) badge = makeBadge("VENDUE", "#0B7A33");
 
         StackPane wrapper = new StackPane(card);
         if (badge != null) {
@@ -592,83 +512,175 @@ public class ListeCultures {
             StackPane.setMargin(badge, new Insets(10, 10, 0, 0));
             wrapper.getChildren().add(badge);
         }
-
         return wrapper;
     }
 
-    // ===== ComboBox Parcelle (nom + reste) =====
+    // ===== ComboBox Parcelle =====
     private ComboBox<Parcelle> createParcelleCombo(Parcelle preselect) {
         ComboBox<Parcelle> cb = new ComboBox<>();
         cb.setItems(FXCollections.observableArrayList(parcellesDuUser));
-
         cb.setCellFactory(listView -> new ListCell<>() {
-            @Override
-            protected void updateItem(Parcelle item, boolean empty) {
+            @Override protected void updateItem(Parcelle item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) { setText(null); return; }
-                double reste = parcelleResteById.getOrDefault(item.getId(), 0.0);
-                setText(item.getNom() + " (reste: " + reste + " m²)");
+                setText(item.getNom() + " (reste: " + parcelleResteById.getOrDefault(item.getId(), 0.0) + " m²)");
             }
         });
-
         cb.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Parcelle item, boolean empty) {
+            @Override protected void updateItem(Parcelle item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) { setText(null); return; }
-                double reste = parcelleResteById.getOrDefault(item.getId(), 0.0);
-                setText(item.getNom() + " (reste: " + reste + " m²)");
+                setText(item.getNom() + " (reste: " + parcelleResteById.getOrDefault(item.getId(), 0.0) + " m²)");
             }
         });
-
         if (preselect != null) cb.setValue(preselect);
         return cb;
     }
+
     private Label makeBadge(String text, String bgColor) {
         Label badge = new Label(text);
-        badge.setStyle(
-                "-fx-background-color: " + bgColor + ";" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-font-size: 12px;" +
-                        "-fx-padding: 6 10;" +
-                        "-fx-background-radius: 14;" +
-                        "-fx-border-radius: 14;"
-        );
+        badge.setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 6 10; -fx-background-radius: 14; -fx-border-radius: 14;");
         return badge;
     }
 
     private Parcelle findParcelleById(int id) {
-        for (Parcelle p : parcellesDuUser) {
-            if (p.getId() == id) return p;
-        }
+        for (Parcelle p : parcellesDuUser) if (p.getId() == id) return p;
         return null;
     }
 
-    // ===== Helpers UI EN_VENTE =====
-    private void setVisibleManaged(Control n, boolean v) {
-        if (n == null) return;
-        n.setVisible(v);
-        n.setManaged(v);
-    }
-    private void setVisibleManaged(Label n, boolean v) {
-        if (n == null) return;
-        n.setVisible(v);
-        n.setManaged(v);
+    private void setVisibleManaged(Control n, boolean v) { if (n == null) return; n.setVisible(v); n.setManaged(v); }
+    private void setVisibleManaged(Label n, boolean v)   { if (n == null) return; n.setVisible(v); n.setManaged(v); }
+
+    // ============================================================
+    // HELPERS VALIDATION (partagés par les deux popups)
+    // ============================================================
+
+    /** Retourne null si valide, sinon le message d'erreur. */
+    private String validerChamps(
+            String nom,
+            Culture.TypeCulture type,
+            String superficieTxt,
+            double maxSuperficie,
+            Culture.Etat etat,
+            LocalDate dateRecolte,
+            LocalDate dateCreation,
+            String recolteEstimeTxt,
+            String prixVenteTxt) {
+
+        // Nom
+        if (nom == null || nom.trim().isEmpty())
+            return "Le nom est obligatoire.";
+        if (nom.trim().length() < 2)
+            return "Le nom doit contenir au moins 2 caractères.";
+        if (nom.trim().length() > 100)
+            return "Le nom ne doit pas dépasser 100 caractères.";
+        if (!nom.trim().matches("[\\p{L}0-9 '\\-_]+"))
+            return "Le nom contient des caractères non autorisés.";
+
+        // Type
+        if (type == null)
+            return "Veuillez sélectionner un type de culture.";
+
+        // Superficie
+        if (superficieTxt == null || superficieTxt.trim().isEmpty())
+            return "La superficie est obligatoire.";
+        double superficie;
+        try { superficie = Double.parseDouble(superficieTxt.trim()); }
+        catch (NumberFormatException e) { return "La superficie doit être un nombre décimal (ex: 120.5)."; }
+        if (superficie <= 0)
+            return "La superficie doit être supérieure à 0.";
+        if (superficie > maxSuperficie + 1e-9)
+            return String.format("Superficie trop grande. Maximum disponible sur cette parcelle : %.2f m².", maxSuperficie);
+
+        // État
+        if (etat == null)
+            return "Veuillez sélectionner un état.";
+
+        // Date récolte
+        if (dateRecolte == null)
+            return "La date de récolte est obligatoire.";
+        if (!dateRecolte.isAfter(dateCreation))
+            return "La date de récolte doit être postérieure à la date de création (" + dateCreation + ").";
+        if (dateRecolte.isAfter(LocalDate.now().plusYears(10)))
+            return "La date de récolte semble trop lointaine (maximum +10 ans).";
+
+        // Récolte estimée (optionnelle)
+        if (recolteEstimeTxt != null && !recolteEstimeTxt.trim().isEmpty()) {
+            try {
+                double re = Double.parseDouble(recolteEstimeTxt.trim());
+                if (re <= 0) return "La récolte estimée doit être supérieure à 0.";
+                if (re > 10_000_000) return "La récolte estimée semble trop grande.";
+            } catch (NumberFormatException e) {
+                return "La récolte estimée doit être un nombre (ex: 300).";
+            }
+        }
+
+        // Prix vente (si EN_VENTE)
+        if (etat == Culture.Etat.EN_VENTE) {
+            if (prixVenteTxt == null || prixVenteTxt.trim().isEmpty())
+                return "Le prix de vente est obligatoire quand l'état est EN_VENTE.";
+            try {
+                double pv = Double.parseDouble(prixVenteTxt.trim());
+                if (pv <= 0)        return "Le prix de vente doit être supérieur à 0.";
+                if (pv > 100_000_000) return "Le prix de vente semble trop élevé.";
+            } catch (NumberFormatException e) {
+                return "Le prix de vente doit être un nombre décimal (ex: 250).";
+            }
+        }
+
+        return null; // tout est valide ✓
     }
 
-    private boolean isEnVente(Culture.Etat e) {
-        return e == Culture.Etat.EN_VENTE;
+    private boolean isPositiveDouble(String txt) {
+        if (txt == null || txt.trim().isEmpty()) return false;
+        try { return Double.parseDouble(txt.trim()) > 0; }
+        catch (NumberFormatException e) { return false; }
     }
 
-    // ===== AGRICULTEUR: add popup =====
+    private void setFieldStyle(TextField tf, boolean valid) {
+        tf.setStyle(valid
+                ? "-fx-border-color: #A5D6A7; -fx-border-radius: 6; -fx-background-radius: 6;"
+                : "-fx-border-color: #EF9A9A; -fx-border-radius: 6; -fx-background-radius: 6;");
+    }
+
+    /** Calcule le max autorisé pour une parcelle donnée en excluant une culture (null = aucune à exclure). */
+    private double calculerMaxSuperficie(Parcelle parcelle, Culture cultureExclue) {
+        if (parcelle == null) return Double.MAX_VALUE;
+        double sommeAutres = culturesUserCache.stream()
+                .filter(other -> cultureExclue == null || other.getId() != cultureExclue.getId())
+                .filter(other -> other.getParcelleId() == parcelle.getId())
+                .filter(other -> other.getEtat() != Culture.Etat.RECOLTEE)
+                .mapToDouble(Culture::getSuperficie)
+                .sum();
+        return Math.max(0, round2(parcelle.getSuperficie() - sommeAutres));
+    }
+
+    /** Construit le label inline d'erreur pour le popup. */
+    private Label buildInlineErrorLabel() {
+        Label lbl = new Label();
+        lbl.setVisible(false);
+        lbl.setManaged(false);
+        lbl.setWrapText(true);
+        lbl.setMaxWidth(Double.MAX_VALUE);
+        lbl.setStyle("-fx-text-fill: #B71C1C; -fx-background-color: #FFEBEE; -fx-padding: 8 12; -fx-background-radius: 8; -fx-font-size: 13px;");
+        return lbl;
+    }
+
+    private void showInlineError(Label lbl, String msg) {
+        lbl.setText(msg);
+        lbl.setVisible(true);
+        lbl.setManaged(true);
+    }
+
+    // ============================================================
+    // AJOUT — popup avec validation inline
+    // ============================================================
     @FXML
     void ouvrirFenetreAjout() {
         hideError();
         User u = MainController.getCurrentUser();
         if (u == null) { showError("Session vide."); return; }
         if (isAdmin(u)) { showError("ADMIN ne peut pas ajouter."); return; }
-
         if (parcellesDuUser.isEmpty()) {
             showError("Vous n'avez aucune parcelle. Ajoutez une parcelle avant de créer une culture.");
             return;
@@ -677,8 +689,6 @@ public class ListeCultures {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Ajouter Culture");
         dialog.setHeaderText("Nouvelle culture");
-
-        // ✅ IMPORTANT pour ton problème
         dialog.setResizable(true);
         dialog.getDialogPane().setPrefWidth(650);
         dialog.getDialogPane().setPrefHeight(520);
@@ -687,6 +697,9 @@ public class ListeCultures {
         ButtonType saveBtn = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
 
+        Label inlineError = buildInlineErrorLabel();
+
+        // Champs
         ComboBox<Parcelle> parcelleCombo = createParcelleCombo(parcellesDuUser.get(0));
 
         TextField nom = new TextField();
@@ -695,135 +708,135 @@ public class ListeCultures {
         ComboBox<Culture.TypeCulture> type = new ComboBox<>(FXCollections.observableArrayList(Culture.TypeCulture.values()));
         type.setPromptText("Type culture");
 
+        // Superficie : prompt mis à jour selon la parcelle sélectionnée
         TextField superficie = new TextField();
-        superficie.setPromptText("ex: 120.5");
 
-        DatePicker dateRecolte = new DatePicker();
-
-        TextField recolteEstime = new TextField();
-        recolteEstime.setPromptText("ex: 300");
-
-        // ✅ Etat + prix vente (affiché seulement si EN_VENTE)
         ComboBox<Culture.Etat> etat = new ComboBox<>(FXCollections.observableArrayList(Culture.Etat.values()));
         etat.setValue(Culture.Etat.EN_COURS);
+
+        DatePicker dateRecolte = new DatePicker();
+        TextField recolteEstime = new TextField();
+        recolteEstime.setPromptText("ex: 300 (optionnel)");
 
         TextField prixVente = new TextField();
         prixVente.setPromptText("ex: 250");
         prixVente.setDisable(true);
         prixVente.setManaged(false);
         prixVente.setVisible(false);
+        Label lblPrix = new Label("Prix vente (DT) * (si EN_VENTE)");
+        lblPrix.setVisible(false);
+        lblPrix.setManaged(false);
 
-        // ✅ petite preview image (optionnel mais pratique)
+        // Preview image
         ImageView preview = createCultureImageView(null, 120, 90);
-        type.valueProperty().addListener((obs, oldV, newV) -> {
-            ImageView iv = createCultureImageView(newV, 120, 90);
-            preview.setImage(iv.getImage());
+        type.valueProperty().addListener((obs, o, n) -> preview.setImage(createCultureImageView(n, 120, 90).getImage()));
+
+        // Mise à jour prompt superficie quand parcelle change
+        Runnable updateSuperficiePrompt = () -> {
+            Parcelle sel = parcelleCombo.getValue();
+            double max = calculerMaxSuperficie(sel, null);
+            superficie.setPromptText(String.format("max: %.2f m²", max));
+        };
+        parcelleCombo.valueProperty().addListener((obs, o, n) -> updateSuperficiePrompt.run());
+        updateSuperficiePrompt.run();
+
+        etat.valueProperty().addListener((obs, o, n) -> {
+            boolean ev = n == Culture.Etat.EN_VENTE;
+            prixVente.setDisable(!ev);
+            prixVente.setVisible(ev);  prixVente.setManaged(ev);
+            lblPrix.setVisible(ev);    lblPrix.setManaged(ev);
+            if (!ev) prixVente.clear();
         });
 
-        etat.valueProperty().addListener((obs, oldV, newV) -> {
-            boolean enVente = (newV == Culture.Etat.EN_VENTE);
-            prixVente.setDisable(!enVente);
-            prixVente.setManaged(enVente);
-            prixVente.setVisible(enVente);
-            if (!enVente) prixVente.clear();
-        });
+        // Feedback visuel temps réel
+        nom.textProperty().addListener((obs, o, n) -> setFieldStyle(nom, !n.trim().isEmpty()));
+        superficie.textProperty().addListener((obs, o, n) -> setFieldStyle(superficie, isPositiveDouble(n)));
+        recolteEstime.textProperty().addListener((obs, o, n) -> setFieldStyle(recolteEstime, n.trim().isEmpty() || isPositiveDouble(n)));
+        prixVente.textProperty().addListener((obs, o, n) -> setFieldStyle(prixVente, isPositiveDouble(n)));
 
+        // Grille
         GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(12);
+        grid.setHgap(12); grid.setVgap(12);
         grid.setPadding(new Insets(12));
         grid.setMaxWidth(Double.MAX_VALUE);
+        ColumnConstraints c0 = new ColumnConstraints(180);
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c0, c1);
 
         int r = 0;
-        grid.add(new Label("Parcelle *"), 0, r);                 grid.add(parcelleCombo, 1, r++);
-
-        grid.add(new Label("Nom *"), 0, r);                      grid.add(nom, 1, r++);
-
+        grid.add(new Label("Parcelle *"),                   0, r); grid.add(parcelleCombo,              1, r++);
+        grid.add(new Label("Nom *"),                        0, r); grid.add(nom,                        1, r++);
         HBox typeRow = new HBox(12, type, preview);
-        grid.add(new Label("Type *"), 0, r);                     grid.add(typeRow, 1, r++);
+        grid.add(new Label("Type *"),                       0, r); grid.add(typeRow,                    1, r++);
+        grid.add(new Label("Superficie (m²) *"),            0, r); grid.add(superficie,                 1, r++);
+        grid.add(new Label("Date récolte *"),               0, r); grid.add(dateRecolte,                1, r++);
+        grid.add(new Label("Récolte estimée (Kg)"),         0, r); grid.add(recolteEstime,              1, r++);
+        grid.add(new Label("Etat *"),                       0, r); grid.add(etat,                       1, r++);
+        grid.add(lblPrix,                                   0, r); grid.add(prixVente,                  1, r++);
 
-        grid.add(new Label("Superficie (m²) *"), 0, r);          grid.add(superficie, 1, r++);
-        grid.add(new Label("Date récolte *"), 0, r);             grid.add(dateRecolte, 1, r++);
-        grid.add(new Label("Récolte estimée (Kg)"), 0, r);       grid.add(recolteEstime, 1, r++);
-
-        grid.add(new Label("Etat *"), 0, r);                     grid.add(etat, 1, r++);
-        grid.add(new Label("Prix vente (DT) * (si EN_VENTE)"), 0, r);  grid.add(prixVente, 1, r++);
-
-        ScrollPane sp = new ScrollPane(grid);
+        ScrollPane sp = new ScrollPane(new VBox(10, inlineError, grid));
         sp.setFitToWidth(true);
         sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
         dialog.getDialogPane().setContent(sp);
+
+        // Bloquer la fermeture si invalide
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(saveBtn);
+        okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            Parcelle sel = parcelleCombo.getValue();
+            double max = calculerMaxSuperficie(sel, null);
+            String err = validerChamps(
+                    nom.getText(),
+                    type.getValue(),
+                    superficie.getText(),
+                    max,
+                    etat.getValue(),
+                    dateRecolte.getValue(),
+                    LocalDate.now(),       // date création = maintenant pour un ajout
+                    recolteEstime.getText(),
+                    prixVente.getText()
+            );
+            // Vérif parcelle
+            if (sel == null) err = "Parcelle obligatoire.";
+            // Vérif date > aujourd'hui (règle spécifique à l'ajout)
+            if (err == null && dateRecolte.getValue() != null && !dateRecolte.getValue().isAfter(LocalDate.now()))
+                err = "La date de récolte doit être supérieure à la date de création (" + LocalDate.now() + ").";
+
+            if (err != null) {
+                event.consume();
+                showInlineError(inlineError, err);
+            }
+        });
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveBtn) {
                 try {
                     Parcelle selectedParcelle = parcelleCombo.getValue();
-                    if (selectedParcelle == null) { showError("Parcelle obligatoire."); return; }
-
-                    String n = nom.getText() == null ? "" : nom.getText().trim();
-                    Culture.TypeCulture t = type.getValue();
-                    if (n.isEmpty() || t == null) { showError("Nom et type sont obligatoires."); return; }
-
                     double s = Double.parseDouble(superficie.getText().trim());
-                    if (s <= 0) { showError("Superficie doit être > 0."); return; }
-
                     LocalDate ld = dateRecolte.getValue();
-                    if (ld == null) { showError("Date récolte obligatoire."); return; }
-
-                    // date création = maintenant
-                    LocalDate creation = LocalDate.now();
-                    if (!ld.isAfter(creation)) {
-                        showError("La date de récolte doit être supérieure à la date de création (" + creation + ").");
-                        return;
-                    }
-
-                    // superficie <= reste parcelle (reste calcule sans RECOLTEE)
-                    double reste = parcelleResteById.getOrDefault(selectedParcelle.getId(), 0.0);
-                    if (s > reste + 1e-9) {
-                        showError("Superficie trop grande. Reste disponible: " + reste + " m².");
-                        return;
-                    }
-
-                    Double re = null;
                     String rtxt = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
-                    if (!rtxt.isEmpty()) re = Double.parseDouble(rtxt);
-
+                    Double re = rtxt.isEmpty() ? null : Double.parseDouble(rtxt);
                     Culture.Etat e = etat.getValue();
-                    if (e == null) { showError("Etat obligatoire."); return; }
 
-                    // prix vente si EN_VENTE
                     Double pv = null;
                     java.sql.Date dp = null;
                     if (e == Culture.Etat.EN_VENTE) {
-                        String ptxt = prixVente.getText() == null ? "" : prixVente.getText().trim();
-                        if (ptxt.isEmpty()) { showError("Prix obligatoire si EN_VENTE."); return; }
-                        pv = Double.parseDouble(ptxt);
-                        if (pv <= 0) { showError("Prix doit être > 0."); return; }
-                        dp = java.sql.Date.valueOf(LocalDate.now()); // publication = maintenant
+                        pv = Double.parseDouble(prixVente.getText().trim());
+                        dp = java.sql.Date.valueOf(LocalDate.now());
                     }
 
                     Culture c = new Culture(
-                            selectedParcelle.getId(),
-                            u.getId(),
-                            n,
-                            t,
-                            s,
-                            e,
-                            java.sql.Date.valueOf(ld),
-                            re
+                            selectedParcelle.getId(), u.getId(),
+                            nom.getText().trim(), type.getValue(),
+                            s, e, java.sql.Date.valueOf(ld), re
                     );
-
-                    // champs vente intégrés
                     c.setPrixVente(pv);
                     c.setDatePublication(dp);
-
                     sc.ajouter(c);
                     rafraichir();
 
                 } catch (NumberFormatException ex) {
-                    showError("Superficie / récolte estimée / prix doivent être numériques.");
+                    showError("Erreur numérique inattendue: " + ex.getMessage());
                 } catch (SQLException ex) {
                     showError("Erreur DB: " + ex.getMessage());
                 }
@@ -831,32 +844,19 @@ public class ListeCultures {
         });
     }
 
-    // ===== AGRICULTEUR: edit popup =====
+    // ============================================================
+    // MODIFICATION — popup avec validation inline
+    // ============================================================
     private void ouvrirPopupModificationAgriculteur(Culture c) {
         User u = MainController.getCurrentUser();
-        if (u == null) {
-            showError("Session vide.");
-            return;
-        }
-        if (isAdmin(u)) {
-            showError("ADMIN ne peut pas modifier.");
-            return;
-        }
-        if (c.getProprietaireId() != u.getId()) {
-            showError("Accès refusé.");
-            return;
-        }
-
-        if (parcellesDuUser.isEmpty()) {
-            showError("Vous n'avez aucune parcelle.");
-            return;
-        }
+        if (u == null) { showError("Session vide."); return; }
+        if (isAdmin(u)) { showError("ADMIN ne peut pas modifier."); return; }
+        if (c.getProprietaireId() != u.getId()) { showError("Accès refusé."); return; }
+        if (parcellesDuUser.isEmpty()) { showError("Vous n'avez aucune parcelle."); return; }
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Modifier Culture");
         dialog.setHeaderText("Modifier: " + (c.getNom() == null ? "" : c.getNom()));
-
-        // ✅ IMPORTANT pour ton problème
         dialog.setResizable(true);
         dialog.getDialogPane().setPrefWidth(650);
         dialog.getDialogPane().setPrefHeight(560);
@@ -865,18 +865,22 @@ public class ListeCultures {
         ButtonType saveBtn = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
 
+        Label inlineError = buildInlineErrorLabel();
+
+        // Champs
         Parcelle current = findParcelleById(c.getParcelleId());
         ComboBox<Parcelle> parcelleCombo = createParcelleCombo(current != null ? current : parcellesDuUser.get(0));
 
         TextField nom = new TextField(c.getNom());
+        nom.setPromptText("ex: Blé nord");
 
         ComboBox<Culture.TypeCulture> type = new ComboBox<>(FXCollections.observableArrayList(Culture.TypeCulture.values()));
         type.setValue(c.getTypeCulture());
 
         TextField superficie = new TextField(String.valueOf(c.getSuperficie()));
+
         ComboBox<Culture.Etat> etat = new ComboBox<>();
         Culture.Etat currentEtat = c.getEtat();
-
         if (currentEtat == Culture.Etat.VENDUE) {
             etat.setItems(FXCollections.observableArrayList(Culture.Etat.VENDUE, Culture.Etat.RECOLTEE));
             etat.setValue(Culture.Etat.VENDUE);
@@ -888,161 +892,130 @@ public class ListeCultures {
             etat.setItems(FXCollections.observableArrayList(Culture.Etat.values()));
             etat.setValue(currentEtat);
         }
+
         DatePicker dateRecolte = new DatePicker(c.getDateRecolte() == null ? null : c.getDateRecolte().toLocalDate());
-
         TextField recolteEstime = new TextField(c.getRecolteEstime() == null ? "" : String.valueOf(c.getRecolteEstime()));
+        recolteEstime.setPromptText("ex: 300 (optionnel)");
 
-        // ✅ prix vente visible seulement si EN_VENTE
         TextField prixVente = new TextField(c.getPrixVente() == null ? "" : String.valueOf(c.getPrixVente()));
-        boolean initEnVente = (c.getEtat() == Culture.Etat.EN_VENTE);
+        prixVente.setPromptText("ex: 250");
+        boolean initEnVente = c.getEtat() == Culture.Etat.EN_VENTE;
         prixVente.setDisable(!initEnVente);
-        prixVente.setManaged(initEnVente);
         prixVente.setVisible(initEnVente);
+        prixVente.setManaged(initEnVente);
+        Label lblPrix = new Label("Prix vente (DT) * (si EN_VENTE)");
+        lblPrix.setVisible(initEnVente);
+        lblPrix.setManaged(initEnVente);
 
-        // ✅ preview image
+        // Preview image
         ImageView preview = createCultureImageView(c.getTypeCulture(), 120, 90);
-        type.valueProperty().addListener((obs, oldV, newV) -> {
-            ImageView iv = createCultureImageView(newV, 120, 90);
-            preview.setImage(iv.getImage());
+        type.valueProperty().addListener((obs, o, n) -> preview.setImage(createCultureImageView(n, 120, 90).getImage()));
+
+        // Mise à jour prompt superficie quand parcelle change
+        Runnable updateSuperficiePrompt = () -> {
+            Parcelle sel = parcelleCombo.getValue();
+            double max = calculerMaxSuperficie(sel, c);
+            superficie.setPromptText(String.format("max: %.2f m²", max));
+        };
+        parcelleCombo.valueProperty().addListener((obs, o, n) -> updateSuperficiePrompt.run());
+        updateSuperficiePrompt.run();
+
+        etat.valueProperty().addListener((obs, o, n) -> {
+            boolean ev = n == Culture.Etat.EN_VENTE;
+            prixVente.setDisable(!ev);
+            prixVente.setVisible(ev);  prixVente.setManaged(ev);
+            lblPrix.setVisible(ev);    lblPrix.setManaged(ev);
+            if (!ev) prixVente.clear();
         });
 
-        etat.valueProperty().addListener((obs, oldV, newV) -> {
-            boolean enVente = (newV == Culture.Etat.EN_VENTE);
-            prixVente.setDisable(!enVente);
-            prixVente.setManaged(enVente);
-            prixVente.setVisible(enVente);
-            if (!enVente) prixVente.clear();
-        });
+        // Feedback visuel temps réel
+        nom.textProperty().addListener((obs, o, n) -> setFieldStyle(nom, !n.trim().isEmpty()));
+        superficie.textProperty().addListener((obs, o, n) -> setFieldStyle(superficie, isPositiveDouble(n)));
+        recolteEstime.textProperty().addListener((obs, o, n) -> setFieldStyle(recolteEstime, n.trim().isEmpty() || isPositiveDouble(n)));
+        prixVente.textProperty().addListener((obs, o, n) -> setFieldStyle(prixVente, isPositiveDouble(n)));
 
+        // Grille
         GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(12);
+        grid.setHgap(12); grid.setVgap(12);
         grid.setPadding(new Insets(12));
         grid.setMaxWidth(Double.MAX_VALUE);
+        ColumnConstraints c0 = new ColumnConstraints(180);
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c0, c1);
 
         int r = 0;
-        grid.add(new Label("Parcelle *"), 0, r);
-        grid.add(parcelleCombo, 1, r++);
-
-        grid.add(new Label("Nom *"), 0, r);
-        grid.add(nom, 1, r++);
-
+        grid.add(new Label("Parcelle *"),                   0, r); grid.add(parcelleCombo,              1, r++);
+        grid.add(new Label("Nom *"),                        0, r); grid.add(nom,                        1, r++);
         HBox typeRow = new HBox(12, type, preview);
-        grid.add(new Label("Type *"), 0, r);
-        grid.add(typeRow, 1, r++);
+        grid.add(new Label("Type *"),                       0, r); grid.add(typeRow,                    1, r++);
+        grid.add(new Label("Superficie (m²) *"),            0, r); grid.add(superficie,                 1, r++);
+        grid.add(new Label("Etat *"),                       0, r); grid.add(etat,                       1, r++);
+        grid.add(new Label("Date récolte *"),               0, r); grid.add(dateRecolte,                1, r++);
+        grid.add(new Label("Récolte estimée (Kg)"),         0, r); grid.add(recolteEstime,              1, r++);
+        grid.add(lblPrix,                                   0, r); grid.add(prixVente,                  1, r++);
 
-        grid.add(new Label("Superficie (m²) *"), 0, r);
-        grid.add(superficie, 1, r++);
-        grid.add(new Label("Etat *"), 0, r);
-        grid.add(etat, 1, r++);
-        grid.add(new Label("Date récolte *"), 0, r);
-        grid.add(dateRecolte, 1, r++);
-        grid.add(new Label("Récolte estimée (Kg)"), 0, r);
-        grid.add(recolteEstime, 1, r++);
-
-        grid.add(new Label("Prix vente (DT) * (si EN_VENTE)"), 0, r);
-        grid.add(prixVente, 1, r++);
-
-        ScrollPane spScroll = new ScrollPane(grid);
+        ScrollPane spScroll = new ScrollPane(new VBox(10, inlineError, grid));
         spScroll.setFitToWidth(true);
         spScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         spScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
         dialog.getDialogPane().setContent(spScroll);
+
+        // Bloquer la fermeture si invalide
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(saveBtn);
+        okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            Parcelle sel = parcelleCombo.getValue();
+            if (sel == null) { event.consume(); showInlineError(inlineError, "Parcelle obligatoire."); return; }
+
+            double max = calculerMaxSuperficie(sel, c);
+
+            LocalDate dateCreation = (c.getDateCreation() != null)
+                    ? c.getDateCreation().toLocalDateTime().toLocalDate()
+                    : LocalDate.now();
+
+            String err = validerChamps(
+                    nom.getText(),
+                    type.getValue(),
+                    superficie.getText(),
+                    max,
+                    etat.getValue(),
+                    dateRecolte.getValue(),
+                    dateCreation,
+                    recolteEstime.getText(),
+                    prixVente.getText()
+            );
+            if (err != null) {
+                event.consume();
+                showInlineError(inlineError, err);
+            }
+        });
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveBtn) {
                 try {
                     Parcelle selectedParcelle = parcelleCombo.getValue();
-                    if (selectedParcelle == null) {
-                        showError("Parcelle obligatoire.");
-                        return;
-                    }
-
-                    String n = nom.getText() == null ? "" : nom.getText().trim();
-                    Culture.TypeCulture t = type.getValue();
-                    if (n.isEmpty() || t == null) {
-                        showError("Nom et type obligatoires.");
-                        return;
-                    }
-
                     double s = Double.parseDouble(superficie.getText().trim());
-                    if (s <= 0) {
-                        showError("Superficie doit être > 0.");
-                        return;
-                    }
-
-                    Culture.Etat e = etat.getValue();
-                    if (e == null) {
-                        showError("Etat obligatoire.");
-                        return;
-                    }
-
                     LocalDate ld = dateRecolte.getValue();
-                    if (ld == null) {
-                        showError("Date récolte obligatoire.");
-                        return;
-                    }
-
-                    LocalDate creation = (c.getDateCreation() != null)
-                            ? c.getDateCreation().toLocalDateTime().toLocalDate()
-                            : LocalDate.now();
-
-                    if (!ld.isAfter(creation)) {
-                        showError("La date de récolte doit être supérieure à la date de création (" + creation + ").");
-                        return;
-                    }
-
-                    // superficie restante (reste calcule sans RECOLTEE)
-                    int oldParcelleId = c.getParcelleId();
-                    double resteNewParcelle = parcelleResteById.getOrDefault(selectedParcelle.getId(), 0.0);
-                    double maxAllowed = (selectedParcelle.getId() == oldParcelleId)
-                            ? resteNewParcelle + c.getSuperficie()
-                            : resteNewParcelle;
-
-                    if (s > maxAllowed + 1e-9) {
-                        showError("Superficie trop grande. Max autorisé: " + round2(maxAllowed) + " m².");
-                        return;
-                    }
-
-                    Double re = null;
                     String rtxt = recolteEstime.getText() == null ? "" : recolteEstime.getText().trim();
-                    if (!rtxt.isEmpty()) re = Double.parseDouble(rtxt);
+                    Double re = rtxt.isEmpty() ? null : Double.parseDouble(rtxt);
+                    Culture.Etat e = etat.getValue();
 
-                    // vente
                     Double pv = null;
                     java.sql.Date dp = null;
                     if (e == Culture.Etat.EN_VENTE) {
-                        String ptxt = prixVente.getText() == null ? "" : prixVente.getText().trim();
-                        if (ptxt.isEmpty()) {
-                            showError("Prix obligatoire si EN_VENTE.");
-                            return;
-                        }
-                        pv = Double.parseDouble(ptxt);
-                        if (pv <= 0) {
-                            showError("Prix doit être > 0.");
-                            return;
-                        }
-
-                        // si elle n’était pas déjà publiée, on met publication = maintenant
-                        if (c.getDatePublication() != null) dp = c.getDatePublication();
-                        else dp = java.sql.Date.valueOf(LocalDate.now());
+                        pv = Double.parseDouble(prixVente.getText().trim());
+                        dp = (c.getDatePublication() != null) ? c.getDatePublication() : java.sql.Date.valueOf(LocalDate.now());
                     } else {
-                        // si tu veux reset quand on sort de la vente
-                        pv = null;
-                        dp = null;
                         c.setIdAcheteur(null);
                         c.setDateVente(null);
                     }
 
                     c.setParcelleId(selectedParcelle.getId());
-                    c.setNom(n);
-                    c.setTypeCulture(t);
+                    c.setNom(nom.getText().trim());
+                    c.setTypeCulture(type.getValue());
                     c.setSuperficie(s);
                     c.setEtat(e);
                     c.setDateRecolte(java.sql.Date.valueOf(ld));
                     c.setRecolteEstime(re);
-
                     c.setPrixVente(pv);
                     c.setDatePublication(dp);
 
@@ -1050,7 +1023,7 @@ public class ListeCultures {
                     rafraichir();
 
                 } catch (NumberFormatException ex) {
-                    showError("Superficie / récolte estimée / prix doivent être numériques.");
+                    showError("Erreur numérique inattendue: " + ex.getMessage());
                 } catch (SQLException ex) {
                     showError("Erreur modification: " + ex.getMessage());
                 }
