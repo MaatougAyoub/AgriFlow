@@ -1,6 +1,7 @@
 package mains;
 
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,7 +14,8 @@ public class MainExpertDashboard extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Connexion à la base de données
-        MyConnection.getInstance().getConnection();
+        // MyConnection.getInstance().getConnection();
+        MyDatabase.getInstance().getConnection();
 
         // Charger le FXML de l'Expert Dashboard
         URL fxml = getClass().getResource("/ExpertHome.fxml");

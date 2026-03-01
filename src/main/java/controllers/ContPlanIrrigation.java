@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ContPlanIrrigation {
 
@@ -88,19 +89,39 @@ public class ContPlanIrrigation {
     }
 
     // --- Navigation ---
-    private void navigateTo(ActionEvent event, String path) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(path));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (Exception e) { e.printStackTrace(); }
+    private void delegateNav(java.util.function.Consumer<ExpertHomeController> action) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) action.accept(ctrl);
     }
 
-    @FXML void goToHome(ActionEvent e) { navigateTo(e, "/ExpertHome.fxml"); }
-    @FXML void goToDashboard(ActionEvent e) { navigateTo(e, "/Dashboard.fxml"); }
-    @FXML void goToAjouterProduit(ActionEvent e) { navigateTo(e, "/listeProduits.fxml"); }
-    @FXML void goToDiagnostic(ActionEvent e) { navigateTo(e, "/ExpertDashboard.fxml"); }
-    @FXML void goToIrrigationPlan(ActionEvent e) { navigateTo(e, "/IrrigationPlan.fxml"); }
+    @FXML
+    public void goToHome(ActionEvent event) {
+        delegateNav(c -> c.goToHome(null));
+    }
+
+    @FXML
+    public void goToIrrigationPlan(ActionEvent event) {
+        delegateNav(c -> c.goToIrrigationPlan(null));
+    }
+
+    @FXML
+    public void goToDashboard(ActionEvent event) {
+        delegateNav(c -> c.goToDashboard(null));
+    }
+
+    @FXML
+    public void goToAjouterProduit(ActionEvent event) {
+        delegateNav(c -> c.goToAjouterProduit(null));
+    }
+
+    @FXML
+    public void goToReclamations(ActionEvent event) {
+        delegateNav(c -> c.goToReclamations(null));
+    }
+
+
+
+
 
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

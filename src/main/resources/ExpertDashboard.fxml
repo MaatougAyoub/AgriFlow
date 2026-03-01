@@ -9,28 +9,31 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #F8F9FA;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ExpertController">
 
-    <left>
-        <VBox prefWidth="250.0" style="-fx-background-color: #2D5A27; -fx-padding: 30 0 0 0;">
+    
+<!--     <top>
+        <HBox prefHeight="10.0" style="-fx-background-color: #2E7D32; -fx-padding: 10 20;" alignment="CENTER_LEFT" spacing="20">
             <children>
-                <VBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 50 0;">
-                    <ImageView fitHeight="50.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
-                        <image><Image url="@images/content.png" /></image>
-                    </ImageView>
-                </VBox>
-                <VBox spacing="5">
-                    <Button onAction="#goToHome" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="🏠  Dashboard" />
-                    <Button onAction="#goToIrrigationPlan" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="💧  Plan d'Irrigation" />
-                    <Button onAction="#goToDashboard" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="📊  Analytique" />
-                    <Button onAction="#ouvrirListeProduits" prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30;" text="💊  Produits" />
-                    <Button prefHeight="50.0" prefWidth="250.0" style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 30; -fx-font-weight: bold;" text="📝  Diagnostic" />
-                </VBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button prefHeight="40.0" style="-fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: white; -fx-padding: 6 12; -fx-font-weight: bold;" text="🏠  Tableau de bord" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="💧  Plan d'Irrigation" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="📊  Analytique" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="💊  Produits" />
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <StackPane alignment="CENTER_RIGHT">
+                    <Button prefHeight="36.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="📝 Diagnostic" />
+                    <Label fx:id="badgeDiagnostic" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 7; -fx-font-size: 11;" text="0" StackPane.alignment="CENTER_RIGHT" translateX="-10" />
+                </StackPane>
             </children>
-        </VBox>
-    </left>
+        </HBox>
+    </top> -->
 
     <center>
         <VBox spacing="25" style="-fx-padding: 30;">
@@ -39,7 +42,7 @@
                     <children>
                         <VBox>
                             <Label style="-fx-font-size: 14;" text="Support et assistance technique" textFill="#7f8c8d" />
-                            <Label style="-fx-font-size: 28; -fx-font-weight: 800;" text="Diagnostic à traiter" textFill="#2D5A27" />
+                            <Label style="-fx-font-size: 28; -fx-font-weight: 800;" text="Diagnostic à traiter" textFill="#2E7D32" />
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
                         <Button onAction="#handleSupprimer" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12 25; -fx-cursor: hand;" text="🗑 Supprimer la sélection">
@@ -68,10 +71,10 @@
                     </children>
                 </VBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 12; -fx-border-color: #2D5A27; -fx-border-width: 0 0 0 5;">
+                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #E8F5E9; -fx-padding: 15; -fx-background-radius: 12; -fx-border-color: #2E7D32; -fx-border-width: 0 0 0 5;">
                     <children>
-                        <Label style="-fx-text-fill: #2D5A27; -fx-font-weight: bold; -fx-font-size: 14;" text="💡 Conseil :" />
-                        <Label style="-fx-text-fill: #2D5A27;" text="Cliquez sur une carte pour la sélectionner, double-cliquez pour ouvrir les détails." />
+                        <Label style="-fx-text-fill: #2E7D32; -fx-font-weight: bold; -fx-font-size: 14;" text="💡 Conseil :" />
+                        <Label style="-fx-text-fill: #2E7D32;" text="Cliquez sur une carte pour la sélectionner, double-cliquez pour ouvrir les détails." />
                     </children>
                 </HBox>
             </children>

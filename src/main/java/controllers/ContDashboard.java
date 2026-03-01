@@ -35,8 +35,8 @@ public class ContDashboard implements Initializable {
     @FXML
     private PieChart pieChartCultures;
 
-
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/agriflow";
+    // private static final String DB_URL = "jdbc:mysql://localhost:3306/Agriflow";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/agriflow8";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "";
 
@@ -47,26 +47,60 @@ public class ContDashboard implements Initializable {
         chargerTotalEauSemaine();
         chargerBarChart();
     }
+    /*
+     * @FXML
+     * private void goToHome(ActionEvent event) {
+     * navigateTo(event, "/ExpertHome.fxml");
+     * }
+     * 
+     * @FXML
+     * private void goToIrrigationPlan(ActionEvent event) {
+     * navigateTo(event, "/ExperpalnIrrigation.fxml");
+     * }
+     * 
+     * @FXML
+     * private void goToDashboard(ActionEvent event) {
+     * }
+     * 
+     * @FXML
+     * public void goToDiagnostic(ActionEvent event) { navigateTo(event,
+     * "/ExpertDashboard.fxml");}
+     * 
+     * @FXML
+     * private void goToAjouterProduit(ActionEvent event) {
+     * navigateTo(event, "/listeProduits.fxml");
+     * }
+     */
 
     @FXML
-    private void goToHome(ActionEvent event) {
-        navigateTo(event, "/ExpertHome.fxml");
-    }
-    @FXML
-    private void goToIrrigationPlan(ActionEvent event) {
-        navigateTo(event, "/ExperpalnIrrigation.fxml");
+    public void goToHome(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToHome(null);
     }
 
     @FXML
-    private void goToDashboard(ActionEvent event) {
-    }
-    @FXML
-    public void goToDiagnostic(ActionEvent event) { navigateTo(event, "/ExpertDashboard.fxml");}
-    @FXML
-    private void goToAjouterProduit(ActionEvent event) {
-        navigateTo(event, "/listeProduits.fxml");
+    public void goToIrrigationPlan(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToIrrigationPlan(null);
     }
 
+    @FXML
+    public void goToDashboard(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToDashboard(null);
+    }
+
+    @FXML
+    public void goToAjouterProduit(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToAjouterProduit(null);
+    }
+
+    @FXML
+    public void goToReclamations(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToReclamations(null);
+    }
 
     // ───── Méthode utilitaire de navigation ─────
     private void navigateTo(ActionEvent event, String fxmlPath) {
@@ -91,9 +125,10 @@ public class ContDashboard implements Initializable {
     private void chargerNombreParcelles() {
         String sql = "SELECT COUNT(DISTINCT parcelle_id ) AS total FROM cultures";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) lblNbParcelles.setText(String.valueOf(rs.getInt("total")));
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                lblNbParcelles.setText(String.valueOf(rs.getInt("total")));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -102,9 +137,10 @@ public class ContDashboard implements Initializable {
     private void chargerNombreCultures() {
         String sql = "SELECT COUNT(*) AS total FROM cultures";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) lblNbCultures.setText(String.valueOf(rs.getInt("total")));
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            if (rs.next())
+                lblNbCultures.setText(String.valueOf(rs.getInt("total")));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -117,8 +153,8 @@ public class ContDashboard implements Initializable {
                 "JOIN parcelle p ON c.parcelle_id = p.id";
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             float totalJournalier = 0;
 
@@ -156,8 +192,8 @@ public class ContDashboard implements Initializable {
         series.setName("Besoin en eau (mm/jour)");
 
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 String nom = rs.getString("nom");

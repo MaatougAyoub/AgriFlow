@@ -20,10 +20,10 @@ public class IrrigationSmartService {
         String[] joursCles = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
 
 
-        String loc = serviceParcelle.recupererLocalisation(culture.getIdParcelle());
+        String loc = serviceParcelle.recupererLocalisation(culture.getParcelleId());
 
         if (loc == null || !loc.contains(",")) {
-            throw new Exception("Localisation GPS introuvable pour la parcelle N°" + culture.getIdParcelle());
+            throw new Exception("Localisation GPS introuvable pour la parcelle N°" + culture.getParcelleId());
         }
 
         String[] coords = loc.split(",");

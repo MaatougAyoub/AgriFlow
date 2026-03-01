@@ -36,7 +36,7 @@
                            fitWidth="200" fitHeight="200"
                            preserveRatio="true" smooth="true">
                     <image>
-                        <Image url="images/logo.png"/>
+                        <Image url="@images/logo.png"/>
                     </image>
                 </ImageView>
 
@@ -88,8 +88,13 @@
                         maxWidth="1.7976931348623157E308"
                         style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
-                <Button fx:id="menuPlanIrrigation" text="Plan d'Irrigation"
+                <Button fx:id="menuPlanIrrigation" text="Plan d'Irrigation(Agriculteur)"
                         onAction="#goPlanIrrigation"
+                        maxWidth="1.7976931348623157E308"
+                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+
+                        <Button fx:id="menuPlanIrrigation2" text="Plan d'Irrigation(Expert)"
+                        onAction="#goPlanIrrigation2"
                         maxWidth="1.7976931348623157E308"
                         style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
             </VBox>

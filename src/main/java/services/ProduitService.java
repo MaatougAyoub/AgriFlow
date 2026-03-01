@@ -1,7 +1,8 @@
 package services;
 
 import entities.ProduitPhytosanitaire;
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ public class ProduitService {
     private final Connection conn;
 
     public ProduitService() {
-        conn = MyConnection.getInstance().getConnection();
+        conn = MyDatabase.getInstance().getConnection();
     }
 
     public List<ProduitPhytosanitaire> getAll() {

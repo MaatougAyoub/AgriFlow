@@ -1,6 +1,7 @@
 package services;
 
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ public class ServicePlanIrrigationJour {
     private final Connection connection;
 
     public ServicePlanIrrigationJour() {
-        connection = MyConnection.getInstance().getConnection();
+        connection = MyDatabase.getInstance().getConnection();
     }
 
     public void saveDay(int planId, String day, float eauMm, int tempsMin, float tempC) throws SQLException {

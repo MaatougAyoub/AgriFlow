@@ -10,6 +10,7 @@ import java.util.Locale;
 public class WeatherService {
 
     public JSONObject getForecast(double lat, double lon) throws Exception {
+
         // L'utilisation de Locale.US force le point (.) au lieu de la virgule
         String urlString = String.format(Locale.US,
                 "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&daily=precipitation_sum,temperature_2m_max,relative_humidity_2m_max&timezone=auto",

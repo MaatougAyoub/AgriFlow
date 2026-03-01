@@ -1,6 +1,7 @@
 package mains;
 
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +13,8 @@ public class MainPlanIrrigation extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        MyConnection.getInstance().getConnection();
+        // MyConnection.getInstance().getConnection();
+        MyDatabase.getInstance().getConnection();
 
         URL fxml = getClass().getResource("/palnIrrigation.fxml");
         if (fxml == null) {

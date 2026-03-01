@@ -3,7 +3,8 @@ package services;
 import entities.Parcelle;
 import utils.MyDatabase;
 
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

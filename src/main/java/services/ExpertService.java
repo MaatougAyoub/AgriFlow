@@ -1,7 +1,8 @@
 package services;
 
 import entities.Diagnostic;
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class ExpertService {
     private final Connection connection;
 
     public ExpertService() {
-        connection = MyConnection.getInstance().getConnection();
+        connection = MyDatabase.getInstance().getConnection();
     }
 
     public List<Diagnostic> getAllDiagnostics() {

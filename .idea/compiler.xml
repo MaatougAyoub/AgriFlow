@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="my-project" />
+        <module name="agriflow-integration yakine - Copie" />
         <module name="AgriFlow" />
         <module name="maven-surefire-plugin" />
         <module name="AgriFlow-PI" />

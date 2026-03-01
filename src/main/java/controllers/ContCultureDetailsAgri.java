@@ -72,7 +72,7 @@ public class ContCultureDetailsAgri {
         this.culture = culture;
         if (culture != null && titreLabel != null) {
             titreLabel.setText("Optimisation : " + culture.getNom());
-            infoLabel.setText("Parcelle N°" + culture.getIdParcelle() + " | Objectif : " + culture.calculerBesoinEau() + " mm/sem");
+            infoLabel.setText("Parcelle N°" + culture.getParcelleId() + " | Objectif : " + culture.calculerBesoinEau() + " mm/sem");
         }
         reloadFromDbIfPossible();
     }

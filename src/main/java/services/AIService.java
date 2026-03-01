@@ -12,7 +12,7 @@ import java.util.Base64;
 
 public class AIService {
 
-    String apiKey = System.getenv("GROQ_API_KEY");
+    String GROQ_KEY = System.getenv("GROQ_API_KEY");
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 
@@ -52,7 +52,7 @@ public class AIService {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL))
-                    .header("Authorization", "Bearer " + apiKey)
+                    .header("Authorization", "Bearer " + GROQ_KEY)
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
                     .build();

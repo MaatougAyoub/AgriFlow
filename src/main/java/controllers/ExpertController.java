@@ -163,9 +163,34 @@ public class ExpertController {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    @FXML private void goToHome(ActionEvent event) { navigateTo(event, "/ExpertHome.fxml"); }
-    @FXML private void goToIrrigationPlan(ActionEvent event) { navigateTo(event, "/ExperpalnIrrigation.fxml"); }
-    @FXML private void goToDashboard(ActionEvent event) { navigateTo(event, "/dashboard.fxml"); }
-    @FXML private void ouvrirListeProduits(ActionEvent event) { navigateTo(event, "/listeProduits.fxml"); }
-    @FXML private void goToDiagnostic(ActionEvent event) { loadDiagnostics(); } // Rafraîchir
+    // --- NAVIGATION (délégation à ExpertHomeController) ---
+    @FXML
+    public void goToHome(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToHome(null);
+    }
+
+    @FXML
+    public void goToIrrigationPlan(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToIrrigationPlan(null);
+    }
+
+    @FXML
+    public void goToDashboard(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToDashboard(null);
+    }
+
+    @FXML
+    public void goToAjouterProduit(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToAjouterProduit(null);
+    }
+
+    @FXML
+    public void goToReclamations(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToReclamations(null);
+    }
 }

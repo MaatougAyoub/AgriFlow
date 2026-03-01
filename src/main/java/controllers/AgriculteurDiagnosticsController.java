@@ -18,6 +18,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import mains.MainIrrigationFX;
 import services.DiagnosticService;
 
 import java.io.File;
@@ -106,8 +107,17 @@ public class AgriculteurDiagnosticsController {
         } catch (IOException e) { e.printStackTrace(); }
     }
 
-    @FXML private void goToHome(ActionEvent event) { navigateTo(event, "/AgriculteurHome.fxml"); }
-    @FXML private void goToIrrigation(ActionEvent event) { navigateTo(event, "/palnIrrigation.fxml"); }
+    //@FXML private void goToHome(ActionEvent event) { navigateTo(event, "/AgriculteurHome.fxml"); }
+
+    @FXML private void goToIrrigation(ActionEvent event) {
+        // Charger directement la vue du plan d'irrigation
+        //navigateTo(event, "/palnIrrigation.fxml");
+        MainIrrigationFX.showExploreIrrigations();
+        
+    }
     @FXML private void goToDashboard(ActionEvent event) { navigateTo(event, "/Dashboard.fxml"); }
-    @FXML private void goToAjouterReclamation(ActionEvent event) { navigateTo(event, "/Diagnostic.fxml"); }
+    @FXML private void goToAjouterReclamation(ActionEvent event) { 
+        navigateTo(event, "/Diagnostic.fxml"); 
+
+    }
 }

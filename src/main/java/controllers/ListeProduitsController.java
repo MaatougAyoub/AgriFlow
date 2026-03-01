@@ -110,18 +110,43 @@ public class ListeProduitsController {
         }
     }
 
-    // --- Navigation (Standard) ---
-    private void navigateTo(ActionEvent event, String fxmlPath) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) { e.printStackTrace(); }
+    /** Ouvre le formulaire d'ajout d'un produit dans la zone centrale */
+    @FXML
+    private void ouvrirAjoutProduit(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) {
+            ctrl.loadCenterPage("/ajouterProduit.fxml");
+        }
     }
 
-    @FXML private void goToHome(ActionEvent event) { navigateTo(event, "/ExpertHome.fxml"); }
-    @FXML private void goToIrrigationPlan(ActionEvent event) { navigateTo(event, "/ExperpalnIrrigation.fxml"); }
-    @FXML private void goToDashboard(ActionEvent event) { navigateTo(event, "/dashboard.fxml"); }
-    @FXML private void goToDiagnostic(ActionEvent event) { navigateTo(event, "/ExpertDashboard.fxml"); }
-    @FXML private void ouvrirAjoutProduit(ActionEvent event) { navigateTo(event, "/AjouterProduit.fxml"); }
+    // --- Navigation (délégation à ExpertHomeController) ---
+    @FXML
+    public void goToHome(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToHome(null);
+    }
+
+    @FXML
+    public void goToIrrigationPlan(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToIrrigationPlan(null);
+    }
+
+    @FXML
+    public void goToDashboard(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToDashboard(null);
+    }
+
+    @FXML
+    public void goToAjouterProduit(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToAjouterProduit(null);
+    }
+
+    @FXML
+    public void goToReclamations(ActionEvent event) {
+        ExpertHomeController ctrl = ExpertHomeController.getInstance();
+        if (ctrl != null) ctrl.goToReclamations(null);
+    }
 }

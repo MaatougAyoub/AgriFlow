@@ -1,7 +1,8 @@
 package services;
 
 import entities.Diagnostic;
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,7 +13,8 @@ public class DiagnosticService {
     private final Connection connection;
 
     public DiagnosticService() {
-        connection = MyConnection.getInstance().getConnection();
+        //connection = MyConnection.getInstance().getConnection();
+        connection = MyDatabase.getInstance().getConnection();
     }
 
     public void ajouterDiagnostic(Diagnostic d) {
