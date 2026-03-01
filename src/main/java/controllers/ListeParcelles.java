@@ -13,7 +13,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +41,6 @@ public class ListeParcelles {
     @FXML private TableColumn<Parcelle, Object> colDateCreation;
     @FXML private TableColumn<Parcelle, Void> colActions;
 
-
     // AGRICULTEUR
     @FXML private VBox agriculteurPane;
     @FXML private ScrollPane cardsScroll;
@@ -52,26 +50,20 @@ public class ListeParcelles {
 
     @FXML
     public void initialize() {
-        if (MainController.getCurrentUser() == null) {User uu=
-                new User(36, "Taaat", "ddd", "emaaail@test.com");uu.setRole("AGRICULTEUR");
+        if (MainController.getCurrentUser() == null) {
+            User uu = new User(36, "Taaat", "ddd", "emaaail@test.com");
+            uu.setRole("AGRICULTEUR");
             MainController.setCurrentUser(uu);
-
         }
-        // Combo type
+
         typeFilterCombo.setItems(FXCollections.observableArrayList(
                 "TOUT", "ARGILEUSE", "SABLEUSE", "LIMONEUSE", "CALCAIRE", "HUMIFERE", "SALINE", "MIXTE", "AUTRE"
         ));
         typeFilterCombo.setValue("TOUT");
 
-        // Recherche en temps réel (comme Marketplace)
-        if (searchField != null) {
-            searchField.textProperty().addListener((obs, oldV, newV) -> rafraichir());
-        }
-        if (typeFilterCombo != null) {
-            typeFilterCombo.setOnAction(e -> rafraichir());
-        }
+        if (searchField != null) searchField.textProperty().addListener((obs, o, n) -> rafraichir());
+        if (typeFilterCombo != null) typeFilterCombo.setOnAction(e -> rafraichir());
 
-        // Déterminer rôle + afficher bonne UI
         User u = MainController.getCurrentUser();
         boolean admin = isAdmin(u);
 
@@ -79,9 +71,7 @@ public class ListeParcelles {
         setVisibleManaged(agriculteurPane, !admin);
         setVisibleManaged(btnAjouterParcelle, !admin);
 
-        // Table ADMIN
         if (admin) setupAdminTable();
-
         rafraichir();
     }
 
@@ -94,15 +84,11 @@ public class ListeParcelles {
         colLocalisation.setCellValueFactory(c -> new javafx.beans.property.SimpleStringProperty(c.getValue().getLocalisation()));
         colDateCreation.setCellValueFactory(c -> new javafx.beans.property.SimpleObjectProperty<>(c.getValue().getDateCreation()));
 
-        // ADMIN: فقط supprimer (pas modifier)
         colActions.setCellFactory(col -> new TableCell<>() {
             private final Button btnDelete = new Button("Supprimer");
             {
                 btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:6 10; -fx-background-radius:8;");
-                btnDelete.setOnAction(e -> {
-                    Parcelle p = getTableView().getItems().get(getIndex());
-                    supprimerParcelle(p);
-                });
+                btnDelete.setOnAction(e -> supprimerParcelle(getTableView().getItems().get(getIndex())));
             }
             @Override
             protected void updateItem(Void item, boolean empty) {
@@ -118,8 +104,7 @@ public class ListeParcelles {
 
     private void setVisibleManaged(Node n, boolean v) {
         if (n == null) return;
-        n.setVisible(v);
-        n.setManaged(v);
+        n.setVisible(v); n.setManaged(v);
     }
 
     private void showError(String msg) {
@@ -137,25 +122,99 @@ public class ListeParcelles {
         }
     }
 
-    // ===== Data loading =====
+    // ============================================================
+    // HELPERS VALIDATION
+    // ============================================================
+
+    /** Retourne null si valide, sinon le message d'erreur. */
+    private String validerChamps(String nom, String superficieTxt, Parcelle.TypeTerre type, String localisation) {
+
+        // Nom
+        if (nom == null || nom.trim().isEmpty())
+            return "Le nom est obligatoire.";
+        if (nom.trim().length() < 2)
+            return "Le nom doit contenir au moins 2 caractères.";
+        if (nom.trim().length() > 100)
+            return "Le nom ne doit pas dépasser 100 caractères.";
+        if (!nom.trim().matches("[\\p{L}0-9 '\\-_]+"))
+            return "Le nom contient des caractères non autorisés.";
+
+        // Superficie
+        if (superficieTxt == null || superficieTxt.trim().isEmpty())
+            return "La superficie est obligatoire.";
+        double superficie;
+        try { superficie = Double.parseDouble(superficieTxt.trim()); }
+        catch (NumberFormatException e) { return "La superficie doit être un nombre décimal (ex: 500.5)."; }
+        if (superficie <= 0)
+            return "La superficie doit être supérieure à 0.";
+        if (superficie > 10_000_000)
+            return "La superficie semble trop grande (maximum 10 000 000 m²).";
+
+        // Type
+        if (type == null)
+            return "Veuillez sélectionner un type de terre.";
+
+        // Localisation
+        if (localisation == null || localisation.trim().isEmpty())
+            return "La localisation est obligatoire.";
+        if (localisation.trim().length() < 2)
+            return "La localisation doit contenir au moins 2 caractères.";
+        if (localisation.trim().length() > 150)
+            return "La localisation ne doit pas dépasser 150 caractères.";
+
+        return null; // tout est valide ✓
+    }
+
+    private boolean isPositiveDouble(String txt) {
+        if (txt == null || txt.trim().isEmpty()) return false;
+        try { return Double.parseDouble(txt.trim()) > 0; }
+        catch (NumberFormatException e) { return false; }
+    }
+
+    private void setFieldStyle(TextField tf, boolean valid) {
+        tf.setStyle(valid
+                ? "-fx-border-color: #A5D6A7; -fx-border-radius: 6; -fx-background-radius: 6;"
+                : "-fx-border-color: #EF9A9A; -fx-border-radius: 6; -fx-background-radius: 6;");
+    }
+
+    private Label buildInlineErrorLabel() {
+        Label lbl = new Label();
+        lbl.setVisible(false);
+        lbl.setManaged(false);
+        lbl.setWrapText(true);
+        lbl.setMaxWidth(Double.MAX_VALUE);
+        lbl.setStyle(
+                "-fx-text-fill: #B71C1C;" +
+                        "-fx-background-color: #FFEBEE;" +
+                        "-fx-padding: 8 12;" +
+                        "-fx-background-radius: 8;" +
+                        "-fx-font-size: 13px;"
+        );
+        return lbl;
+    }
+
+    private void showInlineError(Label lbl, String msg) {
+        lbl.setText(msg);
+        lbl.setVisible(true);
+        lbl.setManaged(true);
+    }
+
+    // ============================================================
+    // DATA
+    // ============================================================
 
     private List<Parcelle> baseListByRole() throws SQLException {
         User u = MainController.getCurrentUser();
         if (u == null) return List.of();
-
         List<Parcelle> all = sp.recuperer();
         if (isAdmin(u)) return all;
-
         int uid = u.getId();
-        return all.stream()
-                .filter(p -> p.getAgriculteurId() == uid)
-                .collect(Collectors.toList());
+        return all.stream().filter(p -> p.getAgriculteurId() == uid).collect(Collectors.toList());
     }
 
     private List<Parcelle> applySearchAndType(List<Parcelle> list) {
         String q = (searchField == null || searchField.getText() == null) ? "" : searchField.getText().trim().toLowerCase();
         String type = typeFilterCombo != null ? typeFilterCombo.getValue() : "TOUT";
-
         return list.stream()
                 .filter(p -> q.isEmpty()
                         || (p.getNom() != null && p.getNom().toLowerCase().contains(q))
@@ -176,295 +235,317 @@ public class ListeParcelles {
     }
 
     @FXML
-    void rechercher() {
-        rafraichir();
-    }
+    void rechercher() { rafraichir(); }
 
     private void render(List<Parcelle> list) {
         if (countLabel != null) countLabel.setText(list.size() + " parcelle(s)");
-
         User u = MainController.getCurrentUser();
-        if (isAdmin(u)) {
-            table.setItems(FXCollections.observableArrayList(list));
-        } else {
-            renderCards(list);
-        }
+        if (isAdmin(u)) table.setItems(FXCollections.observableArrayList(list));
+        else renderCards(list);
     }
-
-    // ===== ADMIN + AGRICULTEUR: delete (avec droits) =====
 
     private void supprimerParcelle(Parcelle p) {
         User u = MainController.getCurrentUser();
-        if (u == null) {
-            showError("Session vide.");
-            return;
-        }
-
-        // AGRICULTEUR: فقط يقدر يحذف متاعو
-        if (!isAdmin(u) && p.getAgriculteurId() != u.getId()) {
-            showError("Accès refusé.");
-            return;
-        }
+        if (u == null) { showError("Session vide."); return; }
+        if (!isAdmin(u) && p.getAgriculteurId() != u.getId()) { showError("Accès refusé."); return; }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Confirmation");
         confirm.setHeaderText("Supprimer la parcelle ?");
         confirm.setContentText("Parcelle: " + p.getNom() + " (ID: " + p.getId() + ")");
-
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
+                try { sp.supprimer(p); rafraichir(); }
+                catch (SQLException ex) { showError("Erreur suppression: " + ex.getMessage()); }
+            }
+        });
+    }
+
+    // ============================================================
+    // CARDS
+    // ============================================================
+
+    private void renderCards(List<Parcelle> list) {
+        cardsContainer.getChildren().clear();
+        for (Parcelle p : list) cardsContainer.getChildren().add(buildCard(p));
+    }
+
+    private Node buildCard(Parcelle p) {
+        VBox card = new VBox(12);
+        card.setPadding(new Insets(16));
+
+        final String baseStyle =
+                "-fx-background-color: white; -fx-background-radius: 14; -fx-border-radius: 14;" +
+                        "-fx-border-color: rgba(0,0,0,0.07); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 14, 0, 0, 4);";
+        final String hoverStyle =
+                "-fx-background-color: white; -fx-background-radius: 14; -fx-border-radius: 14;" +
+                        "-fx-border-color: rgba(46,125,50,0.25); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 18, 0, 0, 6);";
+
+        card.setStyle(baseStyle);
+        card.setOnMouseClicked(e -> { if (e.getTarget() instanceof Button) return; openParcelleDetailsPage(p.getId()); });
+        card.setOnMouseEntered(e -> card.setStyle(hoverStyle));
+        card.setOnMouseExited(e -> card.setStyle(baseStyle));
+
+        Label title = new Label(p.getNom() == null ? "(Sans nom)" : p.getNom());
+        title.setStyle("-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #2D5A27;");
+
+        Label badgeType = createChip(p.getTypeTerre() == null ? "TYPE -" : p.getTypeTerre().name(), "#E8F5E9", "#2E7D32");
+        Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox header = new HBox(10, title, spacer, badgeType);
+        header.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+
+        VBox left  = new VBox(6, buildInfoRow("Superficie", formatSuperficie(p.getSuperficie()) + " m²"), buildInfoRow("Localisation", safe(p.getLocalisation())));
+        VBox right = new VBox(6, buildInfoRow("Créée le", p.getDateCreation() == null ? "-" : p.getDateCreation().toString()), buildInfoRow("ID", String.valueOf(p.getId())));
+        HBox infos = new HBox(24, left, right);
+        infos.setAlignment(javafx.geometry.Pos.TOP_LEFT);
+
+        Button btnEdit   = new Button("Modifier");
+        Button btnDelete = new Button("Supprimer");
+        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:8 14; -fx-background-radius:10; -fx-font-weight:700;");
+        btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:8 14; -fx-background-radius:10; -fx-font-weight:700;");
+        btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(p));
+        btnDelete.setOnAction(e -> supprimerParcelle(p));
+
+        Region spacer2 = new Region(); HBox.setHgrow(spacer2, Priority.ALWAYS);
+        HBox actions = new HBox(10, spacer2, btnEdit, btnDelete);
+
+        Separator sep = new Separator(); sep.setStyle("-fx-opacity: 0.35;");
+        card.getChildren().addAll(header, infos, sep, actions);
+        return card;
+    }
+
+    // ============================================================
+    // AJOUT — popup avec validation inline
+    // ============================================================
+    @FXML
+    void ouvrirFenetreAjout() {
+        hideError();
+        User u = MainController.getCurrentUser();
+        if (u == null) { showError("Session vide."); return; }
+        if (isAdmin(u)) { showError("ADMIN ne peut pas ajouter."); return; }
+
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Ajouter Parcelle");
+        dialog.setHeaderText("Nouvelle parcelle");
+        dialog.setResizable(true);
+        dialog.getDialogPane().setPrefWidth(500);
+        dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+
+        ButtonType saveBtn = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
+
+        Label inlineError = buildInlineErrorLabel();
+
+        // Champs
+        TextField nom       = new TextField(); nom.setPromptText("ex: Champ nord");
+        TextField superficie = new TextField(); superficie.setPromptText("ex: 500");
+        ComboBox<Parcelle.TypeTerre> type = new ComboBox<>(FXCollections.observableArrayList(Parcelle.TypeTerre.values()));
+        type.setPromptText("Type Terre");
+        type.setMaxWidth(Double.MAX_VALUE);
+        TextField loc = new TextField(); loc.setPromptText("ex: Tunis");
+
+        // Feedback visuel temps réel
+        nom.textProperty().addListener((obs, o, n)        -> setFieldStyle(nom, n.trim().length() >= 2));
+        superficie.textProperty().addListener((obs, o, n) -> setFieldStyle(superficie, isPositiveDouble(n)));
+        loc.textProperty().addListener((obs, o, n)        -> setFieldStyle(loc, n.trim().length() >= 2));
+
+        // Grille
+        GridPane grid = new GridPane();
+        grid.setHgap(12); grid.setVgap(12);
+        grid.setPadding(new Insets(12));
+        grid.setMaxWidth(Double.MAX_VALUE);
+        ColumnConstraints c0 = new ColumnConstraints(140);
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c0, c1);
+
+        grid.add(new Label("Nom *"),         0, 0); grid.add(nom,        1, 0);
+        grid.add(new Label("Superficie *"),  0, 1); grid.add(superficie, 1, 1);
+        grid.add(new Label("Type Terre *"),  0, 2); grid.add(type,       1, 2);
+        grid.add(new Label("Localisation *"),0, 3); grid.add(loc,        1, 3);
+
+        VBox content = new VBox(10, inlineError, grid);
+        content.setPadding(new Insets(4));
+        dialog.getDialogPane().setContent(content);
+
+        // Bloquer la fermeture si invalide
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(saveBtn);
+        okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String err = validerChamps(nom.getText(), superficie.getText(), type.getValue(), loc.getText());
+            if (err != null) {
+                event.consume();
+                showInlineError(inlineError, err);
+            }
+        });
+
+        dialog.showAndWait().ifPresent(result -> {
+            if (result == saveBtn) {
                 try {
-                    sp.supprimer(p);
+                    Parcelle p = new Parcelle(
+                            u.getId(),
+                            nom.getText().trim(),
+                            Double.parseDouble(superficie.getText().trim()),
+                            type.getValue(),
+                            loc.getText().trim()
+                    );
+                    sp.ajouter(p);
                     rafraichir();
+                } catch (NumberFormatException ex) {
+                    showError("Erreur numérique inattendue: " + ex.getMessage());
                 } catch (SQLException ex) {
-                    showError("Erreur suppression: " + ex.getMessage());
+                    showError("Erreur DB: " + ex.getMessage());
                 }
             }
         });
     }
 
-    // ===== AGRICULTEUR: cards =====
-
-    private void renderCards(List<Parcelle> list) {
-        cardsContainer.getChildren().clear();
-        for (Parcelle p : list) {
-            cardsContainer.getChildren().add(buildCard(p));
-        }
-    }
-
-    private Node buildCard(Parcelle p) {
-        VBox card = new VBox(8);
-        card.setPadding(new Insets(14));
-        card.setStyle(
-                "-fx-background-color: white;" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-border-radius: 12;" +
-                        "-fx-border-color: rgba(0,0,0,0.08);" +
-                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 3);"
-        );
-
-        Label title = new Label(p.getNom() == null ? "(Sans nom)" : p.getNom());
-        title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2D5A27;");
-
-        Label l1 = new Label("Superficie: " + p.getSuperficie());
-        Label l2 = new Label("Type: " + (p.getTypeTerre() == null ? "-" : p.getTypeTerre().name()));
-        Label l3 = new Label("Localisation: " + (p.getLocalisation() == null ? "-" : p.getLocalisation()));
-        Label l4 = new Label("Créée: " + (p.getDateCreation() == null ? "-" : p.getDateCreation().toString()));
-
-        l1.setStyle("-fx-text-fill:#424242;");
-        l2.setStyle("-fx-text-fill:#424242;");
-        l3.setStyle("-fx-text-fill:#424242;");
-        l4.setStyle("-fx-text-fill:#616161;");
-
-        Button btnEdit = new Button("Modifier");
-        btnEdit.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
-
-        Button btnDelete = new Button("Supprimer");
-        btnDelete.setStyle("-fx-background-color:#d32f2f; -fx-text-fill:white; -fx-padding:6 12; -fx-background-radius:8;");
-
-        btnEdit.setOnAction(e -> ouvrirPopupModificationAgriculteur(p));
-        btnDelete.setOnAction(e -> supprimerParcelle(p));
-
-        HBox actions = new HBox(10, btnEdit, btnDelete);
-
-        card.getChildren().addAll(title, l1, l2, l3, l4, actions);
-        return card;
-    }
-
+    // ============================================================
+    // MODIFICATION — popup avec validation inline
+    // ============================================================
     private void ouvrirPopupModificationAgriculteur(Parcelle p) {
         User u = MainController.getCurrentUser();
-        if (u == null) {
-            showError("Session vide.");
-            return;
-        }
-        if (isAdmin(u)) {
-            showError("ADMIN ne peut pas modifier.");
-            return;
-        }
-        if (p.getAgriculteurId() != u.getId()) {
-            showError("Accès refusé.");
-            return;
-        }
+        if (u == null) { showError("Session vide."); return; }
+        if (isAdmin(u)) { showError("ADMIN ne peut pas modifier."); return; }
+        if (p.getAgriculteurId() != u.getId()) { showError("Accès refusé."); return; }
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Modifier Parcelle");
-        dialog.setHeaderText("Modifier: " + (p.getNom() == null ? "" : p.getNom()));
+        dialog.setHeaderText("Modifier : " + (p.getNom() == null ? "" : p.getNom()));
+        dialog.setResizable(true);
+        dialog.getDialogPane().setPrefWidth(500);
+        dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
 
         ButtonType saveBtn = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
 
-        TextField nomFieldEdit = new TextField(p.getNom());
-        TextField superficieFieldEdit = new TextField(String.valueOf(p.getSuperficie()));
-        ComboBox<Parcelle.TypeTerre> typeComboEdit = new ComboBox<>(FXCollections.observableArrayList(Parcelle.TypeTerre.values()));
-        typeComboEdit.setValue(p.getTypeTerre());
-        TextField localisationFieldEdit = new TextField(p.getLocalisation());
+        Label inlineError = buildInlineErrorLabel();
 
+        // Champs pré-remplis
+        TextField nomField        = new TextField(p.getNom());          nomField.setPromptText("ex: Champ nord");
+        TextField superficieField = new TextField(String.valueOf(p.getSuperficie())); superficieField.setPromptText("ex: 500");
+        ComboBox<Parcelle.TypeTerre> typeCombo = new ComboBox<>(FXCollections.observableArrayList(Parcelle.TypeTerre.values()));
+        typeCombo.setValue(p.getTypeTerre());
+        typeCombo.setMaxWidth(Double.MAX_VALUE);
+        TextField locField = new TextField(p.getLocalisation()); locField.setPromptText("ex: Tunis");
+
+        // Feedback visuel temps réel
+        nomField.textProperty().addListener((obs, o, n)        -> setFieldStyle(nomField, n.trim().length() >= 2));
+        superficieField.textProperty().addListener((obs, o, n) -> setFieldStyle(superficieField, isPositiveDouble(n)));
+        locField.textProperty().addListener((obs, o, n)        -> setFieldStyle(locField, n.trim().length() >= 2));
+
+        // Grille
         GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(12);
-        grid.setPadding(new Insets(10));
+        grid.setHgap(12); grid.setVgap(12);
+        grid.setPadding(new Insets(12));
+        grid.setMaxWidth(Double.MAX_VALUE);
+        ColumnConstraints c0 = new ColumnConstraints(140);
+        ColumnConstraints c1 = new ColumnConstraints(); c1.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().addAll(c0, c1);
 
-        grid.add(new Label("Nom *"), 0, 0);
-        grid.add(nomFieldEdit, 1, 0);
+        grid.add(new Label("Nom *"),         0, 0); grid.add(nomField,        1, 0);
+        grid.add(new Label("Superficie *"),  0, 1); grid.add(superficieField, 1, 1);
+        grid.add(new Label("Type Terre *"),  0, 2); grid.add(typeCombo,       1, 2);
+        grid.add(new Label("Localisation *"),0, 3); grid.add(locField,        1, 3);
 
-        grid.add(new Label("Superficie *"), 0, 1);
-        grid.add(superficieFieldEdit, 1, 1);
+        VBox content = new VBox(10, inlineError, grid);
+        content.setPadding(new Insets(4));
+        dialog.getDialogPane().setContent(content);
 
-        grid.add(new Label("Type Terre *"), 0, 2);
-        grid.add(typeComboEdit, 1, 2);
-
-        grid.add(new Label("Localisation *"), 0, 3);
-        grid.add(localisationFieldEdit, 1, 3);
-
-        dialog.getDialogPane().setContent(grid);
+        // Bloquer la fermeture si invalide
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(saveBtn);
+        okButton.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
+            String err = validerChamps(nomField.getText(), superficieField.getText(), typeCombo.getValue(), locField.getText());
+            if (err != null) {
+                event.consume();
+                showInlineError(inlineError, err);
+            }
+        });
 
         dialog.showAndWait().ifPresent(result -> {
             if (result == saveBtn) {
                 try {
-                    String nom = nomFieldEdit.getText().trim();
-                    String loc = localisationFieldEdit.getText().trim();
-                    Parcelle.TypeTerre type = typeComboEdit.getValue();
-                    double superficie = Double.parseDouble(superficieFieldEdit.getText().trim());
-
-                    if (nom.isEmpty() || loc.isEmpty() || type == null) {
-                        showError("Veuillez remplir tous les champs obligatoires.");
-                        return;
-                    }
-
-                    p.setNom(nom);
-                    p.setLocalisation(loc);
-                    p.setTypeTerre(type);
-                    p.setSuperficie(superficie);
-
+                    p.setNom(nomField.getText().trim());
+                    p.setSuperficie(Double.parseDouble(superficieField.getText().trim()));
+                    p.setTypeTerre(typeCombo.getValue());
+                    p.setLocalisation(locField.getText().trim());
                     sp.modifier(p);
                     rafraichir();
                 } catch (NumberFormatException ex) {
-                    showError("Superficie doit être numérique.");
+                    showError("Erreur numérique inattendue: " + ex.getMessage());
                 } catch (SQLException ex) {
                     showError("Erreur modification: " + ex.getMessage());
                 }
             }
         });
     }
+
+    // ============================================================
+    // NAVIGATION
+    // ============================================================
     @FXML
-    private void retourParcellesCultures() {
-        naviguerVers("/ParcellesCultures.fxml");
-    }
+    private void retourParcellesCultures() { naviguerVers("/ParcellesCultures.fxml"); }
 
     private void naviguerVers(String fxmlPath) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
-
-            // récupère contentArea depuis la Scene
             StackPane contentArea = null;
 
-            if (table != null && table.getScene() != null) { // si tu as une table admin
+            if (table != null && table.getScene() != null) {
                 contentArea = (StackPane) table.getScene().lookup("#contentArea");
-                if (contentArea == null) {
-                    Parent sceneRoot = table.getScene().getRoot();
-                    if (sceneRoot != null) contentArea = (StackPane) sceneRoot.lookup("#contentArea");
-                }
+                if (contentArea == null && table.getScene().getRoot() != null)
+                    contentArea = (StackPane) table.getScene().getRoot().lookup("#contentArea");
             }
-
-            if (contentArea == null && btnRafraichir != null && btnRafraichir.getScene() != null) { // fallback
+            if (contentArea == null && btnRafraichir != null && btnRafraichir.getScene() != null) {
                 contentArea = (StackPane) btnRafraichir.getScene().lookup("#contentArea");
-                if (contentArea == null) {
-                    Parent sceneRoot = btnRafraichir.getScene().getRoot();
-                    if (sceneRoot != null) contentArea = (StackPane) sceneRoot.lookup("#contentArea");
-                }
+                if (contentArea == null && btnRafraichir.getScene().getRoot() != null)
+                    contentArea = (StackPane) btnRafraichir.getScene().getRoot().lookup("#contentArea");
             }
-
-            if (contentArea == null) {
-                System.err.println("[ListeParcelles] contentArea introuvable (#contentArea).");
-                return;
-            }
-
-            contentArea.getChildren().setAll(view);
-
+            if (contentArea != null) contentArea.getChildren().setAll(view);
+            else System.err.println("[ListeParcelles] contentArea introuvable.");
         } catch (Exception e) {
-            System.err.println("[ListeParcelles] Erreur navigation vers " + fxmlPath + " : " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("[ListeParcelles] Erreur navigation: " + e.getMessage());
         }
     }
 
-    // ===== AGRICULTEUR: add (popup window) =====
+    private void openParcelleDetailsPage(int parcelleId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ParcelleDetails.fxml"));
+            Parent view = loader.load();
+            ParcelleDetails controller = loader.getController();
+            controller.setParcelleId(parcelleId);
 
-    @FXML
-    void ouvrirFenetreAjout() {
-        hideError();
-
-        User u = MainController.getCurrentUser();
-        if (u == null) {
-            showError("Session vide.");
-            return;
-        }
-        if (isAdmin(u)) {
-            showError("ADMIN ne peut pas ajouter.");
-            return;
-        }
-
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Ajouter Parcelle");
-        dialog.setHeaderText("Nouvelle parcelle");
-
-        ButtonType saveBtn = new ButtonType("Ajouter", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveBtn, ButtonType.CANCEL);
-
-        TextField nom = new TextField();
-        nom.setPromptText("Nom de la parcelle");
-
-        TextField superficie = new TextField();
-        superficie.setPromptText("ex: 500");
-
-        ComboBox<Parcelle.TypeTerre> type = new ComboBox<>(FXCollections.observableArrayList(Parcelle.TypeTerre.values()));
-        type.setPromptText("Type Terre");
-
-        TextField loc = new TextField();
-        loc.setPromptText("ex: Tunis");
-
-        GridPane grid = new GridPane();
-        grid.setHgap(12);
-        grid.setVgap(12);
-        grid.setPadding(new Insets(10));
-
-        grid.add(new Label("Nom *"), 0, 0);
-        grid.add(nom, 1, 0);
-
-        grid.add(new Label("Superficie *"), 0, 1);
-        grid.add(superficie, 1, 1);
-
-        grid.add(new Label("Type Terre *"), 0, 2);
-        grid.add(type, 1, 2);
-
-        grid.add(new Label("Localisation *"), 0, 3);
-        grid.add(loc, 1, 3);
-
-        dialog.getDialogPane().setContent(grid);
-
-        dialog.showAndWait().ifPresent(result -> {
-            if (result == saveBtn) {
-                try {
-                    String n = nom.getText().trim();
-                    String l = loc.getText().trim();
-                    Parcelle.TypeTerre t = type.getValue();
-                    double s = Double.parseDouble(superficie.getText().trim());
-
-                    if (n.isEmpty() || l.isEmpty() || t == null) {
-                        showError("Veuillez remplir tous les champs obligatoires.");
-                        return;
-                    }
-
-                    Parcelle p = new Parcelle(u.getId(), n, s, t, l);
-                    sp.ajouter(p);
-                    rafraichir();
-
-                } catch (NumberFormatException ex) {
-                    showError("Superficie doit être numérique.");
-                } catch (SQLException ex) {
-                    showError("Erreur DB: " + ex.getMessage());
-                }
+            StackPane contentArea = (StackPane) cardsScroll.getScene().lookup("#contentArea");
+            if (cardsScroll != null && cardsScroll.getScene() != null) {
+                contentArea = (StackPane) cardsScroll.getScene().lookup("#contentArea");
+                if (contentArea == null && cardsScroll.getScene().getRoot() != null)
+                    contentArea = (StackPane) cardsScroll.getScene().getRoot().lookup("#contentArea");
             }
-        });
+            if (contentArea != null) contentArea.getChildren().setAll(view);
+        } catch (Exception e) {
+            showError("Erreur ouverture détails parcelle: " + e.getMessage());
+        }
+    }
+
+    // ============================================================
+    // UI HELPERS
+    // ============================================================
+    private Label createChip(String text, String bg, String fg) {
+        Label chip = new Label(text);
+        chip.setStyle("-fx-background-color:" + bg + "; -fx-text-fill:" + fg + "; -fx-font-weight:800; -fx-padding:6 10; -fx-background-radius:999; -fx-border-radius:999; -fx-border-color: rgba(0,0,0,0.06);");
+        return chip;
+    }
+
+    private HBox buildInfoRow(String key, String value) {
+        Label k = new Label(key + ":"); k.setStyle("-fx-text-fill:#757575; -fx-font-weight:700;");
+        Label v = new Label(value == null || value.isBlank() ? "-" : value); v.setStyle("-fx-text-fill:#212121; -fx-font-weight:800;");
+        HBox row = new HBox(8, k, v); row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        return row;
+    }
+
+    private String safe(String s) { return (s == null || s.isBlank()) ? "-" : s; }
+
+    private String formatSuperficie(double s) {
+        if (s == (long) s) return String.valueOf((long) s);
+        return String.format(java.util.Locale.US, "%.2f", s);
     }
 }

@@ -22,6 +22,7 @@ module agriflow{
     requires tess4j;   // ⭐ OCR
     requires jbcrypt;   // ⭐ PASSWORD
     requires com.google.gson;
+    requires org.apache.pdfbox; //BADIS
 
     opens controllers to javafx.fxml;
     opens mains to javafx.fxml;

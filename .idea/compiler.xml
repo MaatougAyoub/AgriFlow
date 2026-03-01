@@ -11,6 +11,7 @@
         <module name="AgriFlow" />
         <module name="maven-surefire-plugin" />
         <module name="AgriFlow-PI" />
+          <module name="AgriFlow" />
       </profile>
     </annotationProcessing>
   </component>
