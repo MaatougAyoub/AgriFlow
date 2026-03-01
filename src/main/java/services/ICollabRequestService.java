@@ -7,4 +7,5 @@ import java.util.List;
 public interface ICollabRequestService extends IServiceY<CollabRequest> {
     void updateStatus(long id, String status) throws SQLException;
     List<CollabRequest> findByStatus(String status) throws SQLException;
+    List<CollabRequest> findByRequesterId(long requesterId) throws SQLException;
 }

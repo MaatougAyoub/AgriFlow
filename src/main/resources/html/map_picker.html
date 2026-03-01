@@ -48,6 +48,11 @@
 
     var marker = null;
 
+    /** Appelé depuis Java (MapPickerBridge) pour mettre à jour le label d'adresse */
+    function updateAddressLabel(addr) {
+        document.getElementById('info').textContent = 'Adresse : ' + addr;
+    }
+
     function onMapClick(e) {
         var lat = e.latlng.lat;
         var lng = e.latlng.lng;
@@ -59,34 +64,14 @@
 
         document.getElementById('info').textContent = "Récupération de l'adresse...";
 
-        fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat +
-            '&lon=' + lng + '&zoom=18&addressdetails=1', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'User-Agent': 'AgriFlow-PIDEV2026'
-            }
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (data) {
-                var addr = data.display_name || (lat.toFixed(5) + ', ' + lng.toFixed(5));
-                document.getElementById('info').textContent = 'Adresse : ' + addr;
-
-                if (window.javaBridge && typeof window.javaBridge.setLocation === 'function') {
-                    window.javaBridge.setLocation(lat, lng, addr);
-                }
-            })
-            .catch(function () {
-                var fallback = lat.toFixed(5) + ', ' + lng.toFixed(5);
-                document.getElementById('info').textContent =
-                    "Adresse non trouvée. Coordonnées : " + fallback;
-
-                if (window.javaBridge && typeof window.javaBridge.setLocation === 'function') {
-                    window.javaBridge.setLocation(lat, lng, fallback);
-                }
-            });
+        // Le géocodage inversé est effectué côté Java pour éviter les restrictions
+        // réseau du WebView (JavaFX ne supporte pas bien fetch() en cross-origin).
+        if (window.javaBridge && typeof window.javaBridge.lookupAddress === 'function') {
+            window.javaBridge.lookupAddress(lat, lng);
+        } else {
+            document.getElementById('info').textContent =
+                'Coordonnées : ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+        }
     }
 
     map.on('click', onMapClick);

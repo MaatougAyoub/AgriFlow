@@ -106,9 +106,13 @@ public class MyRequestsController {
 
     private void loadRequests() {
         try {
-            // TODO: Filtrer par requester_id de l'utilisateur connecté
-            // Pour l'instant, on charge toutes les demandes
-            List<CollabRequest> requests = requestService.findAll();
+            entities.User currentUser = MainController.getCurrentUser();
+            if (currentUser == null) {
+                showError("Erreur", "Aucun utilisateur connecté.");
+                return;
+            }
+
+            List<CollabRequest> requests = requestService.findByRequesterId(currentUser.getId());
 
             if (requestsTable != null) {
                 requestsTable.getItems().clear();

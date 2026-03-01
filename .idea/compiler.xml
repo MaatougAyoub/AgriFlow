@@ -14,5 +14,8 @@
           <module name="AgriFlow" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="module5-collaborations" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

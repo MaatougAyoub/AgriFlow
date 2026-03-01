@@ -30,6 +30,8 @@ module agriflow{
     opens services.ocr to javafx.fxml;
     // Allow JavaFX (base/reflective) and FXML loader to access entity properties reflectively
     opens entities to javafx.base, javafx.fxml;
+    // Allow JavaFX WebView JS bridge to call methods on MapPickerBridge
+    opens utils to javafx.web, jdk.jsobject;
 
     exports mains;
 }

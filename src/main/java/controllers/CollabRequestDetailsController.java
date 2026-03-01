@@ -93,8 +93,17 @@ public class CollabRequestDetailsController {
         }
 
         // Open-Meteo ne fournit que les 16 prochains jours
-        long joursRestants = ChronoUnit.DAYS.between(LocalDate.now(), currentRequest.getStartDate());
-        if (joursRestants > 16) {
+        // On vérifie la date de FIN (pas de début) : si la période est entièrement passée ou entièrement au-delà de 16 jours
+        long joursAvantFin = ChronoUnit.DAYS.between(LocalDate.now(), currentRequest.getEndDate());
+        if (joursAvantFin < 0) {
+            Text horsPeriode = new Text("La période de travail est terminée. Les prévisions météo ne sont disponibles que pour les dates futures.");
+            horsPeriode.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
+            horsPeriode.setWrappingWidth(700);
+            weatherContainer.getChildren().add(horsPeriode);
+            return;
+        }
+        long joursAvantDebut = ChronoUnit.DAYS.between(LocalDate.now(), currentRequest.getStartDate());
+        if (joursAvantDebut > 16) {
             Text horsPeriode = new Text("Les prévisions météo (Open-Meteo) ne couvrent que les 16 prochains jours. La période de travail de cette demande est au-delà ; consultez la météo plus proche des dates.");
             horsPeriode.setStyle("-fx-fill: #757575; -fx-font-size: 14px;");
             horsPeriode.setWrappingWidth(700);
