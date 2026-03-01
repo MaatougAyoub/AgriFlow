@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 27, 2026 at 05:29 PM
+-- Generation Time: Mar 01, 2026 at 02:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `agriflow8`
+-- Database: `agriflow9`
 --
 
 -- --------------------------------------------------------
@@ -125,7 +125,6 @@ CREATE TABLE `collab_applications` (
 
 INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `full_name`, `phone`, `email`, `years_of_experience`, `motivation`, `expected_salary`, `status`, `applied_at`, `updated_at`) VALUES
 (3, 2, 3, 'Mohamed Slimani', '98765432', 'mohamed@example.com', 2, 'Je cherche à apprendre et je suis très sérieux dans mon travail.', 35.00, 'APPROVED', '2026-02-20 00:02:07', '2026-02-21 03:23:17'),
-(4, 5, 1, 'yakine', '000', 'yy@yy.com', 6, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 20.00, 'APPROVED', '2026-02-20 00:05:32', '2026-02-20 02:24:04'),
 (5, 9, 1, 'aa', '0000000', 'bb@bb.com', 5, 'je suis aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 50.00, 'APPROVED', '2026-02-22 14:39:53', '2026-02-22 14:42:28'),
 (8, 8, 1, 'bbbbbbbbbbbbb', '1111111111111', 'bb@bb.bb', 5, 'peut etre  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww', 100.00, 'PENDING', '2026-02-22 15:03:13', '2026-02-22 15:03:13'),
 (9, 6, 1, 'ccc', '00000000', 'aaa@aaa.c', 0, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 10.00, 'PENDING', '2026-02-22 15:24:14', '2026-02-22 15:24:14'),
@@ -198,23 +197,19 @@ CREATE TABLE `cultures` (
   `etat` enum('EN_COURS','RECOLTEE','EN_VENTE','VENDUE') DEFAULT 'EN_COURS',
   `date_recolte` date DEFAULT NULL,
   `recolte_estime` decimal(10,2) DEFAULT NULL,
-  `date_creation` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `culture_vendue`
---
-
-CREATE TABLE `culture_vendue` (
-  `id_vente` int(11) NOT NULL,
-  `id_culture` int(11) NOT NULL,
+  `date_creation` datetime DEFAULT current_timestamp(),
   `id_acheteur` int(11) DEFAULT NULL,
   `date_vente` date DEFAULT NULL,
-  `date_publication` datetime NOT NULL DEFAULT current_timestamp(),
-  `prix_vente` decimal(10,2) DEFAULT NULL
+  `date_publication` date DEFAULT NULL,
+  `prix_vente` double DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cultures`
+--
+
+INSERT INTO `cultures` (`id`, `parcelle_id`, `proprietaire_id`, `nom`, `type_culture`, `superficie`, `etat`, `date_recolte`, `recolte_estime`, `date_creation`, `id_acheteur`, `date_vente`, `date_publication`, `prix_vente`) VALUES
+(1, 1, 75, 'fraise', 'FRAISE', 100.00, 'EN_COURS', '2026-03-18', 10.20, '2026-02-28 12:19:09', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -239,7 +234,6 @@ CREATE TABLE `diagnosti` (
 --
 
 INSERT INTO `diagnosti` (`id_diagnostic`, `id_agriculteur`, `nom_culture`, `image_path`, `description`, `reponse_expert`, `statut`, `date_envoi`, `date_reponse`) VALUES
-(20, 1, 'Pommes', 'C:\\Users\\wess\\Pictures\\Screenshots\\Capture d\'écran 2026-02-18 204010.png', 'L\'image présente deux pommes accrochées à un arbre. Les pommes ont une coloration irrégulière, avec des zones rouges et jaunes. Des taches sombres et des zones décolorées sont visibles sur leur surface.\n\nCes symptômes pourraient être causés par plusieurs facteurs, notamment des maladies ou des dommages physiologiques. \n\nUne maladie courante qui affecte les pommes et cause de telles altérations est la **rouille du pommier (Gymnosporangium sabinae)*\nSi les taches sont petites et brunes avec un centre clair, cela pourrait indiquer une infection par la tavelure du pommier. \n\nUn traitement possible contre ces maladies fongiques consiste en l\'application de fongicides à base de substances actives telles que la chlorothalonil ou la mancozèbe. \n\nIl est important de noter qu\'un diagnostic précis nécessite souvent un examen plus approfondi et des tests. Il est conseillé de consulter un expert en phytopathologie ou en agronomie pour une identification précise de la cause et des mesures appropriées. Des mesures préventives, comme l\'élimination des feuilles infectées et l\'amélioration de la circulation de l\'air autour des arbres, peuvent aussi être bénéfiques.', '\n--- PRODUIT RECOMMANDÉ ---\nNom : Gommex-C\nDosage : 3 L / hectare\nFréquence : 2 fois par mois\nNote : Ne pas appliquer sur un arbre affaibli. Nettoyer le matériel après usage. Éviter le contact avec la peau.\n---------------------------\n', 'Valide', '2026-02-21 21:38:19', NULL),
 (21, 1, 'Citrons', 'C:\\Users\\wess\\Pictures\\Screenshots\\Capture d\'écran 2026-02-19 210421.png', 'L\'image représente des fruits jaunes, probablement des mandarines ou des oranges, présentant des taches vertes et sombres, ce qui suggère la présence de symptômes de maladie.\n\n**État de la culture ou du fruit :**\n\nLes fruits sont globalement bien développés mais arborent des taches sombres irrégulières. L\'état général de la plante n\'est pas complètement visible sur l\'image, mais les feuilles paraissent saines.\n\n**Maladies identifiées :**\n\nSur la base des symptômes visibles (taches vertes et sombres sur les fruits), il est probable que la maladie en question soit la **\"Green Spot\"** ou plus communément appelée en français **\"Tache verte\"** ou encore **\"Marmorature\"** causée par des bactéries comme *Pseudomonas syringae* ou des conditions physiologiques. Cependant, la maladie la plus probable étant donné la description pourrait être la **\"Tache verte à Citrus canker\"** causée par *Xanthomonas citri*.\n\n', NULL, 'En attente', '2026-02-21 21:42:15', NULL),
 (23, 1, 'Citrons', 'C:\\Users\\wess\\Pictures\\Screenshots\\Capture d\'écran 2026-02-21 165706.png', 'Objet : Demande de réclamation agricole - Tâches brunes sur citron\n\nMadame, Monsieur,\n\nJe vous écris pour signaler un problème sur une culture de citronniers dans mon exploitation agricole. Les citronniers présentent des tâches brunes sur les fruits (voir photo ci-jointe).\n\nLe problème observé :\n\nLes tâches brunes sur les citrons sont un symptôme de maladie, probablement causée par une infection fongique. Ces tâches peuvent entraîner une pourriture des fruits.\n\nDommages possibles :\n\n* Perte de qualité et de quantité de la production\n* Risque de contamination d\'autres plantes\n* Coûts supplémentaires pour le traitement et la gestion de la maladie\n\nDemande d\'intervention :\n\nJe vous demande de vous déplacer sur mon exploitation pour examiner les citronniers et déterminer la cause exacte du problème. Je souhaiterais également bénéficier de vos conseils pour mettre en place un plan d\'action afin de traiter la maladie.\n\nJe vous remercie d\'avance pour votre attention à cette affaire et je reste à votre disposition pour tout renseignement complémentaire.\n\nCordialement,\n[Votre nom]', NULL, 'En attente', '2026-02-22 21:50:21', NULL);
 
@@ -277,6 +271,13 @@ CREATE TABLE `parcelle` (
   `localisation` varchar(150) DEFAULT NULL,
   `date_creation` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `parcelle`
+--
+
+INSERT INTO `parcelle` (`id`, `agriculteur_id`, `nom`, `superficie`, `type_terre`, `localisation`, `date_creation`) VALUES
+(1, 75, 'Senya', 100.00, 'HUMIFERE', '52.839,-1.889', '2026-02-28 12:19:52');
 
 -- --------------------------------------------------------
 
@@ -370,7 +371,14 @@ INSERT INTO `plans_irrigation_jour` (`id`, `plan_id`, `jour`, `eau_mm`, `temps_m
 (564, 8, 'SAT', 5.71429, 29, 26.4, '2026-02-16', 52, 0),
 (565, 8, 'FRI', 5.71429, 29, 28.6, '2026-02-16', 41, 0),
 (566, 8, 'MON', 5.71429, 29, 28.4, '2026-02-16', 26, 0),
-(567, 8, 'SUN', 5.71429, 29, 25.5, '2026-02-16', 56, 0);
+(567, 8, 'SUN', 5.71429, 29, 25.5, '2026-02-16', 56, 0),
+(568, 15, 'THU', 20.71, 104, 7.6, '2026-02-23', 95, 5),
+(569, 15, 'TUE', 24.71, 124, 11.5, '2026-02-23', 92, 1),
+(570, 15, 'WED', 24.01, 121, 12.9, '2026-02-23', 94, 1.7),
+(571, 15, 'SAT', 25.41, 128, 13.5, '2026-02-23', 97, 0.3),
+(572, 15, 'FRI', 21.91, 110, 9.7, '2026-02-23', 99, 3.8),
+(573, 15, 'MON', 15.11, 76, 6.9, '2026-02-23', 95, 10.6),
+(574, 15, 'SUN', 20.81, 105, 8, '2026-02-23', 97, 4.9);
 
 -- --------------------------------------------------------
 
@@ -391,7 +399,6 @@ CREATE TABLE `produits_phytosanitaires` (
 --
 
 INSERT INTO `produits_phytosanitaires` (`id_produit`, `nom_produit`, `dosage`, `frequence_application`, `remarques`) VALUES
-(13, 'Fongicide Tavelure-Plus', '2 L / hectare', '1 fois tous les 10 jours', 'Appliquer par temps sec et sans vent. Porter des gants et un masque de protection. Ne pas traiter pendant la floraison.'),
 (16, 'Anti-Rot Grenade', '2.5 L / hectare', '2 fois par mois', 'Appliquer tôt le matin. Ne pas mélanger avec d’autres produits chimiques. Conserver hors de portée des enfants.'),
 (17, 'Bio-Protect', '4 L / hectare', '1 fois tous les 15 jours', 'Produit biologique sans danger pour l’environnement. Bien agiter avant utilisation. Stocker à l’abri de la chaleur.'),
 (18, 'Scab-Control', '2 L / hectare', '1 fois tous les 7 jours', 'Appliquer avant l’apparition des symptômes. Porter des équipements de protection. Éviter les jours de pluie.'),
@@ -422,7 +429,9 @@ CREATE TABLE `reclamations` (
 INSERT INTO `reclamations` (`id`, `utilisateur_id`, `categorie`, `titre`, `description`, `date_creation`, `statut`, `reponse`) VALUES
 (9, 44, 'ACCESS', 'access rec', 'relamationaaaaa', '2026-02-20 14:16:01', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : noooo\nmaatoug ayoub (ADMIN) : yes'),
 (10, 44, 'PAIMENT', 'aaaaaa', 'aaaaaaaaaa', '2026-02-20 14:16:35', 'EN_ATTENTE', 'maatoug ayoub (ADMIN) : yes'),
-(12, 49, 'AUTRE', 'rrr', 'rrrrr', '2026-02-21 00:45:17', 'EN_ATTENTE', NULL);
+(12, 49, 'AUTRE', 'rrr', 'rrrrr', '2026-02-21 00:45:17', 'EN_ATTENTE', NULL),
+(16, 39, 'ACCESS', 'aaaaaaaaa', 'aaaaaaaaaaaaaaaa', '2026-02-28 15:13:27', 'EN_ATTENTE', NULL),
+(17, 39, 'TECHNIQUE', 'rrrrrrrrrr', 'czcz', '2026-03-01 00:55:18', 'EN_ATTENTE', NULL);
 
 -- --------------------------------------------------------
 
@@ -501,16 +510,14 @@ CREATE TABLE `utilisateurs` (
 
 INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`, `role`, `dateCreation`, `signature`, `revenu`, `carte_pro`, `adresse`, `parcelles`, `certification`, `verification_status`, `verification_reason`, `verification_score`, `nom_ar`, `prenom_ar`) VALUES
 (39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', '$2a$12$aiBquFb/ffsalNnpdndEFuR0m0ZLh5luTEYjS.hVCfPS/plKY2j3q', 'ADMIN', '2026-02-16', 'C:\\xampp\\htdocs\\signatures\\1771633850595_signature_ayoub.jpg', 100.5, NULL, NULL, NULL, NULL, 'APPROVED', NULL, NULL, NULL, NULL),
-(43, 'Fattoumi', 'Oussama', 66554433, 'oussama@gmail.com', 'pwoussama', 'EXPERT', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634526954_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771634537416_diplome_expert_Oussama_.png', 'APPROVED', NULL, NULL, NULL, NULL),
 (44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634629497_signature_badis.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634642357_____________.jpg', 'araiana', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
-(49, 'sahli', 'yakine', 12345666, 'yakine@gmail.com', 'pwyakine', 'AGRICULTEUR', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771634702295_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634716151_logo.png', 'bizerte', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
-(50, 'Expert', 'Expert', 99999999, 'expert@gmail.com', 'pwexpert', 'EXPERT', '2026-02-21', 'C:\\xampp\\htdocs\\signatures\\1771632506007_signature_expert.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1771632513711_certification_expert.jpg', 'APPROVED', NULL, NULL, NULL, NULL),
 (63, 'SAMI', 'MAATOUG', 74100000, 'maatougsami25@gmail.com', '$2a$12$OCCHJP1GqPJz5uThamkB/...VSdgqZiUrcyF5u0Y8CwR7T6nR675y', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771730327340_signature_sami.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771730400439_sami____________.jpg', 'rue ali douagi - Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'سامي', 'معتوق'),
 (70, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771779144715_signature_amen.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771779159143__amen_____________.jpg', 'korba', '', NULL, 'APPROVED', NULL, NULL, 'أمان الله', 'جربي'),
 (74, 'Ayoub', 'Maatoug', 11223344, 'ayoub.maatoug@ipeib.ucar.tn', '$2a$12$VqNLs/i7EdWxtFUxa./kQOQkecF3kgoCM/8oDAKvPJgICvomwTLbe', 'AGRICULTEUR', '2026-02-23', 'C:\\xampp\\htdocs\\signatures\\1771821459799_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771821529933_Carte_pro__ayoub_.png', 'eeeeee', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
-(75, 'AYOUB', 'MAATOUG', 25042000, 'maatougayoub7@gmail.com', '$2a$12$aiBquFb/ffsalNnpdndEFuR0m0ZLh5luTEYjS.hVCfPS/plKY2j3q', 'AGRICULTEUR', '2026-02-25', 'C:\\xampp\\htdocs\\signatures\\1772034356349_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772034408339_carte_pro_25042000.png', 'Ras Jebel 7070', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
 (76, 'yakine', 'sahli', 77882020, 'yakinesahli48@gmail.com', '$2a$12$RscsfaflKeKNiwTGqruexeZL.DS8D6tmcxyFErpOeKUTIwNw8HX0m', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209232788_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209276977_Carte_pro_yakine.png', 'Bizerte', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي'),
-(77, 'sahli', 'yakine eddine', 98765432, 'yakineddine.sahli@isgb.ucar.tn', '$2a$12$qD6nzyC34wBASVrNEkDXUOqV2hnzqppcBdiYlm4H7HuLiDNviraBm', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209652466_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209684709_carte_pro_yakine22.png', 'ariana', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي');
+(77, 'sahli', 'yakine eddine', 98765432, 'yakineddine.sahli@isgb.ucar.tn', '$2a$12$qD6nzyC34wBASVrNEkDXUOqV2hnzqppcBdiYlm4H7HuLiDNviraBm', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209652466_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209684709_carte_pro_yakine22.png', 'ariana', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي'),
+(78, 'MAATOUG', 'AYOUB', 25042000, 'maatougayoub7@gmail.com', '$2a$12$6rBDrCyfa4n1EW1PNYf6GeAdsTORq.rooxt18YxrUxTSap0VY1wi6', 'AGRICULTEUR', '2026-02-28', 'C:\\xampp\\htdocs\\signatures\\1772289147867_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772289190234_carte_pro_25042000.png', 'Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
+(79, 'Fattoumi', 'Oussama', 20252026, 'oussama@agriflow.tn', '$2a$12$AkPu0n83AtyZ2sv9TED7h.UgPdJEsmTVBTGUYYVa6EN0VNEQcGVvS', 'EXPERT', '2026-03-01', 'C:\\xampp\\htdocs\\signatures\\1772323714914_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1772323721302_diplome_expert_Oussama_.png', 'APPROVED', '', 1, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -556,7 +563,8 @@ ALTER TABLE `collab_requests`
 -- Indexes for table `cultures`
 --
 ALTER TABLE `cultures`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_cultures_acheteur` (`id_acheteur`);
 
 --
 -- Indexes for table `diagnosti`
@@ -658,13 +666,13 @@ ALTER TABLE `collab_requests`
 -- AUTO_INCREMENT for table `cultures`
 --
 ALTER TABLE `cultures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `diagnosti`
 --
 ALTER TABLE `diagnosti`
-  MODIFY `id_diagnostic` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_diagnostic` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -676,7 +684,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `parcelle`
 --
 ALTER TABLE `parcelle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `plans_irrigation`
@@ -688,7 +696,7 @@ ALTER TABLE `plans_irrigation`
 -- AUTO_INCREMENT for table `plans_irrigation_jour`
 --
 ALTER TABLE `plans_irrigation_jour`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=568;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=596;
 
 --
 -- AUTO_INCREMENT for table `produits_phytosanitaires`
@@ -700,7 +708,7 @@ ALTER TABLE `produits_phytosanitaires`
 -- AUTO_INCREMENT for table `reclamations`
 --
 ALTER TABLE `reclamations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `reservations`
@@ -712,7 +720,17 @@ ALTER TABLE `reservations`
 -- AUTO_INCREMENT for table `utilisateurs`
 --
 ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `cultures`
+--
+ALTER TABLE `cultures`
+  ADD CONSTRAINT `fk_cultures_acheteur` FOREIGN KEY (`id_acheteur`) REFERENCES `utilisateurs` (`id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

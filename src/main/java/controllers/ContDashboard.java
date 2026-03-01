@@ -36,7 +36,7 @@ public class ContDashboard implements Initializable {
     private PieChart pieChartCultures;
 
     // private static final String DB_URL = "jdbc:mysql://localhost:3306/Agriflow";
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/agriflow8";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/agriflow9";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "";
 

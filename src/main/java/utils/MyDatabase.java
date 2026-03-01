@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class MyDatabase {
 
     //private static final String URL = "jdbc:mysql://localhost:3306/db-gusers";
-    private static final String URL = "jdbc:mysql://localhost:3306/agriflow8";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow9";
     //amen
     //private static final String URL = "jdbc:mysql:// localhost:3306/agriflow?useSSL=false&serverTimezone=UTC";
 
