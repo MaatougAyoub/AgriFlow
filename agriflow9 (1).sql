@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2026 at 02:42 AM
+-- Generation Time: Mar 02, 2026 at 12:23 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,8 @@ INSERT INTO `annonces` (`id`, `titre`, `description`, `type`, `statut`, `prix`, 
 (24, 'Pulverisateur Agricole 600L', 'Pulverisateur traine 600 litres avec rampe 12m. Parfait pour traitement phytosanitaire.', 'LOCATION', 'DISPONIBLE', 120.00, 'jour', 'Outil', NULL, NULL, NULL, 'Tunis', NULL, NULL, 40, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 200.00, NULL, 1, 'piece'),
 (25, 'Olives Chemlali Bio - Recolte 2025', 'Olives fraiches variete Chemlali, agriculture biologique. Ideales pour huile ou conserve.', 'VENTE', 'DISPONIBLE', 8.00, 'kg', 'Fruits', NULL, NULL, NULL, 'Sfax', NULL, NULL, 44, '2026-01-01', '2026-03-31', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 0.00, NULL, 500, 'kg'),
 (26, 'Charrue Reversible 3 Socs', 'Charrue reversible 3 socs pour labour profond. Compatible tracteurs 80-120 CV.', 'LOCATION', 'DISPONIBLE', 80.00, 'jour', 'Outil', NULL, NULL, NULL, 'Sfax', NULL, NULL, 44, '2026-01-01', '2026-12-31', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 100.00, NULL, 1, 'piece'),
-(27, 'Dattes Deglet Nour Premium', 'Dattes Deglet Nour premiere qualite, recolte manuelle. Calibre AAA, caisses de 5kg.', 'VENTE', 'DISPONIBLE', 25.00, 'kg', 'Fruits', NULL, NULL, NULL, 'Tozeur', NULL, NULL, 44, '2026-01-01', '2026-06-30', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 0.00, NULL, 300, 'kg');
+(27, 'Dattes Deglet Nour Premium', 'Dattes Deglet Nour premiere qualite, recolte manuelle. Calibre AAA, caisses de 5kg.', 'VENTE', 'DISPONIBLE', 25.00, 'kg', 'Fruits', NULL, NULL, NULL, 'Tozeur', NULL, NULL, 44, '2026-01-01', '2026-06-30', '2026-02-23 12:10:34', '2026-02-23 12:10:34', 0, 0, 0.00, NULL, 300, 'kg'),
+(28, 'Trakteur', 'Titre de l\'annonce : Trakteur de qualité pour les agriculteurs tunisiens\n\nCatégorie : Trakteur\n\nDescription :\n\nVous cherchez un trakteur fiable et performant pour votre exploitation agricole ? Nous sommes ravis de vous présenter notre trakteur de qualité, conçu pour répondre aux besoins spécifiques des agriculteurs tunisiens.\n\nCe trakteur robuste et polyvalent est équipé de moteur puissant, permettant une efficacité maximale dans les travaux de labour, de moissonnage, de transport et d\'autres opérations agricoles. Son système de transmission et de direction est conçu pour garantir une stabilité et une facilité d\'utilisation, même en conditions difficiles.\n\nLes caractéristiques clés de notre trakteur :\n\n- Puissance motorisée : [puissance du moteur]\n- Capacité de déplacement : [capacité de déplacement]\n- Système de transmission : [système de transmission]\n- Système de direction : [système de direction]\n- Capacité de charge : [capacité de charge]\n\nNotre trakteur est équipé de toutes les fonctionnalités essentielles pour un rendement optimal, y compris :\n\n- Un système de freinage performant pour une sécurité maximale\n- Un système de ventilation pour une efficacité accrue\n- Un système de lubrification automatique pour une durée de vie prolongée\n\nEn choisissant notre trakteur, vous bénéficierez d\'une expérience agricole plus efficace, plus rentable et plus durable. N\'hésitez pas à nous contacter pour plus d\'informations ou pour prendre rendez-vous pour une visite.\n\nPrix : [prix du trakteur]\n\nEmplacement : [emplacement du trakteur]\n\nContact : [informations de contact]', 'LOCATION', 'DISPONIBLE', 450.00, 'jour', 'trakteur', NULL, NULL, 0, 'Tunis', NULL, NULL, 78, NULL, NULL, '2026-03-01 22:40:43', '2026-03-01 22:49:54', 0, 0, 0.00, NULL, 0, 'kg');
 
 -- --------------------------------------------------------
 
@@ -96,7 +97,8 @@ INSERT INTO `annonce_photos` (`id`, `annonce_id`, `url_photo`, `ordre`) VALUES
 (15, 24, 'https://images.unsplash.com/photo-1592982537447-6f2a6a0c7c10?w=400', 0),
 (16, 25, 'https://images.unsplash.com/photo-1445282768818-728615cc910a?w=400', 0),
 (17, 26, 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=400', 0),
-(18, 27, 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400', 0);
+(18, 27, 'https://images.unsplash.com/photo-1590779033100-9f60a05a013d?w=400', 0),
+(19, 28, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGAsfif4Q0lIMxU-fEVhCEitlm3Kp7-dTn5A&s', 0);
 
 -- --------------------------------------------------------
 
@@ -137,7 +139,9 @@ INSERT INTO `collab_applications` (`id`, `request_id`, `candidate_id`, `full_nam
 (74, 2, 74, 'imen ben kilani', '28121457', 'imen@imen.cpm', 10, 'motivé motivé  motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé motivé ', 10.00, 'PENDING', '2026-02-27 03:38:15', '2026-02-27 03:38:15'),
 (75, 14, 1, 'ayoub', '111111111', 'ayy@yy.com', 5, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 20.00, 'APPROVED', '2026-02-26 23:09:29', '2026-02-26 23:10:03'),
 (76, 15, 1, 'Ayoub', '20305177', 'ayoub.maatoug@ipeib.ucar.tn', 6, 'lettre de motivation\niiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', 30.00, 'PENDING', '2026-02-27 16:03:40', '2026-02-27 16:03:40'),
-(77, 16, 1, 'sami', '20305177', 'maatougsami25@gmail.com', 10, 'yesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 50.00, 'PENDING', '2026-02-27 16:09:28', '2026-02-27 16:09:28');
+(77, 16, 1, 'sami', '20305177', 'maatougsami25@gmail.com', 10, 'yesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss', 50.00, 'PENDING', '2026-02-27 16:09:28', '2026-02-27 16:09:28'),
+(78, 17, 76, 'Yakine Sahli', '23654987', 'yakinesahli48@gmail.com', 15, 'sérieux et motivé aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', 0.00, 'APPROVED', '2026-03-01 16:10:42', '2026-03-01 16:40:47'),
+(79, 18, 63, 'Maatoug Sami', '96140807', 'maatougsami25@gmail.com', 20, 'motivé hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh', 50.00, 'PENDING', '2026-03-01 16:42:40', '2026-03-01 16:42:40');
 
 -- --------------------------------------------------------
 
@@ -179,7 +183,9 @@ INSERT INTO `collab_requests` (`id`, `title`, `description`, `location`, `latitu
 (13, 'Plantation des Fraises', 'on cherche plantation fraise ', 'Sidi Ahmed, Délégation Bizerte Sud, Gouvernorat Bizerte, Tunisie', 37.2740528, 9.7229004, '2026-02-27', '2026-03-01', 1, 10.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 03:20:11', '2026-02-26 03:20:29'),
 (14, 'Recolte des pommes ', 'on cherche des personnes seriesux pou......', 'Cherichira, Délégation Essouassi, Gouvernorat Mahdia, Tunisie', 35.2994355, 10.5249023, '2026-02-28', '2026-03-03', 2, 53.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 23:06:37', '2026-02-26 23:07:56'),
 (15, 'recolte oranges', 'on cherche', 'Habib Thameur, Délégation El Hamma, Gouvernorat Gabès, Tunisie', 33.8521697, 9.6679688, '2026-02-28', '2026-03-01', 1, 44.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-26 23:31:18', '2026-02-26 23:31:41'),
-(16, 'Récolte tomate ', 'illi yji ', 'Sidi Harreth, Délégation Kasserine Sud, Gouvernorat Kasserine, Tunisie', 35.2456191, 8.8165283, '2026-02-28', '2026-03-05', 2, 440.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-27 16:04:09', '2026-02-27 16:05:57');
+(16, 'Récolte tomate ', 'illi yji ', 'Sidi Harreth, Délégation Kasserine Sud, Gouvernorat Kasserine, Tunisie', 35.2456191, 8.8165283, '2026-02-28', '2026-03-05', 2, 440.00, 'APPROVED', 1, 'Ali Ben Ahmed', '2026-02-27 16:04:09', '2026-02-27 16:05:57'),
+(17, 'Récolte pomme de terre ', 'à la recherche d\'un ouvrier ', 'عين فرنة, معتمدية برقو, ولاية سليانة, تونس', 36.1733569, 9.5800781, '2026-03-11', '2026-03-26', 10, 40.00, 'APPROVED', 78, 'AYOUB MAATOUG', '2026-03-01 16:05:37', '2026-03-01 16:07:42'),
+(18, 'Récolte Olive', 'Récolte Olive ', 'الطريق الجهوية جبنيانة - المحرس, شعلاب, معتمدية منزل شاكر, ولاية صفاقس, تونس', 35.0389920, 10.5249023, '2026-03-02', '2026-03-31', 9, 35.00, 'APPROVED', 78, 'AYOUB MAATOUG', '2026-03-01 16:39:02', '2026-03-01 16:39:50');
 
 -- --------------------------------------------------------
 
@@ -209,7 +215,10 @@ CREATE TABLE `cultures` (
 --
 
 INSERT INTO `cultures` (`id`, `parcelle_id`, `proprietaire_id`, `nom`, `type_culture`, `superficie`, `etat`, `date_recolte`, `recolte_estime`, `date_creation`, `id_acheteur`, `date_vente`, `date_publication`, `prix_vente`) VALUES
-(1, 1, 75, 'fraise', 'FRAISE', 100.00, 'EN_COURS', '2026-03-18', 10.20, '2026-02-28 12:19:09', NULL, NULL, NULL, NULL);
+(1, 1, 75, 'fraise', 'FRAISE', 100.00, 'EN_COURS', '2026-03-18', 10.20, '2026-02-28 12:19:09', NULL, NULL, NULL, NULL),
+(2, 2, 78, 'Batata', 'POMME_DE_TERRE', 500.00, 'VENDUE', '2026-03-26', 2000.00, '2026-03-01 15:11:48', 63, '2026-03-01', '2026-03-01', 2600),
+(3, 5, 78, 'Degla', 'AUTRE', 1000.00, 'EN_VENTE', '2026-04-25', 100.00, '2026-03-01 18:20:38', NULL, NULL, '2026-03-01', 30000),
+(4, 6, 76, 'Besbes', 'LEGUMES', 1200.00, 'RECOLTEE', '2026-03-29', 3000.00, '2026-03-01 22:05:11', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -234,8 +243,7 @@ CREATE TABLE `diagnosti` (
 --
 
 INSERT INTO `diagnosti` (`id_diagnostic`, `id_agriculteur`, `nom_culture`, `image_path`, `description`, `reponse_expert`, `statut`, `date_envoi`, `date_reponse`) VALUES
-(21, 1, 'Citrons', 'C:\\Users\\wess\\Pictures\\Screenshots\\Capture d\'écran 2026-02-19 210421.png', 'L\'image représente des fruits jaunes, probablement des mandarines ou des oranges, présentant des taches vertes et sombres, ce qui suggère la présence de symptômes de maladie.\n\n**État de la culture ou du fruit :**\n\nLes fruits sont globalement bien développés mais arborent des taches sombres irrégulières. L\'état général de la plante n\'est pas complètement visible sur l\'image, mais les feuilles paraissent saines.\n\n**Maladies identifiées :**\n\nSur la base des symptômes visibles (taches vertes et sombres sur les fruits), il est probable que la maladie en question soit la **\"Green Spot\"** ou plus communément appelée en français **\"Tache verte\"** ou encore **\"Marmorature\"** causée par des bactéries comme *Pseudomonas syringae* ou des conditions physiologiques. Cependant, la maladie la plus probable étant donné la description pourrait être la **\"Tache verte à Citrus canker\"** causée par *Xanthomonas citri*.\n\n', NULL, 'En attente', '2026-02-21 21:42:15', NULL),
-(23, 1, 'Citrons', 'C:\\Users\\wess\\Pictures\\Screenshots\\Capture d\'écran 2026-02-21 165706.png', 'Objet : Demande de réclamation agricole - Tâches brunes sur citron\n\nMadame, Monsieur,\n\nJe vous écris pour signaler un problème sur une culture de citronniers dans mon exploitation agricole. Les citronniers présentent des tâches brunes sur les fruits (voir photo ci-jointe).\n\nLe problème observé :\n\nLes tâches brunes sur les citrons sont un symptôme de maladie, probablement causée par une infection fongique. Ces tâches peuvent entraîner une pourriture des fruits.\n\nDommages possibles :\n\n* Perte de qualité et de quantité de la production\n* Risque de contamination d\'autres plantes\n* Coûts supplémentaires pour le traitement et la gestion de la maladie\n\nDemande d\'intervention :\n\nJe vous demande de vous déplacer sur mon exploitation pour examiner les citronniers et déterminer la cause exacte du problème. Je souhaiterais également bénéficier de vos conseils pour mettre en place un plan d\'action afin de traiter la maladie.\n\nJe vous remercie d\'avance pour votre attention à cette affaire et je reste à votre disposition pour tout renseignement complémentaire.\n\nCordialement,\n[Votre nom]', NULL, 'En attente', '2026-02-22 21:50:21', NULL);
+(27, 76, 'Besbes', 'C:\\Users\\Crash\\Desktop\\fenouil.png', 'Objet : Réclamation concernant la qualité des plants de fenouil\n\nÀ l\'attention de l\'expert agricole,\n\nJe vous écris pour signaler un problème concernant mes plants de fenouil. Comme vous pouvez le voir sur la photo ci-jointe, les plants de fenouil présentent des feuilles jaunâtres et des tiges faibles.\n\nMalgré un arrosage régulier et une exposition suffisante à la lumière solaire, les plants ne semblent pas se développer normalement. Les feuilles sont également moins nombreuses et moins denses que celles que l\'on peut trouver sur des plants sains.\n\nJe crains que cela puisse être dû à une maladie ou à une carence nutritionnelle. Je vous serais reconnaissant si vous pouviez m\'aider à identifier la cause de ce problème et à trouver une solution pour y remédier.\n\nJe joins à ce message une photo des plants affectés. Je vous remercie d\'avance pour votre attention à cette affaire et je suis impatient de vous entendre.\n\nCordialement,\n[Votre nom]', '\n--- PRODUIT RECOMMANDÉ ---\nNom : Oidium-Fix\nDosage : 1.8 L / hectare\nFréquence : 2 fois par mois\nNote : Ne pas dépasser la dose recommandée. Bien nettoyer le pulvérisateur après usage.\n---------------------------\n', 'Valide', '2026-03-01 22:26:03', NULL);
 
 -- --------------------------------------------------------
 
@@ -277,7 +285,12 @@ CREATE TABLE `parcelle` (
 --
 
 INSERT INTO `parcelle` (`id`, `agriculteur_id`, `nom`, `superficie`, `type_terre`, `localisation`, `date_creation`) VALUES
-(1, 75, 'Senya', 100.00, 'HUMIFERE', '52.839,-1.889', '2026-02-28 12:19:52');
+(1, 75, 'Senya', 100.00, 'HUMIFERE', '22.819,41.573', '2026-02-28 12:19:52'),
+(2, 78, 'Senya batata', 500.00, 'SABLEUSE', '52.839,-1.889', '2026-03-01 15:09:59'),
+(3, 79, 'eeee', 5000.00, 'CALCAIRE', '52.839,-1.889', '2026-03-01 16:13:50'),
+(4, 78, 'waha', 600.00, 'SABLEUSE', 'العذارة, معتمدية دوز الجنوبية, ولاية قبلي, تونس', '2026-03-01 18:07:56'),
+(5, 78, 'Wa7a gabes', 1000.00, 'MIXTE', '33.833920,9.783325', '2026-03-01 18:16:10'),
+(6, 76, 'Henchir', 1200.00, 'ARGILEUSE', '36.686041,9.091187', '2026-03-01 22:04:17');
 
 -- --------------------------------------------------------
 
@@ -306,7 +319,7 @@ INSERT INTO `plans_irrigation` (`plan_id`, `id_culture`, `nom_culture`, `date_de
 (5, 3, NULL, '2026-02-15 19:13:48', 'brouillon', 50, '00:00:00', '2026-02-15 19:13:48', NULL),
 (7, 9, NULL, '2026-02-15 22:33:20', 'brouillon', 60, '00:00:00', '2026-02-15 22:33:20', NULL),
 (8, 2, NULL, '2026-02-16 11:00:04', 'brouillon', 40, '00:00:00', '2026-02-16 11:00:04', NULL),
-(9, 4, NULL, '2026-02-18 09:46:53', 'brouillon', 35, '00:00:00', '2026-02-18 09:46:53', NULL),
+(9, 4, 'Besbes', '2026-02-18 09:46:53', 'soumis', 3224.87, NULL, NULL, NULL),
 (10, 8, NULL, '2026-02-18 09:47:00', 'brouillon', 70, '00:00:00', '2026-02-18 09:47:00', NULL),
 (11, 11, NULL, '2026-02-18 20:38:52', 'brouillon', 45, '00:00:00', '2026-02-18 20:38:52', NULL),
 (12, 5, NULL, '2026-02-19 19:01:10', 'brouillon', 45, '00:00:00', '2026-02-19 19:01:10', NULL),
@@ -372,13 +385,34 @@ INSERT INTO `plans_irrigation_jour` (`id`, `plan_id`, `jour`, `eau_mm`, `temps_m
 (565, 8, 'FRI', 5.71429, 29, 28.6, '2026-02-16', 41, 0),
 (566, 8, 'MON', 5.71429, 29, 28.4, '2026-02-16', 26, 0),
 (567, 8, 'SUN', 5.71429, 29, 25.5, '2026-02-16', 56, 0),
-(568, 15, 'THU', 20.71, 104, 7.6, '2026-02-23', 95, 5),
-(569, 15, 'TUE', 24.71, 124, 11.5, '2026-02-23', 92, 1),
-(570, 15, 'WED', 24.01, 121, 12.9, '2026-02-23', 94, 1.7),
-(571, 15, 'SAT', 25.41, 128, 13.5, '2026-02-23', 97, 0.3),
-(572, 15, 'FRI', 21.91, 110, 9.7, '2026-02-23', 99, 3.8),
-(573, 15, 'MON', 15.11, 76, 6.9, '2026-02-23', 95, 10.6),
-(574, 15, 'SUN', 20.81, 105, 8, '2026-02-23', 97, 4.9);
+(568, 15, 'THU', 25.71, 129, 9.4, '2026-02-23', 96, 0),
+(569, 15, 'TUE', 24.51, 123, 13.5, '2026-02-23', 93, 1.2),
+(570, 15, 'WED', 25.71, 129, 9.1, '2026-02-23', 92, 0),
+(571, 15, 'SAT', 20.91, 105, 9.5, '2026-02-23', 99, 4.8),
+(572, 15, 'FRI', 25.71, 129, 13.2, '2026-02-23', 94, 0),
+(573, 15, 'MON', 24.71, 124, 11.6, '2026-02-23', 97, 1),
+(574, 15, 'SUN', 25.11, 126, 9.8, '2026-02-23', 97, 0.6),
+(610, 8, 'THU', 192.857, 965, 10.5, '2026-02-23', 100, 0),
+(611, 8, 'TUE', 192.257, 962, 13.8, '2026-02-23', 92, 0.6),
+(612, 8, 'WED', 192.557, 963, 10.7, '2026-02-23', 94, 0.3),
+(613, 8, 'SAT', 192.857, 965, 8.4, '2026-02-23', 87, 0),
+(614, 8, 'FRI', 187.757, 939, 10.6, '2026-02-23', 98, 5.1),
+(615, 8, 'MON', 192.857, 965, 11.4, '2026-02-23', 96, 0),
+(616, 8, 'SUN', 192.857, 965, 9.4, '2026-02-23', 96, 0),
+(617, 13, 'THU', 257.14, 1286, 24.4, '2026-02-23', 90, 0),
+(618, 13, 'TUE', 257.14, 1286, 20.8, '2026-02-23', 96, 0),
+(619, 13, 'WED', 285.71, 1429, 22.4, '2026-02-23', 71, 0),
+(620, 13, 'SAT', 238.59, 1193, 18.6, '2026-02-23', 92, 18.55),
+(621, 13, 'FRI', 256.64, 1284, 19.6, '2026-02-23', 95, 0.5),
+(622, 13, 'MON', 257.14, 1286, 20.3, '2026-02-23', 100, 0),
+(623, 13, 'SUN', 257.14, 1286, 18.3, '2026-02-23', 88, 0),
+(631, 9, 'THU', 462.56, 2313, 21.7, '2026-02-23', 94, 0.3),
+(632, 9, 'TUE', 462.86, 2315, 19.5, '2026-02-23', 100, 0),
+(633, 9, 'WED', 462.86, 2315, 18.9, '2026-02-23', 96, 0),
+(634, 9, 'SAT', 449.41, 2248, 15.5, '2026-02-23', 96, 13.45),
+(635, 9, 'FRI', 461.46, 2308, 17.3, '2026-02-23', 94, 1.4),
+(636, 9, 'MON', 462.86, 2315, 18.8, '2026-02-23', 96, 0),
+(637, 9, 'SUN', 462.86, 2315, 16.5, '2026-02-23', 98, 0);
 
 -- --------------------------------------------------------
 
@@ -474,7 +508,9 @@ INSERT INTO `reservations` (`id`, `annonce_id`, `demandeur_id`, `proprietaire_id
 (5, 1, 39, 36, '2026-02-16', '2026-02-17', 1, 550.00, 1000.00, 'EN_ATTENTE', 'salut', NULL, '2026-02-16 00:06:34', NULL, '2026-02-16 00:06:34', NULL, 0, NULL, 0, NULL, NULL),
 (6, 2, 39, 36, '2026-02-16', '2026-02-17', 1, 1760.00, 3000.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-16 00:11:01', NULL, '2026-02-16 00:11:01', NULL, 0, NULL, 0, NULL, NULL),
 (7, 19, 74, 39, '2026-02-25', '2026-02-26', 1, 550.00, 500.00, 'EN_ATTENTE', 'aaaaaaaa', NULL, '2026-02-25 15:55:14', NULL, '2026-02-25 15:55:14', NULL, 0, NULL, 0, NULL, NULL),
-(8, 19, 74, 39, '2026-02-25', '2026-02-26', 1, 550.00, 500.00, 'ACCEPTEE', 'aaaaaaa', 'Demande acceptée. Bienvenue !', '2026-02-25 15:56:46', '2026-02-25 15:57:30', '2026-02-25 15:56:46', NULL, 0, NULL, 1, '2026-02-25 15:58:14', 'Carte bancaire (Stripe)');
+(8, 19, 74, 39, '2026-02-25', '2026-02-26', 1, 550.00, 500.00, 'ACCEPTEE', 'aaaaaaa', 'Demande acceptée. Bienvenue !', '2026-02-25 15:56:46', '2026-02-25 15:57:30', '2026-02-25 15:56:46', NULL, 0, NULL, 1, '2026-02-25 15:58:14', 'Carte bancaire (Stripe)'),
+(9, 27, 63, 44, '2026-03-01', '2026-03-02', 1, 27.50, 0.00, 'EN_ATTENTE', 'aaaaaaaaa', NULL, '2026-03-01 14:33:01', NULL, '2026-03-01 14:33:01', NULL, 0, NULL, 0, NULL, NULL),
+(10, 28, 70, 78, '2026-03-01', '2026-03-03', 1, 1485.00, 0.00, 'ACCEPTEE', 'Salut', 'Demande acceptée. Bienvenue !', '2026-03-01 22:48:06', '2026-03-01 22:49:54', '2026-03-01 22:48:06', NULL, 0, NULL, 1, '2026-03-01 22:53:33', 'Carte bancaire (Stripe)');
 
 -- --------------------------------------------------------
 
@@ -512,12 +548,12 @@ INSERT INTO `utilisateurs` (`id`, `nom`, `prenom`, `cin`, `email`, `motDePasse`,
 (39, 'maatoug', 'ayoub', 11429920, 'ayoub.maatoug@esprit.tn', '$2a$12$aiBquFb/ffsalNnpdndEFuR0m0ZLh5luTEYjS.hVCfPS/plKY2j3q', 'ADMIN', '2026-02-16', 'C:\\xampp\\htdocs\\signatures\\1771633850595_signature_ayoub.jpg', 100.5, NULL, NULL, NULL, NULL, 'APPROVED', NULL, NULL, NULL, NULL),
 (44, 'Baji', 'Badis', 99663388, 'badis@gmail.com', 'pwbadis', 'AGRICULTEUR', '2026-02-20', 'C:\\xampp\\htdocs\\signatures\\1771634629497_signature_badis.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771634642357_____________.jpg', 'araiana', '', NULL, 'APPROVED', NULL, NULL, NULL, NULL),
 (63, 'SAMI', 'MAATOUG', 74100000, 'maatougsami25@gmail.com', '$2a$12$OCCHJP1GqPJz5uThamkB/...VSdgqZiUrcyF5u0Y8CwR7T6nR675y', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771730327340_signature_sami.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771730400439_sami____________.jpg', 'rue ali douagi - Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'سامي', 'معتوق'),
-(70, 'Jerbi', 'Amenallah', 12345678, 'amenallah@agriflow.tn', 'pwamen', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771779144715_signature_amen.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771779159143__amen_____________.jpg', 'korba', '', NULL, 'APPROVED', NULL, NULL, 'أمان الله', 'جربي'),
+(70, 'Jerbi', 'Amenallah', 12345678, 'amenallahjerbi@gmail.com', '$2a$12$RtfOc84bjnnNBx5Y/j7YkO/lwMe0KkeedD3D4UykZH6fjUyjCQkIW', 'AGRICULTEUR', '2026-02-22', 'C:\\xampp\\htdocs\\signatures\\1771779144715_signature_amen.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771779159143__amen_____________.jpg', 'korba', '', NULL, 'APPROVED', NULL, NULL, 'أمان الله', 'جربي'),
 (74, 'Ayoub', 'Maatoug', 11223344, 'ayoub.maatoug@ipeib.ucar.tn', '$2a$12$VqNLs/i7EdWxtFUxa./kQOQkecF3kgoCM/8oDAKvPJgICvomwTLbe', 'AGRICULTEUR', '2026-02-23', 'C:\\xampp\\htdocs\\signatures\\1771821459799_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1771821529933_Carte_pro__ayoub_.png', 'eeeeee', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
 (76, 'yakine', 'sahli', 77882020, 'yakinesahli48@gmail.com', '$2a$12$RscsfaflKeKNiwTGqruexeZL.DS8D6tmcxyFErpOeKUTIwNw8HX0m', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209232788_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209276977_Carte_pro_yakine.png', 'Bizerte', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي'),
 (77, 'sahli', 'yakine eddine', 98765432, 'yakineddine.sahli@isgb.ucar.tn', '$2a$12$qD6nzyC34wBASVrNEkDXUOqV2hnzqppcBdiYlm4H7HuLiDNviraBm', 'AGRICULTEUR', '2026-02-27', 'C:\\xampp\\htdocs\\signatures\\1772209652466_signature_yakine.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772209684709_carte_pro_yakine22.png', 'ariana', '', NULL, 'APPROVED', '', 1, 'يقين', 'ساحلي'),
-(78, 'MAATOUG', 'AYOUB', 25042000, 'maatougayoub7@gmail.com', '$2a$12$6rBDrCyfa4n1EW1PNYf6GeAdsTORq.rooxt18YxrUxTSap0VY1wi6', 'AGRICULTEUR', '2026-02-28', 'C:\\xampp\\htdocs\\signatures\\1772289147867_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772289190234_carte_pro_25042000.png', 'Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
-(79, 'Fattoumi', 'Oussama', 20252026, 'oussama@agriflow.tn', '$2a$12$AkPu0n83AtyZ2sv9TED7h.UgPdJEsmTVBTGUYYVa6EN0VNEQcGVvS', 'EXPERT', '2026-03-01', 'C:\\xampp\\htdocs\\signatures\\1772323714914_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1772323721302_diplome_expert_Oussama_.png', 'APPROVED', '', 1, NULL, NULL);
+(78, 'MAATOUG', 'AYOUB', 25042000, 'maatougayoub7@gmail.com', '$2a$12$XKSQNDhKw0WtMA4CRGA6Ze5fxppJ5dlKLIt9/Tu8E.zWIrw5wAJyG', 'AGRICULTEUR', '2026-02-28', 'C:\\xampp\\htdocs\\signatures\\1772289147867_signature_ayoub.jpg', NULL, 'C:\\xampp\\htdocs\\cartes\\1772289190234_carte_pro_25042000.png', 'Ras Jebel', '', NULL, 'APPROVED', NULL, NULL, 'أيوب', 'معتوق'),
+(79, 'Fattoumi', 'Oussama', 20252026, 'fattoumioussema8@gmail.com', '$2a$12$s8tX4O8qwbSLRXImzxIoL.wMn3lCuovNrRYYcmL9d3WrWTSyyw.Hy', 'EXPERT', '2026-03-01', 'C:\\xampp\\htdocs\\signatures\\1772323714914_signature_oussama.jpg', NULL, NULL, NULL, NULL, 'C:\\xampp\\htdocs\\certifications\\1772323721302_diplome_expert_Oussama_.png', 'APPROVED', '', 1, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -570,7 +606,8 @@ ALTER TABLE `cultures`
 -- Indexes for table `diagnosti`
 --
 ALTER TABLE `diagnosti`
-  ADD PRIMARY KEY (`id_diagnostic`);
+  ADD PRIMARY KEY (`id_diagnostic`),
+  ADD KEY `diag` (`id_agriculteur`);
 
 --
 -- Indexes for table `messages`
@@ -642,37 +679,37 @@ ALTER TABLE `utilisateurs`
 -- AUTO_INCREMENT for table `annonces`
 --
 ALTER TABLE `annonces`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `annonce_photos`
 --
 ALTER TABLE `annonce_photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `collab_applications`
 --
 ALTER TABLE `collab_applications`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `collab_requests`
 --
 ALTER TABLE `collab_requests`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `cultures`
 --
 ALTER TABLE `cultures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `diagnosti`
 --
 ALTER TABLE `diagnosti`
-  MODIFY `id_diagnostic` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id_diagnostic` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `messages`
@@ -684,7 +721,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `parcelle`
 --
 ALTER TABLE `parcelle`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `plans_irrigation`
@@ -696,7 +733,7 @@ ALTER TABLE `plans_irrigation`
 -- AUTO_INCREMENT for table `plans_irrigation_jour`
 --
 ALTER TABLE `plans_irrigation_jour`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=596;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=666;
 
 --
 -- AUTO_INCREMENT for table `produits_phytosanitaires`
@@ -714,7 +751,7 @@ ALTER TABLE `reclamations`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `utilisateurs`
@@ -731,6 +768,12 @@ ALTER TABLE `utilisateurs`
 --
 ALTER TABLE `cultures`
   ADD CONSTRAINT `fk_cultures_acheteur` FOREIGN KEY (`id_acheteur`) REFERENCES `utilisateurs` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `diagnosti`
+--
+ALTER TABLE `diagnosti`
+  ADD CONSTRAINT `diag` FOREIGN KEY (`id_agriculteur`) REFERENCES `utilisateurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
