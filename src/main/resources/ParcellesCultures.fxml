@@ -36,7 +36,7 @@
                       prefWidth="340" prefHeight="360">
                     <ImageView fitWidth="308" fitHeight="230" preserveRatio="true" smooth="true">
                         <image>
-                            <Image url="@/images/gestion_parcelles.png"/>
+                            <Image url="@images/gestion_parcelles.png"/>
                         </image>
                     </ImageView>
 
@@ -54,7 +54,7 @@
                       prefWidth="340" prefHeight="360">
                     <ImageView fitWidth="308" fitHeight="230" preserveRatio="true" smooth="true">
                         <image>
-                            <Image url="@/images/gestion_cultures.png"/>
+                            <Image url="@images/gestion_cultures.png"/>
                         </image>
                     </ImageView>
 
@@ -72,7 +72,7 @@
                       prefWidth="340" prefHeight="360">
                     <ImageView fitWidth="308" fitHeight="230" preserveRatio="true" smooth="true">
                         <image>
-                            <Image url="@/images/cultures_vente.png"/>
+                            <Image url="@images/cultures_vente.png"/>
                         </image>
                     </ImageView>
 

@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 
@@ -46,14 +47,27 @@ public class MainExpertFX extends Application {
      */
     public static void showExploreExpertHome() {
         try {
+            // Get current stage dynamically if primaryStage is null
+            Stage stage = primaryStage;
+            if (stage == null) {
+                stage = (Stage) Window.getWindows().stream()
+                    .filter(Window::isShowing)
+                    .findFirst()
+                    .orElse(null);
+            }
+            if (stage == null) {
+                System.err.println("No stage available for navigation");
+                return;
+            }
+            
             // Load the main layout (drawer + content area)
             FXMLLoader loader = new FXMLLoader(MainFX.class.getResource("/Main.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root, 1400, 900);
             // scene.getStylesheets().add(MainFX.class.getResource("/css/styles.css").toExternalForm());
-            primaryStage.setScene(scene);
-            primaryStage.setTitle("AgriFlow - Explore Tableau de bord Expert");
-            primaryStage.setFullScreen(true);
+            stage.setScene(scene);
+            stage.setTitle("AgriFlow - Explore Tableau de bord Expert");
+            stage.setFullScreen(true);
 
             // Restore userData to the loaded MainController so drawer/profile show
             // correctly
@@ -71,7 +85,7 @@ public class MainExpertFX extends Application {
                 pane.getChildren().setAll(exploreRoot);
             } else {
                 // Fallback: set the scene directly to the explore view
-                primaryStage.setScene(new Scene(exploreRoot, 1200, 800));
+                stage.setScene(new Scene(exploreRoot, 1200, 800));
             }
         } catch (IOException e) {
             System.err.println("❌ Erreur lors du chargement de Main.fxml ou ExploreExperHome.fxml : " + e.getMessage());

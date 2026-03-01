@@ -11,8 +11,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import mains.MainExpertFX;
 import services.IrrigationSmartService;
 import services.ServicePlanIrrigationJour;
 
@@ -271,10 +273,7 @@ public class ContCultureDetails {
 
     @FXML
     private void retour(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ExperpalnIrrigation.fxml"));
-            ((Stage)((Node)event.getSource()).getScene().getWindow()).getScene().setRoot(root);
-        } catch (IOException e) { e.printStackTrace(); }
+        MainExpertFX.showExploreExpertHome();
     }
 
     private void addSideLabel(int col, int row, String text) {

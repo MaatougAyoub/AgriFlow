@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import mains.MainExpertFX;
 import services.ExpertService;
 import services.ProduitService;
 
@@ -139,10 +140,10 @@ public class DiagnosticDetailController {
 
         expertService.repondreDiagnostic(diagnostic.getIdDiagnostic(), reponse);
         showAlert("Succès", "Réponse envoyée avec succès.");
-        goBack(event);
+        goBack();
     }
 
-    @FXML
+/*     @FXML
     private void goBack(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ExpertDashboard.fxml"));
@@ -152,6 +153,18 @@ public class DiagnosticDetailController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    } */
+
+
+
+    @FXML
+    private void goBack() {
+        MainExpertFX.showExploreExpertHome();
+    }
+
+        @FXML
+    private void retour() {
+        MainExpertFX.showExploreExpertHome();
     }
 
     private void showAlert(String title, String message) {
