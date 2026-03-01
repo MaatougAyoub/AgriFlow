@@ -52,6 +52,8 @@ public class MainController implements Initializable {
     private Button menuCollaborations;
     @FXML
     private Button menuPlanIrrigation;
+    @FXML
+    private Button menuPlanIrrigation2;
 
     // Boutons à conserver
     @FXML
@@ -188,13 +190,31 @@ public class MainController implements Initializable {
             btnAdmin.setVisible(admin);
             btnAdmin.setManaged(admin);
         }
+
+        // Visibilité des boutons Plan d'Irrigation selon le rôle
+        String role = (currentUser != null && currentUser.getRole() != null)
+                ? currentUser.getRole().toUpperCase() : "";
+        boolean isExpert = "EXPERT".equals(role);
+        boolean isAgriculteur = !admin && !isExpert; // tout ce qui n'est ni ADMIN ni EXPERT
+
+        // Agriculteur et Admin voient "Plan d'Irrigation(Agriculteur)"
+        // Expert et Admin voient "Plan d'Irrigation(Expert)"
+        if (menuPlanIrrigation != null) {
+            boolean visible = admin || isAgriculteur;
+            menuPlanIrrigation.setVisible(visible);
+            menuPlanIrrigation.setManaged(visible);
+        }
+        if (menuPlanIrrigation2 != null) {
+            boolean visible = admin || isExpert;
+            menuPlanIrrigation2.setVisible(visible);
+            menuPlanIrrigation2.setManaged(visible);
+        }
     }
 
     // ===== Navigation Drawer =====
 
     @FXML
     private void goProfil() {
-        MarketplaceController.arreterMusique();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProfilUtilisateur.fxml"));
             Parent view = loader.load();
@@ -239,10 +259,19 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void goPlanIrrigation() {
-        System.out.println("Plan d'Irrigation - non implémenté");
+    public void goPlanIrrigation() {
+        //System.out.println("Plan d'Irrigation - non implémenté");
+        loadView("/palnIrrigation.fxml");
         setActiveButton(menuPlanIrrigation);
     }
+
+    @FXML
+    public void goPlanIrrigation2() {
+        //System.out.println("Plan d'Irrigation - non implémenté");
+        loadView("/ExpertHome.fxml");
+        setActiveButton(menuPlanIrrigation2);
+    }
+
 
     // ===== Boutons conservés =====
 
@@ -270,7 +299,6 @@ public class MainController implements Initializable {
 
     @FXML
     private void deconnecter() {
-        MarketplaceController.arreterMusique();
         currentUser = null;
         userData = null;
         try {
@@ -292,11 +320,6 @@ public class MainController implements Initializable {
 
     private void loadView(String fxmlPath) {
         try {
-            // arreter la musique si on quitte le Marketplace
-            if (!"/Marketplace.fxml".equals(fxmlPath)) {
-                MarketplaceController.arreterMusique();
-            }
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Parent view = loader.load();
 

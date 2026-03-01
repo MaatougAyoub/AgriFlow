@@ -20,6 +20,7 @@ import mains.MainCollabFX;
 import mains.MainFX;
 import services.CollabRequestService;
 import services.WeatherService;
+import services.WeatherServiceYakine;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -43,7 +44,7 @@ public class CollabRequestDetailsController {
 
     private CollabRequest currentRequest;
     private final CollabRequestService requestService = new CollabRequestService();
-    private final WeatherService weatherService = new WeatherService();
+    private final WeatherServiceYakine weatherService = new WeatherServiceYakine();
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("EEE d MMM", java.util.Locale.FRENCH);
 
     /**

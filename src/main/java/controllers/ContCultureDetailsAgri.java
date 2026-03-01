@@ -25,7 +25,7 @@ import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ContCultureDetails {
+public class ContCultureDetailsAgri {
 
     private final ServicePlanIrrigationJour serviceJour = new ServicePlanIrrigationJour();
     private int planId;
@@ -59,53 +59,7 @@ public class ContCultureDetails {
         mettreAJourLabelSemaine();
     }
 
-    // --- LOGIQUE IA & ACTIONS ---
 
-    @FXML
-    private void genererPlanAutomatique(ActionEvent event) {
-        if (culture == null || planId <= 0) {
-            showAlert("Erreur", "Données de culture manquantes.");
-            return;
-        }
-
-        IrrigationSmartService smartService = new IrrigationSmartService();
-        LocalDate lundi = getDebutSemaineActuelle();
-
-        try {
-            Map<String, float[]> planData = smartService.genererPlanIA(this.culture);
-
-            for (Map.Entry<String, float[]> entry : planData.entrySet()) {
-                float[] val = entry.getValue();
-                serviceJour.saveDayOptimized(
-                        this.planId, entry.getKey(), val[0], (int) val[1],
-                        val[2], val[3], val[4], lundi
-                );
-            }
-
-            reloadFromDbIfPossible();
-            showAlert("Succès", "Plan optimisé via IA : La pluie a été déduite !");
-
-        } catch (Exception e) {
-            showAlert("Erreur API", "Détail : " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void enregistrerPlanning(ActionEvent event) {
-        if (planId <= 0) return;
-        try {
-            LocalDate lundi = getDebutSemaineActuelle();
-            for (Day day : Day.values()) {
-                float eau = parseSafeFloat(fields.get(Row.EAU).get(day).getText());
-                int time = (int) parseSafeFloat(fields.get(Row.TIME).get(day).getText());
-                float temp = parseSafeFloat(fields.get(Row.TEMP).get(day).getText());
-                serviceJour.saveDay(planId, day.name(), eau, time, temp, lundi);
-            }
-            showAlert("Succès", "Planning enregistré !");
-        } catch (Exception e) {
-            showAlert("Erreur", "Vérifiez les formats numériques.");
-        }
-    }
 
     // --- ACCÈS AUX DONNÉES ---
 
@@ -272,7 +226,7 @@ public class ContCultureDetails {
     @FXML
     private void retour(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ExperpalnIrrigation.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/palnIrrigation.fxml"));
             ((Stage)((Node)event.getSource()).getScene().getWindow()).getScene().setRoot(root);
         } catch (IOException e) { e.printStackTrace(); }
     }

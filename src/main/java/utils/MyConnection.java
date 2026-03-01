@@ -1,10 +1,11 @@
-package utils;
+/*package utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MyConnection {
-    private  final  String URL="jdbc:mysql://localhost:3306/AgriFlow";
+    //private  final  String URL="jdbc:mysql://localhost:3306/AgriFlow";
+    private static final String URL = "jdbc:mysql://localhost:3306/agriflow8";
     private  final  String USER="root";
     private  final  String PASSWORD="";
     private Connection connection;
@@ -30,4 +31,4 @@ public class MyConnection {
         return connection;
     }
 
-}
+}*/

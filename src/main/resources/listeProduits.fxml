@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #F8F9FA;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ListeProduitsController">
+
+
+<!--     <top>
+        <HBox prefHeight="10.0" style="-fx-background-color: #2E7D32; -fx-padding: 10 20;" alignment="CENTER_LEFT" spacing="20">
+            <children>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Button prefHeight="40.0" style="-fx-background-color: rgba(255,255,255,0.08); -fx-text-fill: white; -fx-padding: 6 12; -fx-font-weight: bold;" text="🏠  Tableau de bord" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="💧  Plan d'Irrigation" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="📊  Analytique" />
+                    <Button prefHeight="40.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="💊  Produits" />
+                </HBox>
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <StackPane alignment="CENTER_RIGHT">
+                    <Button prefHeight="36.0" style="-fx-background-color: transparent; -fx-text-fill: #e0e0e0; -fx-padding: 6 12;" text="📝 Diagnostic" />
+                    <Label fx:id="badgeDiagnostic" style="-fx-background-color: #E74C3C; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 2 7; -fx-font-size: 11;" text="0" StackPane.alignment="CENTER_RIGHT" translateX="-10" />
+                </StackPane>
+            </children>
+        </HBox>
+    </top> -->
+
+    <center>
+        <VBox spacing="25" style="-fx-padding: 35;">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <VBox>
+                            <Label style="-fx-font-size: 14;" text="Gestion des intrants" textFill="#7f8c8d" />
+                            <Label style="-fx-font-size: 30; -fx-font-weight: 800;" text="Catalogue Phytosanitaire" textFill="#2E7D32" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#ouvrirAjoutProduit" style="-fx-background-color: #2E7D32; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 12 25; -fx-cursor: hand;" text="➕ AJOUTER UN PRODUIT">
+                            <effect><DropShadow color="#00000033" offsetY="3" radius="10" /></effect>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" prefHeight="40.0" spacing="15" style="-fx-padding: 0 20;">
+                    <Label prefWidth="200" style="-fx-text-fill: #95a5a6; -fx-font-weight: bold; -fx-font-size: 12;" text="NOM DU PRODUIT" />
+                    <Label prefWidth="120" style="-fx-text-fill: #95a5a6; -fx-font-weight: bold; -fx-font-size: 12;" text="DOSAGE" />
+                    <Label prefWidth="120" style="-fx-text-fill: #95a5a6; -fx-font-weight: bold; -fx-font-size: 12;" text="FRÉQUENCE" />
+                    <Label prefWidth="250" style="-fx-text-fill: #95a5a6; -fx-font-weight: bold; -fx-font-size: 12;" text="REMARQUES" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label prefWidth="100" style="-fx-text-fill: #95a5a6; -fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER_RIGHT;" text="ACTIONS" />
+                </HBox>
+
+                <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                    <content>
+                        <VBox fx:id="produitsContainer" spacing="15" style="-fx-padding: 5 5 20 5;" />
+                    </content>
+                </ScrollPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

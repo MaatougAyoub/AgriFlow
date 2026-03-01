@@ -1,7 +1,8 @@
 package services;
 
 import entities.PlanIrrigation;
-import utils.MyConnection;
+//import utils.MyConnection;
+import utils.MyDatabase;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ public class ServicePlanIrrigation implements IService<PlanIrrigation> {
     private final Connection connection;
 
     public ServicePlanIrrigation() {
-        connection = MyConnection.getInstance().getConnection();
+        connection = MyDatabase.getInstance().getConnection();
     }
 
     @Override

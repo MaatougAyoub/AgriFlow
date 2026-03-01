@@ -20,6 +20,7 @@ public class MainFX extends Application {
         DbMigrations.ensureUserVerificationColumns(MyDatabase.getInstance().getConnection());
 
         Parent root = FXMLLoader.load(getClass().getResource("/SignIn.fxml"));
+        //Parent root = FXMLLoader.load(getClass().getResource("/ExpertHome.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("AgriFlow - Connexion");
         stage.setScene(scene);
