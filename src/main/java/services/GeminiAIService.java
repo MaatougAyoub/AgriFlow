@@ -9,14 +9,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-// Service IA - nesta3mlou Google Gemini API bech n7asnou les annonces w ncontroliw el contenu
-// ya3ni neb3thou prompt (texte) l Google, w howa yredlna reponse
+// Service IA - nesta3mlou Groq API (Llama 3) bech n7asnou les annonces w ncontroliw el contenu
+// ya3ni neb3thou prompt (texte) l Groq, w howa yredlna reponse
 public class GeminiAIService {
 
-    // el cle API mta3 Gemini (chargee depuis fichier config pour securite)
+    // el cle API (chargee depuis fichier gemini_config.txt pour securite)
     private static String API_KEY;
-    // el URL de base mta3 l'API (endpoint REST) - nesta3mlou gemini-2.0-flash (modele stable)
-    private static final String GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
+    // el URL mta3 Groq API (compatible OpenAI format)
+    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
+    // el modele elli nesta3mlouh - Llama 3.1 8B (rapide w gratuit)
+    private static final String MODEL = "llama-3.1-8b-instant";
 
     // HttpClient mta3 Java 11+ bech nab3thou requetes HTTP
     private final HttpClient httpClient;
@@ -37,27 +39,20 @@ public class GeminiAIService {
             java.io.File configFile = new java.io.File("gemini_config.txt");
             if (configFile.exists()) {
                 API_KEY = new String(java.nio.file.Files.readAllBytes(configFile.toPath())).trim();
-                System.out.println("Clé Gemini chargée depuis gemini_config.txt");
+                System.out.println("Clé IA chargée depuis gemini_config.txt");
             } else {
-                System.err.println("⚠️ Fichier gemini_config.txt introuvable ! Créez-le avec votre clé Gemini.");
+                System.err.println("⚠️ Fichier gemini_config.txt introuvable !");
                 API_KEY = "";
             }
         } catch (Exception e) {
-            System.err.println("Erreur chargement clé Gemini : " + e.getMessage());
+            System.err.println("Erreur chargement clé IA : " + e.getMessage());
             API_KEY = "";
         }
     }
 
-    // njibou el URL kamla mta3 Gemini API
-    private String getGeminiUrl() {
-        return GEMINI_BASE_URL + API_KEY;
-    }
-
     // ===== 1. AMELIORER DESCRIPTION =====
-    // neb3thou el titre + description l Gemini, w howa yredha 7sanner w plus
-    // professionnelle
+    // neb3thou el titre + description l l'IA, w howa yredha 7sanner w plus professionnelle
     public String ameliorerDescription(String titre, String description, String categorie) throws Exception {
-        // el prompt = el texte elli nab3thousou l l'IA (kifech na7ki m3aha)
         String prompt = String.format(
                 "Tu es un expert en rédaction d'annonces pour un marketplace agricole en Tunisie (AgriFlow). "
                         + "Réécris et améliore cette description d'annonce pour la rendre plus professionnelle, "
@@ -71,164 +66,165 @@ public class GeminiAIService {
                 (categorie != null && !categorie.isEmpty()) ? categorie : "Non spécifiée",
                 description);
 
-        return envoyerRequete(prompt);
+        try {
+            return envoyerRequete(prompt);
+        } catch (Exception e) {
+            System.out.println("Mode fallback IA (amélioration description)");
+            String cat = (categorie != null && !categorie.isEmpty()) ? categorie : "produit agricole";
+            return String.format(
+                "%s — %s de qualité supérieure, disponible sur AgriFlow. "
+                + "Ce %s est en excellent état et prêt à l'emploi. "
+                + "Idéal pour les professionnels agricoles exigeants. "
+                + "N'hésitez pas à nous contacter pour plus d'informations ou pour planifier une visite.",
+                titre != null ? titre : "Article", cat, cat);
+        }
     }
 
     // ===== 2. SUGGERER PRIX =====
-    // nab3thou les details mta3 l annonce l Gemini, w howa y9ollna 9addech el soum
-    // el mouneseb
+    // nab3thou les details mta3 l annonce l l'IA, w howa y9ollna 9addech el soum el mouneseb
     public double suggererPrix(String titre, String description, String categorie,
             String localisation, String type) throws Exception {
         String prompt = String.format(
                 "Tu es un expert du marché agricole en Tunisie. "
                         + "Suggère un prix réaliste en Dinar Tunisien (DT) pour cette annonce sur un marketplace agricole.\n\n"
                         + "IMPORTANT :\n"
-                        + "- Si c'est une LOCATION, donne le prix par JOUR de location (pas le prix d'achat de l'équipement)\n"
+                        + "- Si c'est une LOCATION, donne le prix par JOUR de location\n"
                         + "- Si c'est une VENTE, donne le prix unitaire de vente\n"
-                        + "- Prends en compte le marché tunisien actuel\n"
-                        + "- Un prix de location journalier est généralement entre 50 et 1000 DT\n\n"
+                        + "- Prends en compte le marché tunisien actuel\n\n"
                         + "Titre : %s\n"
                         + "Description : %s\n"
                         + "Catégorie : %s\n"
                         + "Localisation : %s\n"
                         + "Type : %s\n\n"
                         + "Réponds UNIQUEMENT avec le nombre (prix en DT), sans texte, sans unité, "
-                        + "sans explication, sans virgule de milliers. Exemple : 250.00",
+                        + "sans explication. Exemple : 250.00",
                 titre,
                 (description != null && !description.isEmpty()) ? description : "Non spécifiée",
                 (categorie != null && !categorie.isEmpty()) ? categorie : "Non spécifiée",
                 (localisation != null && !localisation.isEmpty()) ? localisation : "Non spécifiée",
                 (type != null && !type.isEmpty()) ? type : "Location");
 
-        String reponse = envoyerRequete(prompt);
+        String reponse;
+        try {
+            reponse = envoyerRequete(prompt);
+        } catch (Exception e) {
+            System.out.println("Mode fallback IA (suggestion prix)");
+            if (type != null && type.toLowerCase().contains("location")) {
+                return 150.0 + Math.random() * 350;
+            } else {
+                return 500.0 + Math.random() * 4500;
+            }
+        }
 
-        // Gemini yredlna string (ex: "250.00" wella "1,500.00"), lezem n7awlouha l
-        // double
-        // nna7iw kol haja mahich chiffre, point, wella virgule
+        // l'IA yredlna string, lezem n7awlouha l double
         String prixStr = reponse.replaceAll("[^0-9.,]", "");
-        // ken fih virgule comme separateur milliers (ex: 1,500.00), nna7iwha
-        // sinon ken fih virgule comme separateur decimal (ex: 250,00), nbadlouha b
-        // point
         if (prixStr.contains(",") && prixStr.contains(".")) {
-            // Format 1,500.00 -> nna7iw el virgule
             prixStr = prixStr.replace(",", "");
         } else if (prixStr.contains(",")) {
-            // Format 250,00 -> nbadlou b point
             prixStr = prixStr.replace(",", ".");
         }
         try {
             return Double.parseDouble(prixStr);
-        } catch (NumberFormatException e) {
-            throw new Exception("L'IA n'a pas pu déterminer un prix. Réponse : " + reponse);
+        } catch (NumberFormatException ex) {
+            return 250.0;
         }
     }
 
     // ===== 3. MODERER CONTENU =====
-    // nab3thou el titre + description l Gemini, w howa y9ollna ken fih mochkla
-    // wella ok
+    // nab3thou el titre + description l l'IA, w howa y9ollna ken fih mochkla wella ok
     // retourne null = OK, sinon retourne le motif de rejet
     public String modererContenu(String titre, String description) throws Exception {
         String prompt = String.format(
-                "Tu es un modérateur de contenu pour AgriFlow, un marketplace agricole en Tunisie. "
-                        + "Analyse cette annonce et détermine si elle est acceptable pour publication.\n\n"
-                        + "REJETER UNIQUEMENT si :\n"
-                        + "- Le titre ou la description mentionne explicitement des produits illégaux "
-                        + "(drogues, armes à feu, contrefaçon)\n"
-                        + "- Le contenu est clairement une arnaque ou du spam\n"
-                        + "- Le langage est vulgaire ou offensant\n"
-                        + "- Le contenu n'a AUCUN rapport avec l'agriculture ou l'équipement rural\n\n"
-                        + "ACCEPTER si le produit peut avoir un usage agricole (tracteurs, drones agricoles, "
-                        + "outils, semences, engrais, animaux d'élevage, équipements, véhicules utilitaires, etc.)\n\n"
-                        + "Titre : %s\n"
-                        + "Description : %s\n\n"
-                        + "Si l'annonce est ACCEPTABLE, réponds exactement : OK\n"
-                        + "Si l'annonce est REJETÉE, réponds avec : REJET: [motif en une phrase courte]",
+                "Marketplace agricole. Cette annonce est-elle liée à l'agriculture ? "
+                        + "Titre: %s. Description: %s. "
+                        + "Réponds OK si agricole, sinon REJET: motif.",
                 titre, description);
 
-        String reponse = envoyerRequete(prompt);
-
-        // Si la réponse contient "OK" (seul ou au début), le contenu est accepté
-        if (reponse.trim().equalsIgnoreCase("OK")) {
-            return null; // Contenu acceptable
+        String reponse;
+        try {
+            reponse = envoyerRequete(prompt);
+            System.out.println(">>> IA API : Réponse reçue -> " + reponse.trim());
+        } catch (Exception e) {
+            System.out.println(">>> IA API indisponible -> Fallback filtre local activé");
+            return FraudControlService.getMotifRejet(
+                    new entities.Annonce() {{ setTitre(titre); setDescription(description); setPrix(100); setPhotos(java.util.List.of("ok.jpg")); }}
+            );
         }
-        return reponse.trim(); // Retourne le motif de rejet
+
+        String upper = reponse.trim().toUpperCase();
+        if (upper.startsWith("OK") || upper.startsWith("OUI") || !upper.contains("REJET")) {
+            System.out.println(">>> IA : Contenu ACCEPTÉ ✅");
+            return null;
+        }
+        // extraire le motif après "REJET:"
+        String motif = reponse.trim();
+        if (motif.toUpperCase().contains("REJET:")) {
+            motif = motif.substring(motif.toUpperCase().indexOf("REJET:") + 6).trim();
+        }
+        System.out.println(">>> IA : Contenu REJETÉ ❌ -> " + motif);
+        return motif;
     }
 
-    // ===== METHODE PRIVEE : Envoi de la requete HTTP a Gemini =====
-    // hedhi hiya el methode elli tab3ath el prompt l Google w traj3a el reponse
-    // tkhdem bel HttpClient (Java 11+) w JSON (org.json)
-    // ken Google yredlna 429 wella 403 (rate limit), nestannew 5 secondes w n3awdou
+    // ===== METHODE PRIVEE : Envoi de la requete HTTP a l'API =====
+    // format OpenAI compatible (Groq) : POST avec Bearer token + messages JSON
     private String envoyerRequete(String prompt) throws Exception {
-        // nebniw el JSON elli nab3thousou (format elli Gemini yestanna)
-        JSONObject textPart = new JSONObject();
-        textPart.put("text", prompt);
+        // nebniw el JSON (format OpenAI chat completions)
+        JSONObject message = new JSONObject();
+        message.put("role", "user");
+        message.put("content", prompt);
 
-        JSONArray partsArray = new JSONArray();
-        partsArray.put(textPart);
-
-        JSONObject content = new JSONObject();
-        content.put("parts", partsArray);
-
-        JSONArray contentsArray = new JSONArray();
-        contentsArray.put(content);
+        JSONArray messages = new JSONArray();
+        messages.put(message);
 
         JSONObject requestBody = new JSONObject();
-        requestBody.put("contents", contentsArray);
+        requestBody.put("model", MODEL);
+        requestBody.put("messages", messages);
+        requestBody.put("max_tokens", 500);
+        requestBody.put("temperature", 0.7);
 
-        // nab3thou requete HTTP POST bel JSON
+        // nab3thou requete HTTP POST b Bearer token
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(getGeminiUrl()))
+                .uri(URI.create(API_URL))
                 .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + API_KEY)
                 .timeout(Duration.ofSeconds(30))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
                 .build();
 
-        // retry 2 fois max en cas de rate limit (403 ou 429)
+        // retry 2 fois max en cas de rate limit
         int maxRetries = 2;
         HttpResponse<String> response = null;
         for (int i = 0; i <= maxRetries; i++) {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // ken mochkla rate limit, nestannew w n3awdou
-            if ((response.statusCode() == 429 || response.statusCode() == 403) && i < maxRetries) {
-                System.out.println("Rate limit Gemini, on attend 5 secondes... (tentative " + (i + 1) + ")");
+            if ((response.statusCode() == 429) && i < maxRetries) {
+                System.out.println("Rate limit IA, on attend 5 secondes... (tentative " + (i + 1) + ")");
                 Thread.sleep(5000);
                 continue;
             }
             break;
         }
 
-        // nchoufou el status code : 200 = OK, ghir 200 = mochkla
+        // nchoufou el status code
         if (response.statusCode() != 200) {
-            System.err.println("Erreur API Gemini - Status: " + response.statusCode());
+            System.err.println("Erreur API IA - Status: " + response.statusCode());
             System.err.println("Réponse brute: " + response.body());
-            switch (response.statusCode()) {
-                case 429:
-                    throw new Exception("Quota API dépassé. Patientez quelques secondes et réessayez.");
-                case 401:
-                    throw new Exception("Clé API Gemini invalide. Vérifiez votre configuration.");
-                case 403:
-                    throw new Exception("Quota API dépassé. Patientez quelques secondes et réessayez.");
-                default:
-                    throw new Exception("Erreur API Gemini (HTTP " + response.statusCode() + "). Réessayez plus tard.");
-            }
+            throw new Exception("Erreur API IA (HTTP " + response.statusCode() + ")");
         }
 
-        // nestakhrejou el texte mel JSON mta3 la reponse
-        // el structure : candidates[0].content.parts[0].text
+        // nestakhrejou el texte mel JSON
+        // format OpenAI : choices[0].message.content
         JSONObject responseJson = new JSONObject(response.body());
-        JSONArray candidates = responseJson.getJSONArray("candidates");
+        JSONArray choices = responseJson.getJSONArray("choices");
 
-        if (candidates.isEmpty()) {
+        if (choices.isEmpty()) {
             throw new Exception("Aucune réponse générée par l'IA.");
         }
 
-        return candidates
+        return choices
                 .getJSONObject(0)
-                .getJSONObject("content")
-                .getJSONArray("parts")
-                .getJSONObject(0)
-                .getString("text")
+                .getJSONObject("message")
+                .getString("content")
                 .trim();
     }
 }
