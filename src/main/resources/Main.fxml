@@ -22,6 +22,8 @@
     </top>
 
     <left>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                    style="-fx-background-color: #2E7D32; -fx-background: #2E7D32;">
         <VBox fx:id="drawerBox"
               prefWidth="260.0"
               spacing="14"
@@ -33,65 +35,67 @@
             <!-- Logo -->
             <VBox spacing="10" alignment="CENTER">
                 <ImageView fx:id="logoImage"
-                           fitWidth="200" fitHeight="200"
+                           fitWidth="120" fitHeight="120"
                            preserveRatio="true" smooth="true">
                     <image>
-                        <Image url="images/logo.png"/>
+                        <Image url="@images/logo.png"/>
                     </image>
                 </ImageView>
 
                 <Label text="AgriFlow"
-                       style="-fx-text-fill: white; -fx-font-size: 42px; -fx-font-weight: bold;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;"/>
             </VBox>
 
             <Separator style="-fx-opacity: 0.35;"/>
 
             <!-- Menu -->
-            <VBox spacing="10">
+            <VBox spacing="8">
 
                 <Button fx:id="menuProfil" text="Mon Profil"
                         onAction="#goProfil"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20;-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16;-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
                 <Button fx:id="menuListeUtilisateurs"
                         text="Liste des utilisateurs"
                         onAction="#goListeUtilisateurs"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20;-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16;-fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
                 <Button fx:id="menuMarketplace" text="Marketplace"
                         onAction="#goMarketplace"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
-
-                <!-- ✅ conserver -->
                 <Button fx:id="btnReservations" text="Mes Réservations"
                         onAction="#afficherReservations"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
-                <!-- ✅ conserver -->
                 <Button fx:id="btnAdmin" text="Espace Admin"
                         onAction="#afficherAdmin"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
                 <Button fx:id="menuParcellesCultures" text="Parcelles et cultures"
                         onAction="#goParcellesCultures"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
                 <Button fx:id="menuCollaborations" text="Collaborations"
                         onAction="#goCollaborations"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
 
-                <Button fx:id="menuPlanIrrigation" text="Plan d'Irrigation"
+                <Button fx:id="menuPlanIrrigation" text="Plan d'Irrigation(Agriculteur)"
                         onAction="#goPlanIrrigation"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-font-size: 20; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 10 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
+
+                <Button fx:id="menuPlanIrrigation2" text="Plan d'Irrigation(Expert)"
+                        onAction="#goPlanIrrigation2"
+                        maxWidth="1.7976931348623157E308"
+                        style="-fx-font-size: 16; -fx-background-color: transparent; -fx-text-fill: white; -fx-padding: 8 12; -fx-border-color: rgba(255,255,255,0.35); -fx-border-radius: 10;"/>
             </VBox>
 
             <Region VBox.vgrow="ALWAYS"/>
@@ -101,22 +105,23 @@
             <!-- User footer -->
             <VBox spacing="6">
                 <Label text="Connecté en tant que"
-                       style="-fx-text-fill: rgba(255,255,255,0.60); -fx-font-size: 15px;"/>
+                       style="-fx-text-fill: rgba(255,255,255,0.60); -fx-font-size: 13px;"/>
                 <Label fx:id="connectedAsLabel"
                        text="-"
-                       style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px;"/>
+                       style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;"/>
                 <Label fx:id="connectedEmailLabel"
                        text=""
-                       style="-fx-text-fill: rgba(255,255,255,0.75); -fx-font-size: 15px;"/>
+                       style="-fx-text-fill: rgba(255,255,255,0.75); -fx-font-size: 13px;"/>
                 <Label fx:id="connectedRoleLabel"
                        text=""
-                       style="-fx-text-fill: #A5D6A7; -fx-font-weight: bold; -fx-font-size: 15px;"/>
+                       style="-fx-text-fill: #A5D6A7; -fx-font-weight: bold; -fx-font-size: 13px;"/>
                 <Button fx:id="btnDeconnexion" text="🚪 Déconnexion"
                         onAction="#deconnecter"
                         maxWidth="1.7976931348623157E308"
-                        style="-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-padding: 6 10; -fx-background-radius: 8; -fx-font-size: 17px; -fx-cursor: hand;"/>
+                        style="-fx-background-color: rgba(255,255,255,0.15); -fx-text-fill: white; -fx-padding: 6 10; -fx-background-radius: 8; -fx-font-size: 15px; -fx-cursor: hand;"/>
             </VBox>
         </VBox>
+        </ScrollPane>
     </left>
 
     <!-- ================= CENTER CONTENT ================= -->
