@@ -5,14 +5,23 @@ import entities.User;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.concurrent.Worker;
+import javafx.stage.Stage;
+import netscape.javascript.JSObject;
 import services.ServiceParcelle;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
+import utils.MapPickerBridge;
 
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -343,6 +352,62 @@ public class ListeParcelles {
         type.setPromptText("Type Terre");
         type.setMaxWidth(Double.MAX_VALUE);
         TextField loc = new TextField(); loc.setPromptText("ex: Tunis");
+        HBox.setHgrow(loc, Priority.ALWAYS);
+
+        // Bouton carte
+        Button btnMap = new Button("\uD83D\uDCCD Carte");
+        btnMap.setStyle("-fx-background-color:#2E7D32; -fx-text-fill:white; -fx-padding:6 10; -fx-background-radius:8; -fx-cursor:hand;");
+
+        // Variables pour stocker les coordonnées choisies sur la carte
+        final double[] mapCoords = {Double.NaN, Double.NaN};
+        final Stage[] mapStageRef = {null};
+        // Déclaré avant le lambda pour qu'il soit accessible à l'intérieur
+        final MapPickerBridge[] bridge2Ref = {null};
+
+        btnMap.setOnAction(e -> {
+            if (mapStageRef[0] != null && mapStageRef[0].isShowing()) {
+                mapStageRef[0].toFront();
+                return;
+            }
+            WebView webView = new WebView();
+            webView.setPrefSize(900, 600);
+            WebEngine engine = webView.getEngine();
+
+            MapPickerBridge bridge = new MapPickerBridge(() -> {
+                // Coordonnées choisies sur la carte
+                mapCoords[0] = bridge2Ref[0].getLatitude();
+                mapCoords[1] = bridge2Ref[0].getLongitude();
+                loc.setText(String.format(java.util.Locale.US, "%.6f,%.6f", mapCoords[0], mapCoords[1]));
+                if (mapStageRef[0] != null) { mapStageRef[0].close(); mapStageRef[0] = null; }
+            });
+            bridge2Ref[0] = bridge;
+
+            engine.getLoadWorker().stateProperty().addListener((obs2, oldS, newS) -> {
+                if (newS == Worker.State.SUCCEEDED) {
+                    JSObject win = (JSObject) engine.executeScript("window");
+                    win.setMember("javaBridge", bridge);
+                    bridge.setWebEngine(engine);
+                }
+            });
+
+            URL htmlUrl = getClass().getResource("/html/map_picker.html");
+            if (htmlUrl == null) {
+                showError("Fichier map_picker.html introuvable.");
+                return;
+            }
+            engine.load(htmlUrl.toExternalForm());
+
+            Stage ms = new Stage();
+            ms.setTitle("Choisir la localisation de la parcelle");
+            ms.setScene(new Scene(webView));
+            ms.setOnHidden(ev -> mapStageRef[0] = null);
+            ms.show();
+            mapStageRef[0] = ms;
+        });
+
+        HBox locRow = new HBox(6, loc, btnMap);
+        locRow.setAlignment(Pos.CENTER_LEFT);
+        locRow.setMaxWidth(Double.MAX_VALUE);
 
         // Feedback visuel temps réel
         nom.textProperty().addListener((obs, o, n)        -> setFieldStyle(nom, n.trim().length() >= 2));
@@ -361,7 +426,7 @@ public class ListeParcelles {
         grid.add(new Label("Nom *"),         0, 0); grid.add(nom,        1, 0);
         grid.add(new Label("Superficie *"),  0, 1); grid.add(superficie, 1, 1);
         grid.add(new Label("Type Terre *"),  0, 2); grid.add(type,       1, 2);
-        grid.add(new Label("Localisation *"),0, 3); grid.add(loc,        1, 3);
+        grid.add(new Label("Localisation *"),0, 3); grid.add(locRow,     1, 3);
 
         VBox content = new VBox(10, inlineError, grid);
         content.setPadding(new Insets(4));
