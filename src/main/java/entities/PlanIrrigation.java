@@ -6,21 +6,30 @@ import java.time.LocalDateTime;
 
 public class PlanIrrigation {
     private int planId;
+    private int idCulture;          // ✅ AJOUTÉ
     private String nomCulture;
     private LocalDateTime dateDemande;
-    private String statut; // brouillon, soumis, approuvé, rejeté
+    private String statut;
     private float volumeEauPropose;
-    private LocalTime tempIrrigation;   // TIME
+    private LocalTime tempIrrigation;
     private LocalDateTime temp;
     private String donneesMeteojson;
 
-
-
     // Constructeur complet
-    public PlanIrrigation(int planId,String nomCulture,
-                          LocalDateTime dateDemande,String statut, float volumeEauPropose,
+    public PlanIrrigation(int planId, String nomCulture,
+                          LocalDateTime dateDemande, String statut, float volumeEauPropose,
                           String donneesMeteojson) {
         this.planId = planId;
+        this.nomCulture = nomCulture;
+        this.dateDemande = dateDemande;
+        this.statut = statut;
+        this.volumeEauPropose = volumeEauPropose;
+        this.donneesMeteojson = donneesMeteojson;
+    }
+
+    public PlanIrrigation(String nomCulture, LocalDateTime dateDemande, String statut,
+                          Float volumeEauPropose, LocalTime tempIrrigation,
+                          LocalDateTime temp, String donneesMeteojson) {
         this.nomCulture = nomCulture;
         this.dateDemande = dateDemande;
         this.statut = statut;
@@ -30,28 +39,23 @@ public class PlanIrrigation {
         this.donneesMeteojson = donneesMeteojson;
     }
 
-    public PlanIrrigation(String nomCulture, LocalDateTime dateDemande,String statut, Float volumeEauPropose,LocalTime tempIrrigation,LocalDateTime temp,
-                          String  donneesMeteojson) {
-        this.nomCulture= nomCulture;
-        this.dateDemande = dateDemande;
-        this.statut = statut;
-        this.volumeEauPropose = volumeEauPropose;
-        this.tempIrrigation = tempIrrigation;
-        this.temp = temp;
-        this.donneesMeteojson = donneesMeteojson;
-
-    }
-
     public PlanIrrigation(int id, String id1, LocalDate d2, String s, float f) {
     }
 
     public PlanIrrigation() {
-
     }
 
     public static void add(PlanIrrigation plan) {
     }
 
+    // ✅ AJOUTÉ : getter et setter pour idCulture
+    public int getIdCulture() {
+        return idCulture;
+    }
+
+    public void setIdCulture(int idCulture) {
+        this.idCulture = idCulture;
+    }
 
     public int getPlanId() {
         return planId;
@@ -68,7 +72,6 @@ public class PlanIrrigation {
     public void setNomCulture(String nomCulture) {
         this.nomCulture = nomCulture;
     }
-
 
     public LocalDateTime getDateDemande() {
         return dateDemande;
@@ -94,11 +97,21 @@ public class PlanIrrigation {
         this.volumeEauPropose = volumeEauPropose;
     }
 
-    public LocalTime getTempIrrigation() { return tempIrrigation; }
-    public void setTempIrrigation(LocalTime tempIrrigation) { this.tempIrrigation = tempIrrigation; }
+    public LocalTime getTempIrrigation() {
+        return tempIrrigation;
+    }
 
-    public LocalDateTime getTemp() { return temp; }
-    public void setTemp(LocalDateTime temp) { this.temp = temp; }
+    public void setTempIrrigation(LocalTime tempIrrigation) {
+        this.tempIrrigation = tempIrrigation;
+    }
+
+    public LocalDateTime getTemp() {
+        return temp;
+    }
+
+    public void setTemp(LocalDateTime temp) {
+        this.temp = temp;
+    }
 
     public String getDonneesMeteojson() {
         return donneesMeteojson;
@@ -108,18 +121,15 @@ public class PlanIrrigation {
         this.donneesMeteojson = donneesMeteojson;
     }
 
-
-
     @Override
     public String toString() {
         return "PlanIrrigation{" +
                 "planId=" + planId +
-                ", parcelleId=" + nomCulture +
+                ", idCulture=" + idCulture +
+                ", nomCulture='" + nomCulture + '\'' +
                 ", dateDemande=" + dateDemande +
                 ", statut='" + statut + '\'' +
                 ", volumeEauPropose=" + volumeEauPropose +
                 '}';
     }
-
-
 }

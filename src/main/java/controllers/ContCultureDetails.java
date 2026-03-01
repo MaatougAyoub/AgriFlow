@@ -1,7 +1,6 @@
 package controllers;
 
 import entities.Culture;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,11 +10,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import mains.MainExpertFX;
 import services.IrrigationSmartService;
+import services.ServicePlanIrrigation;
 import services.ServicePlanIrrigationJour;
 
 import java.io.IOException;
@@ -30,6 +29,7 @@ import java.util.Map;
 public class ContCultureDetails {
 
     private final ServicePlanIrrigationJour serviceJour = new ServicePlanIrrigationJour();
+    private final ServicePlanIrrigation servicePlan = new ServicePlanIrrigation();
     private int planId;
     private Culture culture;
     private LocalDate dateReference = LocalDate.now();
@@ -37,7 +37,7 @@ public class ContCultureDetails {
     enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
     enum Row { EAU, TIME, TEMP, HUMID, PLUIE }
 
-    @FXML private Label titreLabel; // Utilisé aussi comme titleLabel
+    @FXML private Label titreLabel;
     @FXML private Label infoLabel;
     @FXML private Label labelSemaine;
     @FXML private GridPane planningGrid;
@@ -45,7 +45,6 @@ public class ContCultureDetails {
     @FXML private Label consoSmartLabel;
     @FXML private Label economieLabel;
 
-    // Boutons d'action pour l'expert
     @FXML private Button btnEnregistrer;
     @FXML private Button btnGenererIA;
     @FXML private Button btnAnnuler;
@@ -61,12 +60,22 @@ public class ContCultureDetails {
         mettreAJourLabelSemaine();
     }
 
-    // --- LOGIQUE IA & ACTIONS ---
+    // ══════════════════════════════════════════
+    // LOGIQUE IA & ACTIONS
+    // ══════════════════════════════════════════
 
     @FXML
     private void genererPlanAutomatique(ActionEvent event) {
-        if (culture == null || planId <= 0) {
+        if (culture == null) {
             showAlert("Erreur", "Données de culture manquantes.");
+            return;
+        }
+
+        // ✅ Créer automatiquement un plan si aucun n'existe
+        ensurePlanExists();
+
+        if (planId <= 0) {
+            showAlert("Erreur", "Impossible de créer un plan pour cette culture.");
             return;
         }
 
@@ -76,40 +85,132 @@ public class ContCultureDetails {
         try {
             Map<String, float[]> planData = smartService.genererPlanIA(this.culture);
 
+            // ✅ Calculer le volume total pour mettre à jour plans_irrigation
+            float volumeTotal = 0;
+
             for (Map.Entry<String, float[]> entry : planData.entrySet()) {
                 float[] val = entry.getValue();
+                volumeTotal += val[0];
                 serviceJour.saveDayOptimized(
                         this.planId, entry.getKey(), val[0], (int) val[1],
                         val[2], val[3], val[4], lundi
                 );
             }
 
+            // ✅ Mettre à jour le plan principal dans plans_irrigation
+            mettreAJourPlanPrincipal(volumeTotal, "soumis");
+
             reloadFromDbIfPossible();
-            showAlert("Succès", "Plan optimisé via IA : La pluie a été déduite !");
+            showAlert("Succès", "Plan optimisé via IA !\n" +
+                    "Besoin standard : " + String.format("%.1f", culture.calculerBesoinEau()) + " mm\n" +
+                    "Volume optimisé : " + String.format("%.1f", volumeTotal) + " mm\n" +
+                    "La pluie a été déduite !");
 
         } catch (Exception e) {
             showAlert("Erreur API", "Détail : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @FXML
     private void enregistrerPlanning(ActionEvent event) {
-        if (planId <= 0) return;
+        if (culture == null) {
+            showAlert("Erreur", "Aucune culture sélectionnée.");
+            return;
+        }
+
+        // ✅ Créer automatiquement un plan si aucun n'existe
+        ensurePlanExists();
+
+        if (planId <= 0) {
+            showAlert("Erreur", "Impossible de créer un plan pour cette culture.");
+            return;
+        }
+
         try {
             LocalDate lundi = getDebutSemaineActuelle();
+            float volumeTotal = 0;
+
             for (Day day : Day.values()) {
                 float eau = parseSafeFloat(fields.get(Row.EAU).get(day).getText());
                 int time = (int) parseSafeFloat(fields.get(Row.TIME).get(day).getText());
                 float temp = parseSafeFloat(fields.get(Row.TEMP).get(day).getText());
+
+                volumeTotal += eau;
                 serviceJour.saveDay(planId, day.name(), eau, time, temp, lundi);
             }
-            showAlert("Succès", "Planning enregistré !");
+
+            // ✅ Mettre à jour le plan principal dans plans_irrigation
+            mettreAJourPlanPrincipal(volumeTotal, "soumis");
+
+            showAlert("Succès", "Planning enregistré !\n" +
+                    "Volume total : " + String.format("%.1f", volumeTotal) + " mm\n" +
+                    "Besoin standard : " + String.format("%.1f", culture.calculerBesoinEau()) + " mm");
+
         } catch (Exception e) {
-            showAlert("Erreur", "Vérifiez les formats numériques.");
+            showAlert("Erreur", "Vérifiez les formats numériques.\n" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    // --- ACCÈS AUX DONNÉES ---
+    // ══════════════════════════════════════════
+    // GESTION DU PLAN DANS plans_irrigation
+    // ══════════════════════════════════════════
+
+    /**
+     * ✅ Crée un plan dans plans_irrigation si aucun n'existe pour cette culture
+     */
+    private void ensurePlanExists() {
+        if (planId > 0) return;
+        if (culture == null) return;
+
+        try {
+            // Vérifier s'il existe déjà un plan pour cette culture
+            int existingPlanId = servicePlan.getLastPlanIdByCulture(culture.getId());
+
+            if (existingPlanId > 0) {
+                this.planId = existingPlanId;
+                System.out.println("✅ Plan existant trouvé : plan_id=" + planId);
+            } else {
+                // Créer un nouveau plan brouillon
+                float besoinEau = culture.calculerBesoinEau();
+                this.planId = servicePlan.createDraftPlanAndReturnId(culture.getId(), besoinEau);
+                System.out.println("✅ Nouveau plan créé : plan_id=" + planId +
+                        " | culture=" + culture.getNom() +
+                        " | besoinEau=" + besoinEau + " mm");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Erreur création plan : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * ✅ Met à jour le volume et le statut dans plans_irrigation
+     */
+    private void mettreAJourPlanPrincipal(float volumeTotal, String statut) {
+        if (planId <= 0 || culture == null) return;
+
+        try {
+            entities.PlanIrrigation plan = new entities.PlanIrrigation();
+            plan.setPlanId(planId);
+            plan.setIdCulture(culture.getId());
+            plan.setNomCulture(culture.getNom());
+            plan.setStatut(statut);
+            plan.setVolumeEauPropose(volumeTotal);
+
+            servicePlan.modifier(plan);
+            System.out.println("✅ Plan mis à jour : plan_id=" + planId +
+                    " | volume=" + volumeTotal + " mm | statut=" + statut);
+        } catch (Exception e) {
+            System.err.println("❌ Erreur mise à jour plan : " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // ══════════════════════════════════════════
+    // ACCÈS AUX DONNÉES
+    // ══════════════════════════════════════════
 
     public void setPlanId(int planId) {
         this.planId = planId;
@@ -120,16 +221,28 @@ public class ContCultureDetails {
         this.culture = culture;
         if (culture != null && titreLabel != null) {
             titreLabel.setText("Optimisation : " + culture.getNom());
-            infoLabel.setText("Parcelle N°" + culture.getParcelleId() + " | Objectif : " + culture.calculerBesoinEau() + " mm/sem");
+
+            // ✅ Utilise calculerBesoinEau() pour afficher l'objectif
+            float besoinEau = culture.calculerBesoinEau();
+            infoLabel.setText("Parcelle N°" + culture.getParcelleId() +
+                    " | Type : " + culture.getTypeCulture() +
+                    " | Superficie : " + culture.getSuperficie() + " m²" +
+                    " | Objectif : " + String.format("%.1f", besoinEau) + " mm/sem");
+
+            System.out.println("🌱 Culture : " + culture.getNom() +
+                    " | Type : " + culture.getTypeCulture() +
+                    " | Superficie : " + culture.getSuperficie() +
+                    " | Besoin eau : " + besoinEau + " mm");
         }
         reloadFromDbIfPossible();
     }
 
-    // --- MODE LECTURE (AGRICULTEUR) ---
+    // ══════════════════════════════════════════
+    // MODE LECTURE (AGRICULTEUR)
+    // ══════════════════════════════════════════
 
     public void setReadOnlyMode(boolean readOnly) {
         if (readOnly) {
-            // 1. Verrouiller tous les champs de texte de la grille
             fields.values().forEach(rowMap ->
                     rowMap.values().forEach(tf -> {
                         tf.setEditable(false);
@@ -137,17 +250,17 @@ public class ContCultureDetails {
                     })
             );
 
-            // 2. Masquer les boutons d'édition (Expert)
             if (btnEnregistrer != null) { btnEnregistrer.setVisible(false); btnEnregistrer.setManaged(false); }
             if (btnGenererIA != null) { btnGenererIA.setVisible(false); btnGenererIA.setManaged(false); }
 
-            // 3. Adapter les labels
             if (btnAnnuler != null) btnAnnuler.setText("Retour");
             if (titreLabel != null) titreLabel.setText("📖 Consultation : " + (culture != null ? culture.getNom() : "Plan"));
         }
     }
 
-    // --- MISE À JOUR DE L'INTERFACE ---
+    // ══════════════════════════════════════════
+    // MISE À JOUR DE L'INTERFACE
+    // ════════════════��═════════════════════════
 
     private void reloadFromDbIfPossible() {
         clearFields();
@@ -195,7 +308,6 @@ public class ContCultureDetails {
             tf.setPrefWidth(85);
             tf.setStyle("-fx-alignment: center; -fx-background-radius: 8;");
 
-            // Les données environnementales sont toujours en lecture seule
             if (row == Row.TEMP || row == Row.HUMID || row == Row.PLUIE) {
                 tf.setEditable(false);
                 tf.setFocusTraversable(false);
@@ -239,10 +351,16 @@ public class ContCultureDetails {
         }
     }
 
+    /**
+     * ✅ Compare la consommation smart vs le besoin standard (calculerBesoinEau)
+     */
     private void updateConsommationStats(Map<String, float[]> data) {
         if (culture == null || data == null) return;
+
         float totalSmart = 0;
         for (float[] vals : data.values()) { totalSmart += vals[0]; }
+
+        // ✅ Utilise calculerBesoinEau() de la culture
         float totalStandard = culture.calculerBesoinEau();
 
         consoStandardLabel.setText(String.format("%.1f mm", totalStandard));
@@ -251,11 +369,15 @@ public class ContCultureDetails {
         float economie = totalStandard - totalSmart;
         float pourcent = (totalStandard > 0) ? (economie / totalStandard) * 100 : 0;
 
-        economieLabel.setText(String.format("%s : %.1f%%", (economie >= 0 ? "Économie" : "Surplus"), Math.abs(pourcent)));
-        economieLabel.setStyle("-fx-text-fill: " + (economie >= 0 ? "#2ecc71" : "#e74c3c") + "; -fx-font-weight: bold;");
+        economieLabel.setText(String.format("%s : %.1f%%",
+                (economie >= 0 ? "💧 Économie" : "⚠️ Surplus"), Math.abs(pourcent)));
+        economieLabel.setStyle("-fx-text-fill: " +
+                (economie >= 0 ? "#2ecc71" : "#e74c3c") + "; -fx-font-weight: bold;");
     }
 
-    // --- NAVIGATION & UTILS ---
+    // ══════════════════════════════════════════
+    // NAVIGATION & UTILS
+    // ══════════════════════════════════════════
 
     private LocalDate getDebutSemaineActuelle() {
         return dateReference.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -263,13 +385,26 @@ public class ContCultureDetails {
 
     private void mettreAJourLabelSemaine() {
         LocalDate debut = getDebutSemaineActuelle();
-        labelSemaine.setText(debut.format(DateTimeFormatter.ofPattern("dd/MM")) + " au " + debut.plusDays(6).format(DateTimeFormatter.ofPattern("dd/MM")));
+        labelSemaine.setText(debut.format(DateTimeFormatter.ofPattern("dd/MM")) +
+                " au " + debut.plusDays(6).format(DateTimeFormatter.ofPattern("dd/MM")));
     }
 
-    @FXML void semainePrecedente(ActionEvent event) { dateReference = dateReference.minusWeeks(1); updateUI(); }
-    @FXML void semaineSuivante(ActionEvent event) { dateReference = dateReference.plusWeeks(1); updateUI(); }
+    @FXML
+    void semainePrecedente(ActionEvent event) {
+        dateReference = dateReference.minusWeeks(1);
+        updateUI();
+    }
 
-    private void updateUI() { mettreAJourLabelSemaine(); reloadFromDbIfPossible(); }
+    @FXML
+    void semaineSuivante(ActionEvent event) {
+        dateReference = dateReference.plusWeeks(1);
+        updateUI();
+    }
+
+    private void updateUI() {
+        mettreAJourLabelSemaine();
+        reloadFromDbIfPossible();
+    }
 
     @FXML
     private void retour(ActionEvent event) {
@@ -283,7 +418,9 @@ public class ContCultureDetails {
         planningGrid.add(label, col, row);
     }
 
-    private void clearFields() { fields.values().forEach(m -> m.values().forEach(TextField::clear)); }
+    private void clearFields() {
+        fields.values().forEach(m -> m.values().forEach(TextField::clear));
+    }
 
     private float parseSafeFloat(String text) {
         try {

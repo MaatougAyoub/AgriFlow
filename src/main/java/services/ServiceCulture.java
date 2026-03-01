@@ -360,4 +360,60 @@ public class ServiceCulture implements IService<Culture> {
             return updated == 1; // true => achat réussi ; false => déjà vendu / plus en vente
         }
     }
+
+//---------------------------------------------------------------------------------------------------------
+public List<Culture> recupererCulturesParUtilisateur(int userId) throws SQLException {
+        List<Culture> cultures = new ArrayList<>();
+
+        String sql = "SELECT c.id, c.parcelle_id, c.proprietaire_id, c.nom, c.type_culture, "
+                + "c.superficie, c.etat, c.date_recolte, c.recolte_estime, c.date_creation "
+                + "FROM cultures c "
+                + "INNER JOIN parcelle p ON c.parcelle_id = p.id "
+                + "WHERE p.agriculteur_id = ? "
+                + "ORDER BY c.date_creation DESC";
+
+        System.out.println("🔍 Recherche cultures pour utilisateur ID = " + userId);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                cultures.add(mapResultSetToCulture(rs));
+                System.out.println("✅ Culture : id=" + rs.getInt("id") +
+                        " | nom=" + rs.getString("nom") +
+                        " | parcelle=" + rs.getInt("parcelle_id"));
+            }
+
+            System.out.println("📊 Total cultures : " + cultures.size());
+        }
+
+        return cultures;
+    }
+    private Culture mapResultSetToCulture(ResultSet rs) throws SQLException {
+        Culture c = new Culture();
+        c.setId(rs.getInt("id"));
+        c.setParcelleId(rs.getInt("parcelle_id"));
+        c.setProprietaireId(rs.getInt("proprietaire_id"));
+        c.setNom(rs.getString("nom"));
+        c.setTypeCulture(Culture.TypeCulture.valueOf(rs.getString("type_culture")));
+        c.setSuperficie(rs.getFloat("superficie"));
+        c.setEtat(Culture.Etat.valueOf(rs.getString("etat")));
+
+        Date dr = rs.getDate("date_recolte");
+        if (dr != null) c.setDateRecolte(Date.valueOf(dr.toLocalDate()));
+
+        c.setRecolteEstime((double) rs.getFloat("recolte_estime"));
+
+        Timestamp ts = rs.getTimestamp("date_creation");
+        if (ts != null) c.setDateCreation(Timestamp.valueOf(ts.toLocalDateTime()));
+
+        return c;
+    }
+
+
+
+
+
+
 }
