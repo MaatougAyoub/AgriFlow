@@ -104,8 +104,14 @@ public class PublishRequestController {
             }
 
             // Créer la demande avec TOUS les champs
+            entities.User currentUser = MainController.getCurrentUser();
+            if (currentUser == null) {
+                showError("Erreur d'authentification", "Vous devez être connecté pour publier une demande.");
+                return;
+            }
+
             CollabRequest request = new CollabRequest();
-            request.setRequesterId(1L); // ID utilisateur connecté (à remplacer par session)
+            request.setRequesterId((long) currentUser.getId());
             request.setTitle(title);
             request.setLocation(location);
             request.setDescription(description);
@@ -113,7 +119,12 @@ public class PublishRequestController {
             request.setEndDate(endDate);
             request.setNeededPeople(neededPeople);
             request.setSalary(salary);
-            request.setPublisher("Ali Ben Ahmed"); // Nom utilisateur connecté (à remplacer par session)
+            
+            String publisherName = currentUser.getNomComplet();
+            if (publisherName == null || publisherName.trim().isEmpty()) {
+                publisherName = "Agriculteur " + currentUser.getId();
+            }
+            request.setPublisher(publisherName);
             request.setStatus("PENDING"); // Statut PENDING par défaut
 
             // Si l'utilisateur a choisi un point sur la carte, on persiste les coordonnées

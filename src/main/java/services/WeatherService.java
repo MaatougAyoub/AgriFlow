@@ -36,8 +36,7 @@ public class WeatherService {
         }
 
         try {
-            // L'API standard n'accepte pas start_date/end_date, seulement forecast_days (max 16)
-            String url = String.format(
+            String url = String.format(java.util.Locale.US,
                 "%s?latitude=%.4f&longitude=%.4f&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&forecast_days=16&timezone=auto",
                 BASE_URL, latitude, longitude
             );

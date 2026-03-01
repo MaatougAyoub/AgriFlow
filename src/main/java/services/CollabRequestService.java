@@ -160,6 +160,23 @@ public class CollabRequestService implements ICollabRequestService {
         return list;
     }
 
+    @Override
+    public List<CollabRequest> findByRequesterId(long requesterId) throws SQLException {
+        List<CollabRequest> list = new ArrayList<>();
+        String sql = "SELECT * FROM collab_requests WHERE requester_id=? ORDER BY created_at DESC";
+
+        Connection c = MyDatabase.getInstance().getConnection();
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, requesterId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToCollabRequest(rs));
+                }
+            }
+        }
+        return list;
+    }
+
     // Factorise le mapping d'une ligne SQL vers l'entité CollabRequest
     private CollabRequest mapResultSetToCollabRequest(ResultSet rs) throws SQLException {
         CollabRequest r = new CollabRequest();

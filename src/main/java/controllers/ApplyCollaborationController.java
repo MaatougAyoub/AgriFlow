@@ -53,8 +53,14 @@ public class ApplyCollaborationController {
 
         try {
             // Créer la candidature
+            entities.User currentUser = MainController.getCurrentUser();
+            if (currentUser == null) {
+                showError("Erreur d'authentification", "Vous devez être connecté pour postuler à cette offre.");
+                return;
+            }
+
             CollabApplication application = new CollabApplication();
-            application.setCandidateId(1L); // ✅ CORRIGÉ : ID utilisateur connecté
+            application.setCandidateId((long) currentUser.getId()); // ID utilisateur connecté
             application.setRequestId(requestId);
             application.setFullName(fullNameField.getText().trim());
             application.setPhone(phoneField.getText().trim());

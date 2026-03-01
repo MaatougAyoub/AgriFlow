@@ -130,8 +130,13 @@ public class MyApplicationsController {
      */
     private void loadMyApplications() {
         try {
-            // ID de l'utilisateur connecté (à récupérer depuis la session)
-            long userId = 1L; // Temporaire - à remplacer par l'ID réel
+            // ID de l'utilisateur connecté
+            entities.User currentUser = MainController.getCurrentUser();
+            if (currentUser == null) {
+                showError("Erreur", "Aucun utilisateur connecté.");
+                return;
+            }
+            long userId = currentUser.getId();
 
             List<CollabApplication> applications = applicationService.findByCandidateId(userId);
 
