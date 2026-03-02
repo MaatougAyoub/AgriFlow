@@ -185,7 +185,9 @@ public class ServiceReclamation implements IServiceReclamation<Reclamation> {
 
 /*
     public void repondreAReclamation(int reclamationId, String reponseFormatee) throws SQLException {
-        String sql = "UPDATE reclamations SET reponse = ? WHERE id = ?";
+        String sql = isAdmin
+                ? "UPDATE reclamations SET reponse = ?, statut = 'TRAITE' WHERE id = ?"
+                : "UPDATE reclamations SET reponse = ? WHERE id = ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setString(1, reponseFormatee);
         ps.setInt(2, reclamationId);
@@ -216,7 +218,7 @@ public class ServiceReclamation implements IServiceReclamation<Reclamation> {
      * ✅ Ajoute une réponse en la concaténant à la suite (sur une nouvelle ligne),
      * au lieu d’écraser l’ancienne.
      */
-    public void ajouterReponseConcatenee(int reclamationId, String nouvelleReponseFormatee) throws SQLException {
+    public void ajouterReponseConcatenee(int reclamationId, String nouvelleReponseFormatee, boolean isAdmin) throws SQLException {
         String ancienne = getReponseById(reclamationId);
 
         String finalText;
@@ -226,7 +228,9 @@ public class ServiceReclamation implements IServiceReclamation<Reclamation> {
             finalText = ancienne + "\n" + nouvelleReponseFormatee;
         }
 
-        String sql = "UPDATE reclamations SET reponse = ? WHERE id = ?";
+        String sql = isAdmin
+                ? "UPDATE reclamations SET reponse = ?, statut = 'TRAITE' WHERE id = ?"
+                : "UPDATE reclamations SET reponse = ? WHERE id = ?";
         PreparedStatement ps = connection.prepareStatement(sql);
         ps.setString(1, finalText);
         ps.setInt(2, reclamationId);

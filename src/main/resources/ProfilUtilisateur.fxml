@@ -74,7 +74,8 @@
                     <Label style="-fx-font-size: 24px" text="Adresse" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                     <Label style="-fx-font-size: 24px" fx:id="adresseValue" text="-" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                    <Label style="-fx-font-size: 24px" text="Parcelles" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                    <!-- <Label style="-fx-font-size: 24px" text="Parcelles" GridPane.columnIndex="0" GridPane.rowIndex="1"/> -->
+                    
                     <Label style="-fx-font-size: 24px" fx:id="parcellesValue" text="-" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
                     <Label style="-fx-font-size: 24px" text="Carte pro" GridPane.columnIndex="0" GridPane.rowIndex="2"/>

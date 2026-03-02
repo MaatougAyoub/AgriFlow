@@ -11,14 +11,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.Map;
+import java.io.IOException;
 
 public class ProfilUtilisateur {
-
     @FXML
     private Label roleLabel;
     @FXML
@@ -236,7 +238,7 @@ public class ProfilUtilisateur {
 
     @FXML
     private void listeParcelles(ActionEvent event) {
-        System.out.println("Ouvrir liste des parcelles id=" + userData.get("id"));
+        naviguerVers("/LIsteParcelles.fxml");
     }
 
     @FXML
@@ -259,6 +261,40 @@ public class ProfilUtilisateur {
             e.printStackTrace();
             errorLabel.setText("Impossible d'ouvrir la page de modification: " + e.getMessage());
             errorLabel.setVisible(true);
+        }
+    }
+
+
+    //-------------------------------------------------------------------------------------------
+        private void naviguerVers(String fxmlPath) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            Parent view = loader.load();
+
+            // Utiliser roleLabel (toujours présent) pour accéder à la scène
+            if (roleLabel == null || roleLabel.getScene() == null) {
+                System.err.println("[ProfilUtilisateur] scène introuvable");
+                return;
+            }
+
+            StackPane contentArea = (StackPane) roleLabel.getScene().lookup("#contentArea");
+            if (contentArea == null) {
+                Parent sceneRoot = roleLabel.getScene().getRoot();
+                if (sceneRoot != null) {
+                    contentArea = (StackPane) sceneRoot.lookup("#contentArea");
+                }
+            }
+
+            if (contentArea == null) {
+                System.err.println("[ProfilUtilisateur] contentArea introuvable (#contentArea).");
+                return;
+            }
+
+            contentArea.getChildren().setAll(view);
+
+        } catch (IOException e) {
+            System.err.println("[ProfilUtilisateur] Erreur navigation vers " + fxmlPath + " : " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

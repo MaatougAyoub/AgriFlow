@@ -11,11 +11,15 @@
         <module name="AgriFlow" />
         <module name="maven-surefire-plugin" />
         <module name="AgriFlow-PI" />
-          <module name="AgriFlow" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="module5-collaborations" target="17" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="AgriFlow" options="" />
+    </option>
   </component>
 </project>

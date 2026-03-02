@@ -236,6 +236,12 @@ public class ListeReclamations {
         return nom + " " + prenom + " (" + role + ")";
     }
 
+    private boolean isConnectedAdmin() {
+        if (userData == null) return false;
+        String role = String.valueOf(userData.get("role"));
+        return "ADMIN".equalsIgnoreCase(role);
+    }
+
     private void onReplyClicked(int index) {
         if (index < 0 || index >= table.getItems().size())
             return;
@@ -258,7 +264,8 @@ public class ListeReclamations {
 
         try {
             // ✅ concatène au lieu d’écraser
-            service.ajouterReponseConcatenee(row.getId(), formatted);
+            boolean isAdmin = isConnectedAdmin();
+            service.ajouterReponseConcatenee(row.getId(), formatted, isAdmin);
             rafraichir(null);
         } catch (SQLException e) {
             showErrorDialog("Erreur", "Impossible d'enregistrer la réponse", e.getMessage());
