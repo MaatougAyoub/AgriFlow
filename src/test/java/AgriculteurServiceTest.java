@@ -2,6 +2,7 @@ import entities.Agriculteur;
 import entities.Role;
 import org.junit.jupiter.api.*;
 import services.ServiceAgriculteur;
+import utils.PasswordUtils;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -104,7 +105,7 @@ public class AgriculteurServiceTest {
         assertEquals("user_test_mod", found.getPrenom());
         assertEquals(cinMod, found.getCin());
         assertEquals(emailMod, found.getEmail());
-        assertEquals("pwd_mod", found.getMotDePasse());
+        assertTrue(PasswordUtils.verifyPassword("pwd_mod", found.getMotDePasse()), "Mot de passe modifié incorrect");
         assertEquals("signature_mod.png", found.getSignature());
         assertEquals("carte_pro_mod.png", found.getCarte_pro());
         assertEquals("Bizerte", found.getAdresse());
@@ -132,7 +133,7 @@ public class AgriculteurServiceTest {
                 .orElse(null);
 
         assertNotNull(found);
-        assertEquals(newPwd, found.getMotDePasse(), "Le mot de passe n'a pas été mis à jour");
+        assertTrue(PasswordUtils.verifyPassword(newPwd, found.getMotDePasse()), "Le mot de passe n'a pas été mis à jour");
     }
 
     @Test

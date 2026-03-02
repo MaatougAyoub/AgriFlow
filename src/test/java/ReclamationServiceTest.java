@@ -148,14 +148,14 @@ public class ReclamationServiceTest {
         assertTrue(idReclamation > 0, "idReclamation non initialisé.");
 
         String rep1 = "Admin Test (ADMIN) : première réponse";
-        sr.ajouterReponseConcatenee(idReclamation, rep1);
+        sr.ajouterReponseConcatenee(idReclamation, rep1, true);
 
         String after1 = sr.getReponseById(idReclamation);
         assertNotNull(after1);
         assertTrue(after1.contains("première réponse"));
 
         String rep2 = "Expert Test (EXPERT) : deuxième réponse";
-        sr.ajouterReponseConcatenee(idReclamation, rep2);
+        sr.ajouterReponseConcatenee(idReclamation, rep2, false);
 
         String after2 = sr.getReponseById(idReclamation);
         assertNotNull(after2);

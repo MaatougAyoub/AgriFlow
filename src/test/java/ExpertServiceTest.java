@@ -3,6 +3,7 @@ import entities.Expert;
 import entities.Role;
 import org.junit.jupiter.api.*;
 import services.ServiceExpert;
+import utils.PasswordUtils;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -98,7 +99,7 @@ public class ExpertServiceTest {
         assertEquals("benfoulen_mod", found.getPrenom());
         assertEquals(cinMod, found.getCin());
         assertEquals(emailMod, found.getEmail());
-        assertEquals("motdepasse_mod", found.getMotDePasse());
+        assertTrue(PasswordUtils.verifyPassword("motdepasse_mod", found.getMotDePasse()), "Mot de passe modifié incorrect");
         assertEquals("signature_mod.png", found.getSignature());
         assertEquals("certification_mod.png", found.getCertification());
     }
@@ -123,7 +124,7 @@ public class ExpertServiceTest {
                 .orElse(null);
 
         assertNotNull(found);
-        assertEquals(newPwd, found.getMotDePasse(), "Le mot de passe n'a pas été mis à jour");
+        assertTrue(PasswordUtils.verifyPassword(newPwd, found.getMotDePasse()), "Le mot de passe n'a pas été mis à jour");
 
         // Optionnel: vérifier aussi dans utilisateurs (si tu veux)
         // -> il faudrait une méthode de lecture côté ServiceExpert (ou requête ici),
