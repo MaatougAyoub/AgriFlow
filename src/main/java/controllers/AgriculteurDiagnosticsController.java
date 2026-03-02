@@ -13,10 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import mains.MainIrrigationFX;
 import services.DiagnosticService;
@@ -74,17 +71,21 @@ public class AgriculteurDiagnosticsController {
         }
 
         for (Diagnostic d : diagnostics) {
+            final String styleNormal = "-fx-padding: 14 24; -fx-border-color: #F0F0F0; -fx-border-width: 0 0 1 0; -fx-background-color: white;";
+            final String styleHover  = "-fx-padding: 14 24; -fx-border-color: #F0F0F0; -fx-border-width: 0 0 1 0; -fx-background-color: #F7FFF7;";
+
             HBox row = new HBox(0);
             row.setAlignment(Pos.CENTER_LEFT);
-            row.setStyle("-fx-padding: 15 20; -fx-border-color: #F8F8F8; -fx-border-width: 0 0 1 0; -fx-background-color: white;");
+            row.setStyle(styleNormal);
 
             // 1. Image arrondie
             ImageView iv = new ImageView();
-            iv.setFitHeight(45);
-            iv.setFitWidth(45);
-            Rectangle clip = new Rectangle(45, 45);
-            clip.setArcWidth(15);
-            clip.setArcHeight(15);
+            iv.setFitHeight(46);
+            iv.setFitWidth(46);
+            iv.setPreserveRatio(true);
+            Rectangle clip = new Rectangle(46, 46);
+            clip.setArcWidth(12);
+            clip.setArcHeight(12);
             iv.setClip(clip);
 
             if (d.getImagePath() != null) {
@@ -92,36 +93,48 @@ public class AgriculteurDiagnosticsController {
                 if (file.exists()) iv.setImage(new Image(file.toURI().toString()));
             }
 
-            VBox imgBox = new VBox(iv);
-            imgBox.setPrefWidth(80);
+            HBox imgBox = new HBox(iv);
+            imgBox.setAlignment(Pos.CENTER_LEFT);
+            imgBox.setPrefWidth(70);
 
             // 2. Nom Culture
-            Label lblCulture = new Label(d.getNomCulture());
-            lblCulture.setPrefWidth(200);
-            lblCulture.setFont(Font.font("System", FontWeight.BOLD, 14));
-            lblCulture.setStyle("-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #6B7280;");
+            Label lblCulture = new Label(d.getNomCulture() != null ? d.getNomCulture() : "—");
+            lblCulture.setPrefWidth(180);
+            lblCulture.setWrapText(false);
+            lblCulture.setStyle("-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2D5016;");
 
-            // 3. Description
-            Label lblDesc = new Label(d.getDescription() != null ? d.getDescription() : "Aucune description");
-            lblDesc.setPrefWidth(300);
-            lblDesc.setTextFill(Color.web("#666666"));
-            lblDesc.setStyle("-fx-font-size: 13px;");
+            // 3. Description (truncated visually via label width)
+            String desc = d.getDescription() != null ? d.getDescription() : "Aucune description";
+            Label lblDesc = new Label(desc);
+            lblDesc.setPrefWidth(380);
+            lblDesc.setWrapText(false);
+            lblDesc.setStyle("-fx-font-size: 12; -fx-text-fill: #6B7280;");
 
-            // 4. Statut
-            Label lblStatut = new Label(d.getStatut().toUpperCase());
-            lblStatut.setPrefWidth(120);
+            // 4. Statut badge
+            String statut = d.getStatut() != null ? d.getStatut() : "—";
+            Label lblStatut = new Label(statut.toUpperCase());
+            lblStatut.setPrefWidth(140);
             lblStatut.setAlignment(Pos.CENTER);
-            lblStatut.setStyle("-fx-padding: 5 10; -fx-background-radius: 15; -fx-font-weight: bold; -fx-font-size: 10px;");
-
-            if ("En attente".equalsIgnoreCase(d.getStatut())) {
-                lblStatut.setStyle(lblStatut.getStyle() + "-fx-background-color: #FFF4E5; -fx-text-fill: #FF9800;");
+            if ("En attente".equalsIgnoreCase(statut)) {
+                lblStatut.setStyle("-fx-padding: 5 14; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 10; -fx-background-color: #FFF3E0; -fx-text-fill: #E65100;");
+            } else if ("Traité".equalsIgnoreCase(statut) || "Traite".equalsIgnoreCase(statut)) {
+                lblStatut.setStyle("-fx-padding: 5 14; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 10; -fx-background-color: #E8F5E9; -fx-text-fill: #2E7D32;");
             } else {
-                lblStatut.setStyle(lblStatut.getStyle() + "-fx-background-color: #E8F5E9; -fx-text-fill: #4CAF50;");
+                lblStatut.setStyle("-fx-padding: 5 14; -fx-background-radius: 20; -fx-font-weight: bold; -fx-font-size: 10; -fx-background-color: #E3F2FD; -fx-text-fill: #1565C0;");
             }
 
-            row.getChildren().addAll(imgBox, lblCulture, lblDesc, lblStatut);
-            row.setOnMouseEntered(e -> row.setStyle(row.getStyle() + "-fx-background-color: #FDFDFD;"));
-            row.setOnMouseExited(e -> row.setStyle(row.getStyle() + "-fx-background-color: white;"));
+            // 5. Date
+            String dateStr = d.getDateEnvoi() != null
+                    ? d.getDateEnvoi().toLocalDate().toString()
+                    : "—";
+            Label lblDate = new Label(dateStr);
+            lblDate.setPrefWidth(100);
+            lblDate.setAlignment(Pos.CENTER);
+            lblDate.setStyle("-fx-font-size: 11; -fx-text-fill: #9EA3AE;");
+
+            row.getChildren().addAll(imgBox, lblCulture, lblDesc, lblStatut, lblDate);
+            row.setOnMouseEntered(e -> row.setStyle(styleHover));
+            row.setOnMouseExited(e -> row.setStyle(styleNormal));
             listContainer.getChildren().add(row);
         }
     }

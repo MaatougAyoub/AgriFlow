@@ -1,146 +1,146 @@
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AdminDashboardController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AdminValidationController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AgriContPlanIrrigation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AgriculteurDiagnosticsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AjouterAnnonceController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AjouterProduitController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\AnnonceCardController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ApplyCollaborationController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\CollabApplicationListController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\CollabRequestDetailsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\CollabRequestFormController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\CollabRequestListController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ContCultureDetails.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ContCultureDetailsAgri.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ContDashboard.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ContPlanIrrigation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\CulturesEnVente.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\DiagnosticController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\DiagnosticDetailController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ExpertController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ExpertHomeController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ExploreCollaborationsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ListeCultures.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ListeParcelles.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ListeProduitsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ListeReclamations.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ListeUtilisateurs.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MainController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MainViewController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MarketplaceController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MesReservationsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ModifierProfil.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MotDePasseOublie.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MyApplicationsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\MyRequestsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ParcelleDetails.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ParcellesCulturesController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ProfilUtilisateur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\PublishRequestController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ReservationDialogController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\SignIn.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\SignUp.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\controllers\ViewApplicationsController.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Admin.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Agriculteur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Annonce.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Categorie.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\CollabApplication.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\CollabRequest.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Culture.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\DailyForecast.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Diagnostic.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Expert.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\MatchScore.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Message.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Parcelle.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\PhotoAnnonce.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\PlanIrrigation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\ProduitPhytosanitaire.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Reclamation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\ReclamationRow.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\RecommendationResult.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Reservation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Role.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Statut.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\StatutAnnonce.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\StatutReservation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\TypeAnnonce.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\User.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\Utilisateur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\entities\VerificationStatus.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\AppLauncher.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\Main.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainCollabFX.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainExpertDashboard.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainExpertFX.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainFX.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainIrrigationFX.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\MainPlanIrrigation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\mains\TestConnexion.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\AIService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\AnnonceService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\CandidateMatchingService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\CollabApplicationService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\CollabRequestService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ContentValidator.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\CulturePDF.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\DiagnosticService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ExpertService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\FraudControlService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\GeminiAIService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ICollabApplicationService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ICollabRequestService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IrrigationSmartService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IServiceAdmin.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IServiceAgriculteur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IServiceExpert.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IServiceReclamation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\IServiceY.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\MailerSendEmailService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\MessageService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ocr\OcrResult.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ocr\OcrService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ocr\TesseractOcrService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\PDFService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\PhotoService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\PredictionService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ProduitService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\RecommendationService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\SentimentAnalysisService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceAdmin.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceAgriculteur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceAnnonce.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceAuth.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceCulture.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceExpert.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceGenerateurPlan.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceParcelle.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServicePlanIrrigation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServicePlanIrrigationJour.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceProfil.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceReclamation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceReservation.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\ServiceUtilisateur.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\StripeService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\UserService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\verification\ArabicTextNormalizer.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\verification\ExpertCertificationVerificationService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\verification\FarmerCardVerificationService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\verification\VerificationResult.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\VerificationAdminService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\VerificationCodeEmailService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\WeatherService.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\services\WeatherServiceYakine.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\AIUtils.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\DbMigrations.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\MapPickerBridge.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\MyConnection.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\MyDatabase.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\PasswordUtils.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\TelegramNotifier.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\WeatherCodeLabels.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\utils\XamppUploads.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\validators\CollabApplicationValidator.java
-C:\Users\Crash\Desktop\agriflow-integration-Ayoub\src\main\java\validators\CollabRequestValidator.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AdminDashboardController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AdminValidationController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AgriContPlanIrrigation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AgriculteurDiagnosticsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AjouterAnnonceController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AjouterProduitController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\AnnonceCardController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ApplyCollaborationController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\CollabApplicationListController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\CollabRequestDetailsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\CollabRequestFormController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\CollabRequestListController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ContCultureDetails.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ContCultureDetailsAgri.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ContDashboard.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ContPlanIrrigation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\CulturesEnVente.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\DiagnosticController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\DiagnosticDetailController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ExpertController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ExpertHomeController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ExploreCollaborationsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ListeCultures.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ListeParcelles.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ListeProduitsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ListeReclamations.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ListeUtilisateurs.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MainController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MainViewController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MarketplaceController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MesReservationsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ModifierProfil.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MotDePasseOublie.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MyApplicationsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\MyRequestsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ParcelleDetails.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ParcellesCulturesController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ProfilUtilisateur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\PublishRequestController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ReservationDialogController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\SignIn.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\SignUp.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\controllers\ViewApplicationsController.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Admin.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Agriculteur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Annonce.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Categorie.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\CollabApplication.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\CollabRequest.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Culture.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\DailyForecast.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Diagnostic.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Expert.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\MatchScore.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Message.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Parcelle.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\PhotoAnnonce.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\PlanIrrigation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\ProduitPhytosanitaire.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Reclamation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\ReclamationRow.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\RecommendationResult.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Reservation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Role.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Statut.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\StatutAnnonce.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\StatutReservation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\TypeAnnonce.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\User.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\Utilisateur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\entities\VerificationStatus.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\AppLauncher.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\Main.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainCollabFX.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainExpertDashboard.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainExpertFX.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainFX.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainIrrigationFX.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\MainPlanIrrigation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\mains\TestConnexion.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\AIService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\AnnonceService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\CandidateMatchingService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\CollabApplicationService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\CollabRequestService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ContentValidator.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\CulturePDF.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\DiagnosticService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ExpertService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\FraudControlService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\GeminiAIService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ICollabApplicationService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ICollabRequestService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IrrigationSmartService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IServiceAdmin.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IServiceAgriculteur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IServiceExpert.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IServiceReclamation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\IServiceY.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\MailerSendEmailService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\MessageService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ocr\OcrResult.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ocr\OcrService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ocr\TesseractOcrService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\PDFService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\PhotoService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\PredictionService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ProduitService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\RecommendationService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\SentimentAnalysisService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceAdmin.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceAgriculteur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceAnnonce.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceAuth.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceCulture.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceExpert.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceGenerateurPlan.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceParcelle.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServicePlanIrrigation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServicePlanIrrigationJour.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceProfil.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceReclamation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceReservation.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\ServiceUtilisateur.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\StripeService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\UserService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\verification\ArabicTextNormalizer.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\verification\ExpertCertificationVerificationService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\verification\FarmerCardVerificationService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\verification\VerificationResult.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\VerificationAdminService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\VerificationCodeEmailService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\WeatherService.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\services\WeatherServiceYakine.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\AIUtils.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\DbMigrations.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\MapPickerBridge.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\MyConnection.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\MyDatabase.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\PasswordUtils.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\TelegramNotifier.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\WeatherCodeLabels.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\utils\XamppUploads.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\validators\CollabApplicationValidator.java
+C:\Users\Crash\Desktop\agriflow-FINALE - Copie\src\main\java\validators\CollabRequestValidator.java

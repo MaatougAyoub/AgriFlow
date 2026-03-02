@@ -2,6 +2,7 @@ package controllers;
 
 import entities.Culture;
 import entities.Diagnostic;
+import entities.User;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -137,8 +138,14 @@ public class DiagnosticController {
             return;
         }
 
+        User currentUser = MainController.getCurrentUser();
+        if (currentUser == null) {
+            showAlert("Erreur", "Utilisateur non connecté. Veuillez vous reconnecter.");
+            return;
+        }
+
         Diagnostic diag = new Diagnostic();
-        diag.setIdAgriculteur(1);
+        diag.setIdAgriculteur(currentUser.getId());
         diag.setNomCulture(culture);
         diag.setDescription(description);
         diag.setImagePath(selectedFile.getAbsolutePath());
